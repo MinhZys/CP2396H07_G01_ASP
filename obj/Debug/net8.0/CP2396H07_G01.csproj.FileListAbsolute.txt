@@ -139,3 +139,4 @@ D:\ASP.net\CP2396H07_G01\CP2396H07_G01\obj\Debug\net8.0\CP2396H07_G01.pdb
 D:\ASP.net\CP2396H07_G01\CP2396H07_G01\obj\Debug\net8.0\CP2396H07_G01.genruntimeconfig.cache
 D:\ASP.net\CP2396H07_G01\CP2396H07_G01\obj\Debug\net8.0\ref\CP2396H07_G01.dll
 D:\ASP.net\CP2396H07_G01\CP2396H07_G01\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\ASP.net\CP2396H07_G01\CP2396H07_G01\obj\Debug\net8.0\CP2396H07_G01.sourcelink.json
