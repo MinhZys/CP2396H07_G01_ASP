@@ -1,0 +1,81 @@
+@model Symphony.Portal.Web.Models.ViewModels.HomeViewModel
+
+@{
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="jumbotron p-5 mb-4 bg-light rounded-3 bg-gradient" style="background: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%); color: white;">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Symphony Training Academy</h1>
+        <p class="col-md-8 fs-4">Join the future of technology with our world-class IT courses and certifications.</p>
+        <a class="btn btn-light btn-lg" asp-controller="Account" asp-action="Register">Register Now</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="display-6">Our Popular Courses</h2>
+            <div class="divider"></div>
+        </div>
+        @if (Model.FeaturedCourses.Any())
+        {
+            @foreach (var course in Model.FeaturedCourses)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@course.Title</h5>
+                            <p class="card-text text-muted">@course.Description</p>
+                            <p class="fw-bold text-primary">$@course.TuitionFee</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <a href="#" class="btn btn-outline-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <p class="text-muted">No active courses available at the moment.</p>
+            </div>
+        }
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="display-6">Upcoming Admission Exams</h2>
+             <div class="divider"></div>
+        </div>
+        @if (Model.UpcomingExams.Any())
+        {
+            <div class="col-md-8 offset-md-2">
+                <div class="list-group">
+                @foreach (var exam in Model.UpcomingExams)
+                {
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">@exam.Title</h5>
+                            <small class="text-muted">Date: @exam.ExamDate.ToShortDateString()</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-primary rounded-pill mb-2">$@exam.Fee</span>
+                            <br/>
+                            <a asp-controller="Account" asp-action="Register" class="btn btn-sm btn-success">Register to Apply</a>
+                        </div>
+                    </div>
+                }
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <p class="text-muted">No upcoming exams scheduled.</p>
+            </div>
+        }
+    </div>
+</div>
