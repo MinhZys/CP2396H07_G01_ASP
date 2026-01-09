@@ -1,0 +1,34 @@
+@model Symphony.Portal.Web.Models.PageContent
+
+@{
+    ViewData["Title"] = "Edit Page Content";
+}
+
+<h2>Edit Page: @Model.Title</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditPage">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Slug" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label asp-for="Content" class="control-label">HTML Content</label>
+                <textarea asp-for="Content" class="form-control" rows="15"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+                <small class="form-text text-muted">You can use HTML tags here.</small>
+            </div>
+            
+            <div class="form-group mt-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="ManagePages" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>

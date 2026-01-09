@@ -26,19 +26,19 @@
                         @if (User.IsInRole("Admin"))
                         {
                              <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin</a>
+                                <a class="nav-link text-dark" href="/Admin/Dashboard/Index">Admin</a>
                             </li>
                         }
                         @if (User.IsInRole("Instructor"))
                         {
                              <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Instructor" asp-controller="Classes" asp-action="Index">My Classes</a>
+                                <a class="nav-link text-dark" href="/Instructor/Classes/Index">My Classes</a>
                             </li>
                         }
                         @if (User.IsInRole("Student"))
                         {
                              <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Student" asp-controller="Home" asp-action="Index">My Learning</a>
+                                <a class="nav-link text-dark" href="/Student/Home/Index">My Learning</a>
                             </li>
                         }
                     </ul>

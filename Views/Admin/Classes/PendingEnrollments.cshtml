@@ -1,0 +1,37 @@
+@model IEnumerable<Symphony.Portal.Web.Models.Enrollment>
+
+@{
+    ViewData["Title"] = "Pending Approvals";
+}
+
+<h2>Pending Enrollments</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Class</th>
+            <th>Date</th>
+            <th>Payment Ref</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@(item.Student?.FullName ?? "Unknown")</td>
+            <td>@(item.Class?.Name ?? "Unknown")</td>
+            <td>@item.EnrolledDate.ToShortDateString()</td>
+            <td>@item.PaymentReference</td>
+            <td>
+                <form asp-action="ApproveEnrollment" asp-route-id="@item.Id" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                </form>
+                <form asp-action="RejectEnrollment" asp-route-id="@item.Id" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                </form>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

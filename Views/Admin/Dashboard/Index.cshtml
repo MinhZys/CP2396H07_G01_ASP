@@ -1,0 +1,114 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    // Layout is set in _ViewStart.cshtml
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Admin Dashboard</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Reports</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+        </div>
+    </div>
+</div>
+
+<p class="lead">System Management Overview</p>
+
+<div class="row">
+    <!-- 1. Manage Courses -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-primary">
+            <div class="card-body">
+                <h5 class="card-title text-primary"><i class="bi bi-book"></i> Courses</h5>
+                <p class="card-text">Manage training courses (Basic 4mo, Advanced 6mo) and tuition fees.</p>
+                <a href="/Admin/Courses/Index" class="btn btn-primary btn-sm">Manage Courses</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Manage Classes -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-success">
+            <div class="card-body">
+                <h5 class="card-title text-success"><i class="bi bi-easel"></i> Classes</h5>
+                <p class="card-text">Manage classes, approve enrollments, and track online/offline status.</p>
+                <a href="/Admin/Classes/Index" class="btn btn-success btn-sm">Manage Classes</a>
+                <a href="/Admin/Classes/PendingEnrollments" class="btn btn-outline-success btn-sm mt-1">Approvals</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Manage Subjects (New) -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-info">
+            <div class="card-body">
+                <h5 class="card-title text-info"><i class="bi bi-journal-check"></i> Subjects</h5>
+                <p class="card-text">Create and manage subjects for the curriculum.</p>
+                <a href="/Admin/Subjects/Index" class="btn btn-info btn-sm text-white">Manage Subjects</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Manage Exams -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-warning">
+            <div class="card-body">
+                <h5 class="card-title text-warning"><i class="bi bi-pencil-square"></i> Exams</h5>
+                <p class="card-text">Schedule entrance exams and manage registrations.</p>
+                <a href="/Admin/AdmissionExams/Index" class="btn btn-warning btn-sm text-dark">Manage Exams</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Teacher Assignments -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-danger">
+            <div class="card-body">
+                <h5 class="card-title text-danger"><i class="bi bi-person-check"></i> Assignments</h5>
+                <p class="card-text">Assign teachers to classes and exam duties.</p>
+                <a href="/Admin/TeacherAssignment/Index" class="btn btn-danger btn-sm">Assign Teachers</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Manage Users -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-secondary">
+            <div class="card-body">
+                <h5 class="card-title text-secondary"><i class="bi bi-people"></i> Accounts</h5>
+                <p class="card-text">Manage student and instructor accounts.</p>
+                <a href="/Admin/Users/Index" class="btn btn-secondary btn-sm">Manage Users</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card border-dark">
+            <div class="card-header bg-dark text-white">
+                <i class="bi bi-gear"></i> Content Management System (CMS)
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6>Static Pages</h6>
+                        <p class="small text-muted">Identify "About Us", "Why Join Us", etc.</p>
+                        <a href="/Admin/CMS/ManagePages" class="btn btn-outline-dark btn-sm">Manage Pages</a>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>FAQs</h6>
+                        <p class="small text-muted">Manage Frequently Asked Questions.</p>
+                        <a href="/Admin/CMS/ManageFAQs" class="btn btn-outline-dark btn-sm">Manage FAQs</a>
+                    </div>
+                     <div class="col-md-4">
+                        <h6>Contact Info</h6>
+                        <p class="small text-muted">Update branches and phone numbers.</p>
+                        <a href="/Admin/CMS/Index" class="btn btn-outline-dark btn-sm">Go to CMS</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

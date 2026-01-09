@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Symphony.Portal.Web.Data;
-using Symphony.Portal.Web.Models.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,24 +11,22 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 8;
-    options.SignIn.RequireConfirmedAccount = false;
-})
-.AddEntityFrameworkStores<AppDbContext>()
-.AddDefaultTokenProviders();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+    });
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/Account/Login";
-    options.AccessDeniedPath = "/Account/AccessDenied";
-});
-
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddRazorOptions(options =>
+    {
+        options.ViewLocationFormats.Add("/Views/Admin/{1}/{0}.cshtml");
+        options.ViewLocationFormats.Add("/Views/Instructor/{1}/{0}.cshtml");
+        options.ViewLocationFormats.Add("/Views/Student/{1}/{0}.cshtml");
+        options.ViewLocationFormats.Add("/Views/{1}/{0}.cshtml");
+        options.ViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
+    });
 
 var app = builder.Build();
 
@@ -48,9 +45,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+// Areas route removed
 
 app.MapControllerRoute(
     name: "default",
@@ -64,7 +59,7 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<AppDbContext>();
         context.Database.Migrate();
-        await SeedData.InitializeAsync(services);
+        // SeedData removed - seeding is now in OnModelCreating in AppDbContext
     }
     catch (Exception ex)
     {

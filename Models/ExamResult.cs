@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Symphony.Portal.Web.Models.Identity;
 
 namespace Symphony.Portal.Web.Models
 {
@@ -9,9 +8,9 @@ namespace Symphony.Portal.Web.Models
         public int Id { get; set; }
         
         [Required]
-        public string StudentId { get; set; } = string.Empty;
+        public int StudentId { get; set; }
         [ForeignKey("StudentId")]
-        public ApplicationUser? Student { get; set; }
+        public User? Student { get; set; }
 
         public int AdmissionExamId { get; set; }
         public AdmissionExam? AdmissionExam { get; set; }

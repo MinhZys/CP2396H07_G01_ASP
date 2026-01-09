@@ -1,0 +1,55 @@
+@model Symphony.Portal.Web.Models.Class
+
+@{
+    ViewData["Title"] = "Edit Class";
+}
+
+<h2>Edit Class</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="CourseId" class="control-label">Course</label>
+                <select asp-for="CourseId" class="form-control" asp-items="ViewBag.Courses"></select>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="InstructorId" class="control-label">Instructor</label>
+                <select asp-for="InstructorId" class="form-control" asp-items="ViewBag.Instructors">
+                    <option value="">-- Select Instructor --</option>
+                </select>
+            </div>
+            <div class="row">
+                 <div class="col-md-6 form-group mb-3">
+                    <label asp-for="StartDate" class="control-label"></label>
+                    <input asp-for="StartDate" class="form-control" type="date" />
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                    <label asp-for="EndDate" class="control-label"></label>
+                    <input asp-for="EndDate" class="form-control" type="date" />
+                </div>
+            </div>
+            <div class="form-check mb-3">
+                <input asp-for="IsOnline" class="form-check-input" />
+                <label asp-for="IsOnline" class="form-check-label"></label>
+            </div>
+             <div class="form-group mb-3">
+                <label asp-for="Room" class="control-label"></label>
+                <input asp-for="Room" class="form-control" />
+            </div>
+            
+            <div class="form-group mt-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>

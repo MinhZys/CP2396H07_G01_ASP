@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Symphony.Portal.Web.Models.Identity;
 
 namespace Symphony.Portal.Web.Models
 {
@@ -10,10 +9,14 @@ namespace Symphony.Portal.Web.Models
         public int ClassId { get; set; }
         public Class? Class { get; set; }
 
-        public string StudentId { get; set; } = string.Empty;
+        public int StudentId { get; set; }
         [ForeignKey("StudentId")]
-        public ApplicationUser? Student { get; set; }
+        public User? Student { get; set; }
 
-        public DateTime EnrolledDate { get; set; } 
+        public DateTime EnrolledDate { get; set; } = DateTime.Now;
+        
+        public bool IsApproved { get; set; } = false;
+        public bool IsPaid { get; set; } = false;
+        public string? PaymentReference { get; set; } // Receipt or Check No 
     }
 }

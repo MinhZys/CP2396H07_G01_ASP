@@ -1,0 +1,40 @@
+@model Symphony.Portal.Web.Models.Class
+
+@{
+    ViewData["Title"] = "Assign Instructor";
+}
+
+<h2>Assign Instructor to Class: @Model.Name</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+             <div class="card-body">
+                 <h5 class="card-title">Class Information</h5>
+                 <p><strong>Course:</strong> @Model.Course?.Title</p>
+                 <p><strong>Schedule:</strong> @Model.StartDate.ToShortDateString() - @Model.EndDate.ToShortDateString()</p>
+                 <p><strong>Current Instructor:</strong> @(Model.Instructor?.FullName ?? "None")</p>
+             </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<form asp-action="AssignToClass" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    
+    <div class="form-group mb-3">
+        <label class="control-label">Select Instructor</label>
+        <select name="instructorId" class="form-control">
+            <option value="">-- Choose --</option>
+            @foreach (var user in (List<Symphony.Portal.Web.Models.User>)ViewBag.Instructors)
+            {
+                <option value="@user.Id" selected="@(user.Id == Model.InstructorId)">@user.FullName (@user.Email)</option>
+            }
+        </select>
+    </div>
+    
+    <button type="submit" class="btn btn-success">Assign Teacher</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>

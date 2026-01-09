@@ -1,0 +1,36 @@
+@model IEnumerable<Symphony.Portal.Web.Models.FAQ>
+
+@{
+    ViewData["Title"] = "Manage FAQs";
+}
+
+<h2>Manage FAQs</h2>
+
+<p>
+    <a asp-action="CreateFAQ" class="btn btn-primary">Create New FAQ</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to CMS</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Question</th>
+            <th>Answer</th>
+            <th>Order</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@item.Question</td>
+            <td>@(item.Answer.Length > 50 ? item.Answer.Substring(0, 50) + "..." : item.Answer)</td>
+            <td>@item.DisplayOrder</td>
+            <td>
+                <a asp-action="EditFAQ" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="DeleteFAQ" asp-route-id="@item.Id" onclick="return confirm('Are you sure?');">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,47 @@
+@model IEnumerable<Symphony.Portal.Web.Models.AdmissionExam>
+
+@{
+    ViewData["Title"] = "Admission Exams";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Admission Exams</h2>
+        <a asp-action="Create" class="btn btn-primary">Create New Exam</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Exam Date</th>
+                        <th>Fee</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        <tr>
+                            <td>@item.Title</td>
+                            <td>@item.ExamDate.ToShortDateString()</td>
+                            <td>$@item.Fee</td>
+                            <td>
+                                @if(item.IsActive) {
+                                    <span class="badge bg-success">Active</span>
+                                } else {
+                                    <span class="badge bg-secondary">Closed</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

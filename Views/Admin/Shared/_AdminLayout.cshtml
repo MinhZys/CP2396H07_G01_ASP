@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Symphony Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background-color: #f8f9fa;
+        }
+        .sidebar-sticky {
+            position: relative;
+            top: 0;
+            height: calc(100vh - 48px);
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        main {
+            margin-left: 200px; /* Width of sidebar */
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Symphony Admin</a>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" asp-controller="Public" asp-action="Index">Go to Site</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <style>
+                    .sidebar .nav-link {
+                        border: 1px solid transparent;
+                        margin-bottom: 8px;
+                        border-radius: 8px;
+                        margin-right: 15px;
+                        margin-left: 5px;
+                        transition: all 0.3s;
+                    }
+                    .sidebar .nav-link:hover {
+                         background-color: #e9ecef;
+                         border-color: #dee2e6;
+                    }
+                    .sidebar .nav-link.active {
+                        border-color: #0d6efd;
+                        background-color: #e7f1ff;
+                        color: #0d6efd;
+                        font-weight: bold;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                    }
+                </style>
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")" asp-controller="Dashboard" asp-action="Index">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "active" : "")" asp-controller="Users" asp-action="Index">
+                                <i class="bi bi-people"></i> Manage Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CMS" ? "active" : "")" asp-controller="CMS" asp-action="Index">
+                                <i class="bi bi-file-earmark-text"></i> CMS
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Subjects" ? "active" : "")" asp-controller="Subjects" asp-action="Index">
+                                <i class="bi bi-journal-text"></i> Manage Subjects
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Courses" ? "active" : "")" asp-controller="Courses" asp-action="Index">
+                                <i class="bi bi-book"></i> Manage Courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "active" : "")" asp-controller="Classes" asp-action="Index">
+                                <i class="bi bi-easel"></i> Manage Classes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdmissionExams" ? "active" : "")" asp-controller="AdmissionExams" asp-action="Index">
+                                <i class="bi bi-pencil-square"></i> Manage Exams
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "TeacherAssignment" ? "active" : "")" asp-controller="TeacherAssignment" asp-action="Index">
+                                <i class="bi bi-person-check"></i> Manage Assignments
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">@ViewData["Title"]</h1>
+                </div>
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

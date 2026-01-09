@@ -1,0 +1,41 @@
+@model IEnumerable<Symphony.Portal.Web.Models.Class>
+
+@{
+    ViewData["Title"] = "Teacher Assignments";
+}
+
+<h2>Manage Assignments</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Class Name</th>
+            <th>Course</th>
+            <th>Start Date</th>
+            <th>Current Instructor</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Course?.Title</td>
+            <td>@item.StartDate.ToShortDateString()</td>
+            <td>
+                @if(item.Instructor != null)
+                {
+                    <span class="badge bg-success">@item.Instructor.FullName</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Unassigned</span>
+                }
+            </td>
+            <td>
+                <a asp-action="AssignToClass" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Assign</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
