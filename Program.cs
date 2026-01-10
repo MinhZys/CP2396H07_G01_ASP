@@ -26,6 +26,11 @@ builder.Services.AddControllersWithViews()
         options.ViewLocationFormats.Add("/Views/Student/{1}/{0}.cshtml");
         options.ViewLocationFormats.Add("/Views/{1}/{0}.cshtml");
         options.ViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
+
+        // Add support for Areas with custom view location
+        options.AreaViewLocationFormats.Clear();
+        options.AreaViewLocationFormats.Add("/Views/{2}/{1}/{0}.cshtml");
+        options.AreaViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
     });
 
 var app = builder.Build();
@@ -46,6 +51,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Areas route removed
+
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

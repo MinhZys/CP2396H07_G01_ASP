@@ -1,0 +1,64 @@
+@{
+    ViewData["Title"] = "Instructor Dashboard";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Welcome back, Instructor</h1>
+</div>
+
+<div class="row">
+    <!-- 1. My Classes -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-primary">
+            <div class="card-body">
+                <h5 class="card-title text-primary"><i class="bi bi-easel"></i> My Classes</h5>
+                <p class="card-text">Manage your assigned classes, view student lists, and track attendance.</p>
+                <a asp-controller="Classes" asp-action="Index" class="btn btn-primary btn-sm">Go to Classes</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Exam Supervision -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-warning">
+            <div class="card-body">
+                <h5 class="card-title text-warning"><i class="bi bi-calendar-check"></i> Exam Schedule</h5>
+                <p class="card-text">View your upcoming exam proctoring assignments and instructions.</p>
+                <a asp-controller="ExamSchedule" asp-action="Index" class="btn btn-warning btn-sm text-dark">View Schedule</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Grading -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-success">
+            <div class="card-body">
+                <h5 class="card-title text-success"><i class="bi bi-clipboard-check"></i> Grading</h5>
+                <p class="card-text">Input grades for entrance exams and final course exams.</p>
+                <a asp-controller="Grading" asp-action="Index" class="btn btn-success btn-sm">Enter Grades</a>
+            </div>
+        </div>
+    </div>
+    
+     <!-- 4. Teaching Schedule -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-info">
+            <div class="card-body">
+                <h5 class="card-title text-info"><i class="bi bi-calendar3"></i> Teaching Schedule</h5>
+                <p class="card-text">Check your weekly teaching schedule and room allocations.</p>
+                 <a asp-controller="Classes" asp-action="Index" class="btn btn-info btn-sm text-white">View Timetable</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Materials -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-secondary">
+            <div class="card-body">
+                <h5 class="card-title text-secondary"><i class="bi bi-folder2-open"></i> Materials</h5>
+                <p class="card-text">Upload and manage learning materials for your students.</p>
+                <a asp-controller="Materials" asp-action="Index" class="btn btn-secondary btn-sm">Manage Materials</a>
+            </div>
+        </div>
+    </div>
+</div>

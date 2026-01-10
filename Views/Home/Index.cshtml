@@ -2,7 +2,263 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" />
+}
+
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content fade-in-up">
+        <h1 class="hero-title">Nâng tầm sự nghiệp CNTT cùng Symphony</h1>
+        <p class="hero-subtitle mb-4">Mở khóa tiềm năng của bạn với các khóa học Lập trình, Mạng và Cơ sở dữ liệu chuẩn quốc tế.</p>
+        
+        <div class="d-flex justify-content-center gap-3 mb-5">
+            <a href="#courses" class="btn btn-primary-custom">Xem khóa học</a>
+            <a href="#contact" class="btn btn-outline-custom">Tư vấn miễn phí</a>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="search-container d-flex gap-2">
+                    <input type="text" class="form-control form-control-custom flex-grow-1" placeholder="Bạn muốn học gì hôm nay? (VD: Java, SQL...)">
+                    <select class="form-select form-select-custom w-25 d-none d-md-block">
+                        <option value="">Tất cả danh mục</option>
+                        <option value="software">Software Dev</option>
+                        <option value="network">Networking</option>
+                        <option value="db">Database</option>
+                    </select>
+                    <button class="btn btn-primary-custom px-4"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="text-center mb-5 fade-in-up">
+            <h2 class="section-title">Tại sao chọn Symphony?</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-3 mb-4 fade-in-up">
+                <div class="feature-box h-100">
+                    <i class="fa-solid fa-medal feature-icon"></i>
+                    <h4>Chứng chỉ Quốc tế</h4>
+                    <p class="text-muted">Chương trình đào tạo chuẩn global, được công nhận bởi các tập đoàn lớn.</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4 fade-in-up">
+                <div class="feature-box h-100">
+                    <i class="fa-solid fa-chalkboard-user feature-icon"></i>
+                    <h4>Giảng viên Chuyên gia</h4>
+                    <p class="text-muted">Đội ngũ giảng viên giàu kinh nghiệm thực chiến từ doanh nghiệp.</p>
+                </div>
+            </div>
+             <div class="col-md-3 mb-4 fade-in-up">
+                <div class="feature-box h-100">
+                    <i class="fa-solid fa-laptop-code feature-icon"></i>
+                    <h4>Thực hành 70%</h4>
+                    <p class="text-muted">Hệ thống phòng Lab hiện đại, cam kết thời lượng thực hành lên đến 70%.</p>
+                </div>
+            </div>
+             <div class="col-md-3 mb-4 fade-in-up">
+                <div class="feature-box h-100">
+                    <i class="fa-solid fa-briefcase feature-icon"></i>
+                    <h4>Hỗ trợ Việc làm</h4>
+                    <p class="text-muted">Kết nối doanh nghiệp, hỗ trợ phỏng vấn và tư vấn career path trọn đời.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Courses -->
+<section id="courses" class="section-padding">
+    <div class="container">
+        <div class="text-center mb-5 fade-in-up">
+            <h2 class="section-title">Khóa học Nổi bật</h2>
+        </div>
+        <div class="row">
+            <!-- Course 1 -->
+            <div class="col-md-4 mb-4 fade-in-up">
+                <div class="course-card">
+                    <div class="course-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Java Fullstack" class="course-img">
+                        <span class="badge badge-custom badge-hot">HOT</span>
+                    </div>
+                    <div class="course-body">
+                        <h5 class="course-title">Java Fullstack Developer</h5>
+                        <div class="course-meta d-flex justify-content-between">
+                            <span><i class="fa-regular fa-clock"></i> 6 Tháng</span>
+                            <span><i class="fa-solid fa-layer-group"></i> Advanced</span>
+                        </div>
+                         <div class="d-flex justify-content-between align-items-center mt-3">
+                             <div class="course-rating">
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star-half-stroke"></i>
+                                 <small class="text-muted">(4.8)</small>
+                             </div>
+                             <div class="course-price">$6,000</div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course 2 -->
+             <div class="col-md-4 mb-4 fade-in-up">
+                <div class="course-card">
+                    <div class="course-img-wrapper">
+                         <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Web Development" class="course-img">
+                        <span class="badge badge-custom badge-new">NEW</span>
+                    </div>
+                    <div class="course-body">
+                        <h5 class="course-title">Frontend Mastery (ReactJS)</h5>
+                        <div class="course-meta d-flex justify-content-between">
+                            <span><i class="fa-regular fa-clock"></i> 4 Tháng</span>
+                            <span><i class="fa-solid fa-layer-group"></i> Intermediate</span>
+                        </div>
+                         <div class="d-flex justify-content-between align-items-center mt-3">
+                             <div class="course-rating">
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-regular fa-star"></i>
+                                 <small class="text-muted">(4.3)</small>
+                             </div>
+                             <div class="course-price">$4,275</div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course 3 -->
+             <div class="col-md-4 mb-4 fade-in-up">
+                <div class="course-card">
+                    <div class="course-img-wrapper">
+                         <img src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Networking" class="course-img">
+                    </div>
+                    <div class="course-body">
+                        <h5 class="course-title">CCNA Networking Fundamentals</h5>
+                        <div class="course-meta d-flex justify-content-between">
+                            <span><i class="fa-regular fa-clock"></i> 3 Tháng</span>
+                            <span><i class="fa-solid fa-layer-group"></i> Beginner</span>
+                        </div>
+                         <div class="d-flex justify-content-between align-items-center mt-3">
+                             <div class="course-rating">
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <small class="text-muted">(5.0)</small>
+                             </div>
+                             <div class="course-price">$3,500</div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+             <!-- Course 4 -->
+            <div class="col-md-4 mb-4 fade-in-up">
+                <div class="course-card">
+                    <div class="course-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1563206767-5b1d5d1e3389?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="SQL Database" class="course-img">
+                    </div>
+                    <div class="course-body">
+                        <h5 class="course-title">SQL Server Database Admin</h5>
+                        <div class="course-meta d-flex justify-content-between">
+                            <span><i class="fa-regular fa-clock"></i> 5 Tháng</span>
+                            <span><i class="fa-solid fa-layer-group"></i> Intermediate</span>
+                        </div>
+                         <div class="d-flex justify-content-between align-items-center mt-3">
+                             <div class="course-rating">
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star-half-stroke"></i>
+                                 <small class="text-muted">(4.6)</small>
+                             </div>
+                             <div class="course-price">$4,500</div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+             <!-- Course 5 -->
+            <div class="col-md-4 mb-4 fade-in-up">
+                <div class="course-card">
+                    <div class="course-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Cyber Security" class="course-img">
+                        <span class="badge badge-custom badge-hot">HOT</span>
+                    </div>
+                    <div class="course-body">
+                        <h5 class="course-title">Cyber Security Essentials</h5>
+                        <div class="course-meta d-flex justify-content-between">
+                            <span><i class="fa-regular fa-clock"></i> 6 Tháng</span>
+                            <span><i class="fa-solid fa-layer-group"></i> Advanced</span>
+                        </div>
+                         <div class="d-flex justify-content-between align-items-center mt-3">
+                             <div class="course-rating">
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <small class="text-muted">(4.9)</small>
+                             </div>
+                             <div class="course-price">$7,000</div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+             <!-- Course 6 -->
+            <div class="col-md-4 mb-4 fade-in-up">
+                <div class="course-card">
+                    <div class="course-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1579403124614-197669d231e8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="DevOps" class="course-img">
+                    </div>
+                    <div class="course-body">
+                        <h5 class="course-title">DevOps Engineering</h5>
+                        <div class="course-meta d-flex justify-content-between">
+                            <span><i class="fa-regular fa-clock"></i> 4 Tháng</span>
+                            <span><i class="fa-solid fa-layer-group"></i> Advanced</span>
+                        </div>
+                         <div class="d-flex justify-content-between align-items-center mt-3">
+                             <div class="course-rating">
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-solid fa-star"></i>
+                                 <i class="fa-regular fa-star"></i>
+                                 <small class="text-muted">(4.2)</small>
+                             </div>
+                             <div class="course-price">$5,500</div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4 fade-in-up">
+             <a href="#" class="btn btn-outline-dark rounded-pill px-5 py-2">Xem toàn bộ khóa học</a>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="section-padding bg-dark text-white text-center">
+    <div class="container fade-in-up">
+        <h2 class="section-title text-white">Sẵn sàng bắt đầu hành trình của bạn?</h2>
+        <p class="mb-5 lead">Đừng bỏ lỡ cơ hội trở thành chuyên gia công nghệ được săn đón hàng đầu.</p>
+        <a href="#" class="btn btn-primary-custom btn-lg">Đăng ký tư vấn ngay</a>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/home.js"></script>
+}

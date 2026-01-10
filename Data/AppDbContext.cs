@@ -15,20 +15,38 @@ namespace Symphony.Portal.Web.Data
 
             // Seed Roles
             builder.Entity<Role>().HasData(
-                new Role { Id = 1, Name = "Admin", Description = "System Administrator" },
-                new Role { Id = 2, Name = "Instructor", Description = "Course Instructor" },
-                new Role { Id = 3, Name = "Student", Description = "Learner" }
+                new Role { Id = 1, Name = RoleNames.Admin, Description = "System Administrator" },
+                new Role { Id = 2, Name = RoleNames.Instructor, Description = "Course Instructor" },
+                new Role { Id = 3, Name = RoleNames.Student, Description = "Learner" }
             );
 
-            // Seed Admin User
+            // Seed Users
             builder.Entity<User>().HasData(
                 new User 
                 { 
                     Id = 1, 
                     FullName = "System Admin", 
                     Email = "admin@symphony.local", 
-                    Password = "admin", // Simple plain text as requested for simplicity
+                    Password = "admin", 
                     RoleId = 1,
+                    IsActive = true
+                },
+                new User
+                {
+                    Id = 2,
+                    FullName = "Mr. Teacher",
+                    Email = "teacher@symphony.local",
+                    Password = "123",
+                    RoleId = 2,
+                    IsActive = true
+                },
+                new User
+                {
+                    Id = 3,
+                    FullName = "Student One",
+                    Email = "student@symphony.local",
+                    Password = "123",
+                    RoleId = 3,
                     IsActive = true
                 }
             );

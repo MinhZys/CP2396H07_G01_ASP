@@ -36,7 +36,7 @@
         <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Symphony Admin</a>
         <div class="navbar-nav">
             <div class="nav-item text-nowrap">
-                <a class="nav-link px-3" asp-controller="Public" asp-action="Index">Go to Site</a>
+                <a class="nav-link px-3" asp-area="" asp-controller="Public" asp-action="Index">Go to Site</a>
             </div>
         </div>
     </header>
@@ -68,42 +68,42 @@
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")" asp-controller="Dashboard" asp-action="Index">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
                                 <i class="bi bi-speedometer2"></i> Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "active" : "")" asp-controller="Users" asp-action="Index">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "active" : "")" asp-area="Admin" asp-controller="Users" asp-action="Index">
                                 <i class="bi bi-people"></i> Manage Users
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CMS" ? "active" : "")" asp-controller="CMS" asp-action="Index">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CMS" ? "active" : "")" asp-area="Admin" asp-controller="CMS" asp-action="Index">
                                 <i class="bi bi-file-earmark-text"></i> CMS
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Subjects" ? "active" : "")" asp-controller="Subjects" asp-action="Index">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Subjects" ? "active" : "")" asp-area="Admin" asp-controller="Subjects" asp-action="Index">
                                 <i class="bi bi-journal-text"></i> Manage Subjects
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Courses" ? "active" : "")" asp-controller="Courses" asp-action="Index">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Courses" ? "active" : "")" asp-area="Admin" asp-controller="Courses" asp-action="Index">
                                 <i class="bi bi-book"></i> Manage Courses
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "active" : "")" asp-controller="Classes" asp-action="Index">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "active" : "")" asp-area="Admin" asp-controller="Classes" asp-action="Index">
                                 <i class="bi bi-easel"></i> Manage Classes
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdmissionExams" ? "active" : "")" asp-controller="AdmissionExams" asp-action="Index">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdmissionExams" ? "active" : "")" asp-area="Admin" asp-controller="AdmissionExams" asp-action="Index">
                                 <i class="bi bi-pencil-square"></i> Manage Exams
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "TeacherAssignment" ? "active" : "")" asp-controller="TeacherAssignment" asp-action="Index">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "TeacherAssignment" ? "active" : "")" asp-area="Admin" asp-controller="TeacherAssignment" asp-action="Index">
                                 <i class="bi bi-person-check"></i> Manage Assignments
                             </a>
                         </li>

@@ -1,117 +1,88 @@
-# Tài liệu Yêu cầu Hệ thống: Cổng thông tin Đào tạo Symphony Ltd.
+# Tài liệu Yêu cầu Hệ thống: Symphony Portal
 
-## 1. Tổng quan & Mục tiêu
+Dựa trên mô tả dự án "Symphony Ltd.", tài liệu này chi tiết hóa các yêu cầu chức năng và phi chức năng của hệ thống.
 
-**Đề tài:** Xây dựng cổng thông tin trực tuyến (Web Portal) cho học viện đào tạo CNTT Symphony Ltd.
+## 1. Giới thiệu
+**Symphony Ltd.** là học viện tư nhân chuyên đào tạo và cấp chứng chỉ CNTT (Networking, Java, Database...). Cần xây dựng một Cổng thông tin trực tuyến (Online Portal) để quảng bá dịch vụ, tuyển sinh và quản lý đào tạo, thay thế cho các phương thức thủ công (tờ rơi, quảng cáo truyền thống).
 
-**Mục tiêu cốt lõi:**
-*   Số hóa toàn bộ quy trình: Tuyển sinh – Học tập – Quản lý thông tin.
-*   Quảng bá khóa học & chứng chỉ.
-*   Hỗ trợ quản lý thi đầu vào, xếp lớp, quản lý học viên và học phí.
-*   Cung cấp kênh thông tin chính thức (FAQ, lịch trình, kết quả, liên hệ).
-*   Thay thế quy trình thủ công hiện tại (tờ rơi, quảng cáo TV, tư vấn trực tiếp).
+## 2. Nhóm Chức năng (Functional Modules)
 
-## 2. Các nhóm người dùng (Actors)
+### A. Phân hệ Quản trị (Admin Module)
+Dành cho quản trị viên đăng nhập và quản lý toàn bộ dữ liệu của trung tâm.
 
-1.  **Admin (Quản trị viên):** Quản lý toàn hệ thống, cấu hình và giám sát hoạt động.
-2.  **Giảng viên (Instructor):** Chịu trách nhiệm chuyên môn, chấm thi, đánh giá học viên và quản lý tài liệu.
-3.  **Học viên / Thí sinh (Student/Candidate):** Người sử dụng dịch vụ đào tạo, đăng ký thi, học tập và thanh toán.
-4.  **Khách chưa đăng nhập (Guest/Visitor):** Khách vãng lai tìm hiểu thông tin và đăng ký tham gia.
+1.  **Quản lý Khóa học & Nội dung (Courses & CMS):**
+    *   **Khóa học:** Thêm/Sửa/Xóa danh sách các khóa học và chủ đề (topics) được giảng dạy.
+    *   **Tin tức & CMS:** Cập nhật thông tin "Về chúng tôi" (About Us), "Tại sao chọn chúng tôi?" (Why to join), Quy trình tham gia khóa học (How to join).
+    *   **FAQ:** Thêm/Sửa/Xóa các câu hỏi thường gặp (FAQ) về khóa học, học phí, giờ thực hành.
+    *   **Liên hệ & Chi nhánh:** Quản lý danh sách các trung tâm (Centres), địa chỉ, số điện thoại.
 
----
+2.  **Quản lý Tuyển sinh & Thi đầu vào (Entrance Exams):**
+    *   **Lịch thi:** Tạo thông tin các kỳ thi tuyển sinh (thường tổ chức 6 tháng/lần). Cập nhật lệ phí thi.
+    *   **Kết quả thi:** Nhập điểm thi, Số báo danh (Roll No), Tên học viên.
+    *   **Phân loại (Segregation):** Dựa trên điểm thi, hệ thống/admin phân loại học viên vào lớp phù hợp (Cơ bản hoặc Nâng cao) và gán mức học phí tương ứng.
 
-## 3. Chức năng Hệ thống (Phân quyền chi tiết)
+3.  **Quản lý Tài chính (Financials):**
+    *   Xác định mức học phí và lệ phí thi (có thể thay đổi theo thời gian).
+    *   Quản lý thông tin thanh toán của học viên (Tiền mặt, Séc/Cheque, DD).
 
-### A. Phân hệ Quản trị viên (Admin) - Quản lý toàn hệ thống
+### B. Phân hệ Khách & Học viên (Public/Student Module)
+Các chức năng công khai (Normal site function) và dành cho học viên.
 
-1.  **Quản lý Tài khoản & Phân quyền:**
-    *   Đăng nhập hệ thống quản trị.
-    *   Quản lý tài khoản người dùng (tạo mới/khóa/sửa): Giảng viên, Học viên.
+1.  **Thông tin Chung (Public Access):**
+    *   **Trang chủ:** Giới thiệu ngắn gọn, tin tức khóa học mới.
+    *   **Chi tiết khóa học:** Xem danh sách khóa học và nội dung chi tiết.
+    *   **Thông tin Tuyển sinh:** Xem lịch thi tuyển sinh sắp tới, lệ phí thi.
+    *   **FAQ & Liên hệ:** Xem câu hỏi thường gặp và danh sách chi nhánh.
+    *   **Đăng ký dự thi:** Tải hoặc điền form đăng ký trực tuyến (chọn khóa học, nhập số biên lai thanh toán hoặc thông tin DD/Cheque), sau đó nhận phiếu báo thi (Roll No, ngày giờ, môn thi).
 
-2.  **Quản lý Khóa học & Tuyển sinh:**
-    *   **Khóa học & Chứng chỉ:** Quản lý thông tin khóa học, chứng chỉ cấp phát.
-    *   **Kỳ tuyển sinh:** Tạo và quản lý thời gian, trạng thái các kỳ thi tuyển sinh.
-    *   **Thiết lập chi phí:** Cập nhật học phí, lệ phí thi, phí thực hành.
+2.  **Tra cứu Kết quả (Exam Results):**
+    *   Truy cập trang tra cứu -> Nhập Số báo danh (Roll Number).
+    *   **Nếu có:** Hiển thị Điểm số, Lớp được xếp vào, Học phí tương ứng, Hạn chót đóng tiền.
+    *   **Nếu không có:** Thông báo "Số báo danh không tồn tại".
 
-3.  **Quản lý Lớp học & Xếp lớp:**
-    *   Quản lý danh sách lớp học.
-    *   **Phân công giảng viên:** Gán giảng viên phụ trách cho từng lớp.
-    *   **Xếp lớp học viên:** Tự động hoặc thủ công xếp học viên vào lớp dựa trên điểm thi đầu vào.
+3.  **Học tập & Tiện ích (Student Services):**
+    *   **Thư viện:** Quy định phải xuất trình thẻ (ID Card) để vào, không được mượn sách về nhà.
+    *   **Phòng Lab (Thực hành):**
+        *   Trong khóa học: Miễn phí, mở cửa đến 9PM.
+        *   Sau khóa học: Có phí ($1000 nếu đăng ký từ đầu, $1500 nếu đăng ký sau).
 
-4.  **Quản lý Nội dung Website (CMS):**
-    *   Cập nhật trang Giới thiệu, FAQ, Liên hệ.
-    *   Quản lý thông tin Chi nhánh.
-
-5.  **Thống kê - Báo cáo:**
-    *   Xem các báo cáo tổng hợp về học viên, doanh thu, kết quả thi.
-
-### B. Phân hệ Giảng viên (Instructor) - Chuyên môn & Đánh giá
+### C. Phân hệ Giảng viên (Instructor Module)
+*(Mở rộng từ yêu cầu quản lý đào tạo & hỗ trợ thực hành)*
 
 1.  **Quản lý Giảng dạy:**
-    *   Đăng nhập hệ thống.
-    *   Xem danh sách các lớp được phân công.
-    *   Xem danh sách học viên trong từng lớp.
+    *   Xem lịch phân công dạy (Phòng, Thời gian).
+    *   Xem danh sách học viên trong lớp được phân công.
 
-2.  **Đánh giá & Chấm thi:**
-    *   **Chấm bài thi:** Chấm thi tuyển sinh đầu vào và thi cuối khóa.
-    *   **Nhập điểm:** Cập nhật điểm số lên hệ thống.
-    *   **Đánh giá học viên:** Ghi nhận xét, đánh giá quá trình học tập.
+2.  **Thi cử & Đánh giá:**
+    *   **Phân công coi thi:** Xem lịch giám thị.
+    *   **Chấm thi:** Chấm điểm thi đầu vào và thi cuối khóa -> Gửi kết quả về cho Admin để xếp lớp/cấp chứng chỉ.
+    *   **Phản hồi:** Đưa ra nhận xét, gợi ý cải thiện cho học viên sau kỳ thi cuối khóa (Feedback).
 
-3.  **Quản lý Tài liệu:**
-    *   Upload tài liệu học tập (bài giảng, bài tập) cho lớp mình phụ trách.
-
-### C. Phân hệ Học viên / Thí sinh (Student/Candidate)
-
-1.  **Tài khoản & Tuyển sinh:**
-    *   Đăng ký tài khoản / Đăng nhập.
-    *   Đăng ký dự thi tuyển sinh trực tuyến.
-    *   Xem thông tin khóa học và các kỳ tuyển sinh đang mở.
-
-2.  **Học tập & Kết quả:**
-    *   **Xem kết quả thi:** Tra cứu điểm thi tuyển sinh/cuối khóa.
-    *   **Lớp học:** Xem thông tin lớp được xếp, lịch học, lịch thi.
-    *   **Tài liệu:** Tải và xem tài liệu học tập do giảng viên chia sẻ.
-
-3.  **Tài chính & Phản hồi:**
-    *   **Đăng ký khóa học:** Xác nhận nhập học.
-    *   **Thanh toán:** Thực hiện thanh toán học phí/lệ phí và xem lịch sử thanh toán.
-    *   **Hỗ trợ:** Gửi câu hỏi hoặc phản hồi đến nhà trường.
-
-### D. Phân hệ Khách (Guest/Visitor)
-
-*   Xem Trang chủ (Thông tin nổi bật).
-*   Xem Danh sách Khóa học & Chứng chỉ.
-*   Xem Thông tin Kỳ tuyển sinh (Lịch, lệ phí).
-*   Xem FAQ và Thông tin Liên hệ / Chi nhánh.
-*   **Hành động chính:** Đăng ký tài khoản mới hoặc Đăng ký dự thi ngay.
+3.  **Tài liệu:**
+    *   Upload tài liệu học tập, bài giảng cho lớp.
 
 ---
 
-## 4. Quy tắc Nghiệp vụ & Tài chính
+## 3. Quy tắc Nghiệp vụ (Business Rules)
 
-1.  **Học phí & Lệ phí:**
-    *   Do Admin quy định, có thể thay đổi theo thời điểm.
-    *   **Phí thực hành (Lab Fee):** $1000 (Đăng ký sớm) / $1500 (Bình thường).
-    *   **Phí thi lại:** $1500.
+1.  **Phân loại & Học phí (Segregation & Fees):**
+    *   **Thi đầu vào:** Dùng để đánh giá trình độ.
+    *   **Lớp Cơ bản (With Basics):** Dành cho người chưa có kiến thức nền. Thời gian: **6 tháng**. Học phí: **~$6000**.
+    *   **Lớp Nâng cao (Without Basics):** Dành cho người đã có kiến thức. Thời gian: **4 tháng**. Học phí: **~$4275**.
 
-2.  **Quy trình:**
-    *   **Admin** tạo kỳ thi -> **Khách** đăng ký thi -> **Giảng viên** chấm điểm -> **Admin** xếp lớp & công bố -> **Học viên** xem kết quả & đóng tiền -> **Học viên** vào học.
+2.  **Thanh toán (Payment):**
+    *   Phải đóng học phí ít nhất **1 ngày** trước khi khóa học bắt đầu.
+    *   Hình thức: Tiền mặt (tại trung tâm, nhận biên lai), Séc (Cheque), Hối phiếu (DD).
 
----
-
-## 5. Yêu cầu Kỹ thuật Phi chức năng
-
-*   **Kiến trúc:** Web Portal (Frontend Public + Backend/Admin Panel).
-*   **Cơ sở dữ liệu:** Lưu trữ quan hệ (Khóa học, Thí sinh, Kết quả, Đăng ký, Tài chính...).
-*   **Bảo mật:** Phân quyền chặt chẽ (Admin / Instructor / Student).
-*   **Tương thích:** Hoạt động tốt trên các trình duyệt phổ biến.
+3.  **Giờ thực hành thêm (Extra Lab Sessions):**
+    *   Dịch vụ tùy chọn sau khóa học, có giảng viên hướng dẫn.
+    *   Phí: **$1000** (nếu đăng ký ngay lúc nhập học) hoặc **$1500** (nếu đăng ký sau khi kết thúc khóa).
+    *   Chỉ dành cho học viên của trung tâm.
 
 ---
 
-## 6. Tóm tắt Đề tài
+## 4. Yêu cầu Phi chức năng
 
-Xây dựng cổng thông tin đào tạo CNTT cho học viện Symphony Ltd. với 4 nhóm người dùng chính.
-  **Admin** quản lý toàn bộ hệ thống, xếp lớp và tài chính. 
-  **Giảng viên** phụ trách chuyên môn, chấm thi và cung cấp tài liệu.
-  **Học viên** tham gia thi tuyển, theo dõi kết quả, lịch học và thanh toán học phí. 
-  **Khách** timg hiểu thông tin. Hệ thống nhằm mục đích số hóa quy trình tuyển sinh và đào tạo, tăng tính minh bạch và hiệu quả quản lý.
+*   Giao diện thân thiện, dễ tra cứu thông tin.
+*   Hệ thống bảo mật, phân quyền rõ ràng (Admin, Instructor, Student).
+*   Cơ sở dữ liệu lưu trữ lịch sử thi, xếp lớp, thanh toán chính xác.

@@ -284,23 +284,21 @@ namespace CP2396H07_G01.Migrations
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Subject", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(26)
+                        .HasColumnType("nvarchar(26)");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("StudyTime")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -348,6 +346,24 @@ namespace CP2396H07_G01.Migrations
                             IsActive = true,
                             Password = "admin",
                             RoleId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "teacher@symphony.local",
+                            FullName = "Mr. Teacher",
+                            IsActive = true,
+                            Password = "123",
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "student@symphony.local",
+                            FullName = "Student One",
+                            IsActive = true,
+                            Password = "123",
+                            RoleId = 3
                         });
                 });
 

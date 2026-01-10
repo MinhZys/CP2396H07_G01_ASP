@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "Grading Assignments";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Grading Assignments</h1>
+</div>
+
+<div class="row">
+    <!-- Entrance Exams -->
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header bg-warning text-dark font-weight-bold">
+                <i class="bi bi-star"></i> Entrance Exams (Admissions)
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Exam Name</th>
+                            <th>Date</th>
+                            <th>Candidates</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Spring 2026 Entrance (Piano)</td>
+                            <td>2026-01-10</td>
+                            <td>30 Candidates</td>
+                            <td><span class="badge bg-danger">Pending Grading</span></td>
+                            <td><a asp-action="Input" asp-route-id="101" class="btn btn-sm btn-primary">Grade Now</a></td>
+                        </tr>
+                        <tr>
+                            <td>Spring 2026 Entrance (Theory)</td>
+                            <td>2026-01-10</td>
+                            <td>45 Candidates</td>
+                            <td><span class="badge bg-success">Completed</span></td>
+                            <td><button class="btn btn-sm btn-outline-secondary" disabled>Sent to Admin</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Exams -->
+     <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white font-weight-bold">
+                <i class="bi bi-book"></i> Course Exams
+            </div>
+             <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Class / Subject</th>
+                            <th>Exam Type</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>T2401-A (Music Theory)</td>
+                            <td>Final Exam</td>
+                            <td>2026-01-15</td>
+                            <td><span class="badge bg-secondary">Not Started</span></td>
+                            <td><span class="text-muted">Wait for Exam Date</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -166,15 +166,15 @@ namespace Symphony.Portal.Web.Controllers
             
             if (user != null && user.Role != null)
             {
-                if (user.Role.Name == "Admin")
+                if (user.Role.Name == RoleNames.Admin)
                 {
                     return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
                 }
-                if (user.Role.Name == "Instructor")
+                if (user.Role.Name == RoleNames.Instructor)
                 {
-                    return RedirectToAction("Index", "Classes", new { area = "Instructor" });
+                    return RedirectToAction("Index", "Dashboard", new { area = "Instructor" });
                 }
-                if (user.Role.Name == "Student")
+                if (user.Role.Name == RoleNames.Student)
                 {
                     return RedirectToAction("Index", "Home", new { area = "Student" });
                 }

@@ -1,8 +1,51 @@
 @{
     ViewData["Title"] = "My Classes";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="container mt-5">
-    <h1>Instructor Area</h1>
-    <p>Welcome, Instructor! Here are your classes.</p>
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">My Assigned Classes</h1>
+</div>
+
+<div class="row">
+    <!-- Mock Class 1 -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-left-primary h-100">
+            <div class="card-body">
+                <h5 class="card-title text-primary font-weight-bold">T2401-A (Basic Music Theory)</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Room: 301 - Lab A</h6>
+                <p class="card-text">
+                    <strong><i class="bi bi-clock"></i> Time:</strong> Mon-Wed-Fri (08:00 - 10:00)<br />
+                    <strong><i class="bi bi-people"></i> Students:</strong> 25 Enrolled
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <a asp-action="Details" asp-route-id="1" class="btn btn-sm btn-outline-primary">View Student List</a>
+                        <a href="#" class="btn btn-sm btn-outline-secondary">Upload Material</a>
+                    </div>
+                    <small class="text-muted">Ongoing</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mock Class 2 -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-left-success h-100">
+            <div class="card-body">
+                <h5 class="card-title text-success font-weight-bold">T2402-B (Advanced Piano)</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Room: 205 - Music Hall</h6>
+                <p class="card-text">
+                    <strong><i class="bi bi-clock"></i> Time:</strong> Tue-Thu-Sat (14:00 - 16:00)<br />
+                    <strong><i class="bi bi-people"></i> Students:</strong> 15 Enrolled
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                     <div class="btn-group">
+                        <a asp-action="Details" asp-route-id="2" class="btn btn-sm btn-outline-success">View Student List</a>
+                        <a href="#" class="btn btn-sm btn-outline-secondary">Upload Material</a>
+                    </div>
+                    <small class="text-muted">Starting Soon</small>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

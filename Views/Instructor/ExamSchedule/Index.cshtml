@@ -1,0 +1,56 @@
+@{
+    ViewData["Title"] = "Exam Proctoring Schedule";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Exam Proctoring Schedule</h1>
+</div>
+
+<div class="alert alert-info" role="alert">
+    <i class="bi bi-info-circle"></i> You have <strong>3</strong> upcoming exam supervision duties.
+</div>
+
+<div class="table-responsive shadow-sm">
+    <table class="table table-bordered align-middle">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th>Date</th>
+                <th>Time Slot</th>
+                <th>Room</th>
+                <th>Exam Subject</th>
+                <th>Exam Type</th>
+                <th>Role</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="fw-bold">2026-01-15</td>
+                <td>08:00 - 10:00</td>
+                <td><span class="badge bg-dark">Room 301</span></td>
+                <td>Music Theory Basics</td>
+                <td>Final Exam</td>
+                <td>Main Proctor</td>
+                <td><span class="badge bg-warning text-dark">Upcoming</span></td>
+            </tr>
+             <tr>
+                <td class="fw-bold">2026-01-18</td>
+                <td>13:30 - 15:30</td>
+                <td><span class="badge bg-dark">Hall A</span></td>
+                <td>Piano Performance</td>
+                <td>Entrance Exam</td>
+                <td>Assistant</td>
+                <td><span class="badge bg-warning text-dark">Upcoming</span></td>
+            </tr>
+             <tr>
+                <td class="text-muted">2026-01-10</td>
+                <td class="text-muted">08:00 - 10:00</td>
+                <td class="text-muted">Room 202</td>
+                <td class="text-muted">History of Music</td>
+                <td class="text-muted">Mid-term</td>
+                <td class="text-muted">Main Proctor</td>
+                <td><span class="badge bg-secondary">Completed</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

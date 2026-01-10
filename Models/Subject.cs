@@ -4,14 +4,21 @@ namespace Symphony.Portal.Web.Models
 {
     public class Subject
     {
-        public int Id { get; set; }
+        [Key]
+        [StringLength(26)]
+        [Display(Name = "Subject ID")]
+        public string Id { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(150)]
+        [Display(Name = "Subject Name")]
         public string Name { get; set; }
 
-        public string Description { get; set; }
+        [Required]
+        [Range(1, 1000)]
+        [Display(Name = "Study Time (Hours)")]
+        public int StudyTime { get; set; }
 
-        public bool IsActive { get; set; } = true;
+        public string Description { get; set; }
     }
 }

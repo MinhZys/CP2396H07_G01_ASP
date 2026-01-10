@@ -1,0 +1,84 @@
+@{
+    ViewData["Title"] = "Materials Management";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Learning Materials</h1>
+</div>
+
+<div class="row">
+    <!-- Upload Section -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-cloud-upload"></i> Upload Material
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Select Class</label>
+                        <select class="form-select">
+                            <option>T2401-A (Music Theory)</option>
+                             <option>T2402-B (Advanced Piano)</option>
+                        </select>
+                    </div>
+                     <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" placeholder="e.g., Chapter 1 Lecture Slides">
+                    </div>
+                     <div class="mb-3">
+                        <label class="form-label">File</label>
+                        <input type="file" class="form-control">
+                        <small class="text-muted">PDF, PPT, DOC, Video (Max 50MB)</small>
+                    </div>
+                    <button type="button" class="btn btn-primary w-100" onclick="alert('Material uploaded successfully!')">Upload</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- List Section -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-list-ul"></i> Uploaded Materials
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Class</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><i class="bi bi-file-pdf text-danger"></i> Week 1: Introduction</td>
+                            <td>T2401-A</td>
+                            <td>PDF</td>
+                            <td>2026-01-08</td>
+                            <td><a href="#" class="btn btn-xs btn-outline-danger">Delete</a></td>
+                        </tr>
+                         <tr>
+                            <td><i class="bi bi-file-earmark-ppt text-warning"></i> Advanced Chords</td>
+                            <td>T2402-B</td>
+                            <td>PPTX</td>
+                            <td>2026-01-09</td>
+                            <td><a href="#" class="btn btn-xs btn-outline-danger">Delete</a></td>
+                        </tr>
+                         <tr>
+                            <td><i class="bi bi-file-play text-primary"></i> Practical Demo Video</td>
+                            <td>T2402-B</td>
+                            <td>MP4</td>
+                            <td>2026-01-10</td>
+                            <td><a href="#" class="btn btn-xs btn-outline-danger">Delete</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

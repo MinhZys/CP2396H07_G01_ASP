@@ -1,0 +1,63 @@
+@{
+    ViewData["Title"] = "Input Grades";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Input Grades: Spring 2026 Entrance (Piano)</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+         <a asp-action="Index" class="btn btn-sm btn-outline-secondary me-2">Back</a>
+         <button class="btn btn-sm btn-primary" onclick="alert('Results sent to Admin successfully!')">
+             <i class="bi bi-send"></i> Save & Send to Admin
+         </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-bordered table-striped">
+             <thead class="table-light">
+                <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Candidate Code</th>
+                    <th>Full Name</th>
+                    <th>Instrument</th>
+                    <th>Practical Score (0-10)</th>
+                    <th>Theory Score (0-10)</th>
+                    <th>Feedback / Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>P001</td>
+                    <td>Nguyen Van X</td>
+                    <td>Piano</td>
+                    <td><input type="number" class="form-control" value="8.5" min="0" max="10" /></td>
+                     <td><input type="number" class="form-control" value="7.0" min="0" max="10" /></td>
+                    <td><input type="text" class="form-control" placeholder="Good performance" /></td>
+                </tr>
+                 <tr>
+                    <td>2</td>
+                    <td>P002</td>
+                    <td>Tran Thi Y</td>
+                    <td>Piano</td>
+                    <td><input type="number" class="form-control" value="" min="0" max="10" placeholder="0.0" /></td>
+                     <td><input type="number" class="form-control" value="" min="0" max="10" placeholder="0.0" /></td>
+                    <td><input type="text" class="form-control" /></td>
+                </tr>
+                 <tr>
+                    <td>3</td>
+                    <td>P003</td>
+                    <td>Le Van Z</td>
+                    <td>Piano</td>
+                    <td><input type="number" class="form-control" value="9.0" min="0" max="10" /></td>
+                     <td><input type="number" class="form-control" value="8.5" min="0" max="10" /></td>
+                    <td><input type="text" class="form-control" value="Excellent potential, recommended for Advanced Class" /></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer bg-light">
+         <button class="btn btn-primary float-end" onclick="alert('Saved draft!')">Save Draft</button>
+    </div>
+</div>
