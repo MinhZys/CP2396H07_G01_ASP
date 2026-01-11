@@ -15,8 +15,10 @@
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>
+                        <th>Image</th>
                         <th>Title</th>
                         <th>Duration (Months)</th>
+                        <th>Level</th>
                         <th>Tuition Fee</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -26,11 +28,22 @@
                     @foreach (var item in Model) {
                         <tr>
                             <td>
+                                @if (!string.IsNullOrEmpty(item.Image))
+                                {
+                                    <img src="@item.Image" alt="@item.Title" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No Image</span>
+                                }
+                            </td>
+                            <td>
                                 <strong>@item.Title</strong>
                                 <br/>
                                 <small class="text-muted">@item.Description</small>
                             </td>
                             <td>@item.DurationMonths</td>
+                            <td>@item.Level</td>
                             <td>$@item.TuitionFee</td>
                             <td>
                                 @if(item.IsActive) {

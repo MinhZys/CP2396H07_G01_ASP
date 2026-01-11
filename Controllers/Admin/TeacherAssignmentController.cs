@@ -31,7 +31,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<IActionResult> AssignToClass(int id)
+        public async Task<IActionResult> AssignToClass(string id)
         {
             var @class = await _context.Classes.FindAsync(id);
             if (@class == null) return NotFound();
@@ -41,7 +41,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         [HttpPost]
-        public async Task<IActionResult> AssignToClass(int id, int instructorId)
+        public async Task<IActionResult> AssignToClass(string id, string instructorId)
         {
             var @class = await _context.Classes.FindAsync(id);
             if (@class == null) return NotFound();

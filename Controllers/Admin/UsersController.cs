@@ -64,9 +64,11 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     return View(user);
                 }
 
-                // If RoleId is invalid or not selected, default to Student check?
-                // But with dropdown, it should be selected.
-                if (user.RoleId == 0) user.RoleId = 3;
+                // If RoleId is invalid or not selected, default to Student
+                if (string.IsNullOrEmpty(user.RoleId)) user.RoleId = "3"; // Default Student ID if seeded
+
+                // Update ID if empty
+                if (string.IsNullOrEmpty(user.Id)) user.Id = Guid.NewGuid().ToString();
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
@@ -78,7 +80,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null) return NotFound();
             var user = await _context.Users.FindAsync(id);
@@ -90,7 +92,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, User user)
+        public async Task<IActionResult> Edit(string id, User user)
         {
             if (id != user.Id) return NotFound();
 
@@ -122,7 +124,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user != null)
@@ -134,7 +136,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         [HttpPost]
-        public async Task<IActionResult> ToggleStatus(int id)
+        public async Task<IActionResult> ToggleStatus(string id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
@@ -145,7 +147,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(int id)
+        private bool UserExists(string id)
         {
             return _context.Users.Any(e => e.Id == id);
         }

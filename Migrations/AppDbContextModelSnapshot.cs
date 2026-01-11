@@ -22,48 +22,44 @@ namespace CP2396H07_G01.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Symphony.Portal.Web.Models.AdmissionExam", b =>
+            modelBuilder.Entity("Symphony.Portal.Web.Models.Center", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ExamDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Fee")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("AdmissionExams");
+                    b.ToTable("Centers");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Class", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
+                    b.Property<string>("CourseId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("InstructorId")
-                        .HasColumnType("int");
+                    b.Property<string>("InstructorId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<bool>("IsOnline")
                         .HasColumnType("bit");
@@ -92,11 +88,13 @@ namespace CP2396H07_G01.Migrations
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Course", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Certification")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -105,13 +103,19 @@ namespace CP2396H07_G01.Migrations
                     b.Property<int>("DurationMonths")
                         .HasColumnType("int");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Level")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TuitionFee")
                         .HasColumnType("decimal(18,2)");
@@ -121,16 +125,30 @@ namespace CP2396H07_G01.Migrations
                     b.ToTable("Courses");
                 });
 
+            modelBuilder.Entity("Symphony.Portal.Web.Models.CourseSubject", b =>
+                {
+                    b.Property<string>("CourseId")
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CourseId", "SubjectId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("CourseSubjects");
+                });
+
             modelBuilder.Entity("Symphony.Portal.Web.Models.Enrollment", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ClassId")
-                        .HasColumnType("int");
+                    b.Property<string>("ClassId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("EnrolledDate")
                         .HasColumnType("datetime2");
@@ -142,10 +160,12 @@ namespace CP2396H07_G01.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("PaymentReference")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
 
                     b.HasKey("Id");
 
@@ -156,16 +176,68 @@ namespace CP2396H07_G01.Migrations
                     b.ToTable("Enrollments");
                 });
 
+            modelBuilder.Entity("Symphony.Portal.Web.Models.EntranceExam", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<DateTime>("ExamDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Fee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EntranceExams");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.ExamDetail", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("ExamDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExamRoom")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExamTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RegistrationId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegistrationId")
+                        .IsUnique();
+
+                    b.ToTable("ExamDetails");
+                });
+
             modelBuilder.Entity("Symphony.Portal.Web.Models.ExamResult", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AdmissionExamId")
-                        .HasColumnType("int");
+                    b.Property<string>("EntranceExamId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<DateTime>("ExamDate")
                         .HasColumnType("datetime2");
@@ -176,12 +248,13 @@ namespace CP2396H07_G01.Migrations
                     b.Property<double>("Score")
                         .HasColumnType("float");
 
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdmissionExamId");
+                    b.HasIndex("EntranceExamId");
 
                     b.HasIndex("StudentId");
 
@@ -190,11 +263,9 @@ namespace CP2396H07_G01.Migrations
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.FAQ", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("Answer")
                         .IsRequired()
@@ -214,11 +285,12 @@ namespace CP2396H07_G01.Migrations
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.PageContent", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("CenterId")
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -232,22 +304,58 @@ namespace CP2396H07_G01.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CenterId");
+
+                    b.HasIndex("SubjectId");
+
                     b.ToTable("PageContents");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.Payment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReceiptNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Role", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -264,38 +372,92 @@ namespace CP2396H07_G01.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = "1",
                             Description = "System Administrator",
                             Name = "Admin"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = "2",
                             Description = "Course Instructor",
                             Name = "Instructor"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = "3",
                             Description = "Learner",
                             Name = "Student"
                         });
                 });
 
+            modelBuilder.Entity("Symphony.Portal.Web.Models.StudentRegistration", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("CenterId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("CourseId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasExtraPractice")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RegisteredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CenterId");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("StudentRegistrations");
+                });
+
             modelBuilder.Entity("Symphony.Portal.Web.Models.Subject", b =>
                 {
                     b.Property<string>("Id")
-                        .HasMaxLength(26)
-                        .HasColumnType("nvarchar(26)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StudyTime")
                         .HasColumnType("int");
@@ -307,11 +469,9 @@ namespace CP2396H07_G01.Migrations
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -328,8 +488,9 @@ namespace CP2396H07_G01.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
 
                     b.HasKey("Id");
 
@@ -340,30 +501,30 @@ namespace CP2396H07_G01.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = "1",
                             Email = "admin@symphony.local",
                             FullName = "System Admin",
                             IsActive = true,
                             Password = "admin",
-                            RoleId = 1
+                            RoleId = "1"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = "2",
                             Email = "teacher@symphony.local",
                             FullName = "Mr. Teacher",
                             IsActive = true,
                             Password = "123",
-                            RoleId = 2
+                            RoleId = "2"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = "3",
                             Email = "student@symphony.local",
                             FullName = "Student One",
                             IsActive = true,
                             Password = "123",
-                            RoleId = 3
+                            RoleId = "3"
                         });
                 });
 
@@ -382,6 +543,25 @@ namespace CP2396H07_G01.Migrations
                     b.Navigation("Course");
 
                     b.Navigation("Instructor");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.CourseSubject", b =>
+                {
+                    b.HasOne("Symphony.Portal.Web.Models.Course", "Course")
+                        .WithMany("CourseSubjects")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Symphony.Portal.Web.Models.Subject", "Subject")
+                        .WithMany("CourseSubjects")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Enrollment", b =>
@@ -403,11 +583,22 @@ namespace CP2396H07_G01.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("Symphony.Portal.Web.Models.ExamDetail", b =>
+                {
+                    b.HasOne("Symphony.Portal.Web.Models.StudentRegistration", "StudentRegistration")
+                        .WithOne("ExamDetail")
+                        .HasForeignKey("Symphony.Portal.Web.Models.ExamDetail", "RegistrationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StudentRegistration");
+                });
+
             modelBuilder.Entity("Symphony.Portal.Web.Models.ExamResult", b =>
                 {
-                    b.HasOne("Symphony.Portal.Web.Models.AdmissionExam", "AdmissionExam")
+                    b.HasOne("Symphony.Portal.Web.Models.EntranceExam", "EntranceExam")
                         .WithMany()
-                        .HasForeignKey("AdmissionExamId")
+                        .HasForeignKey("EntranceExamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -417,9 +608,54 @@ namespace CP2396H07_G01.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AdmissionExam");
+                    b.Navigation("EntranceExam");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.PageContent", b =>
+                {
+                    b.HasOne("Symphony.Portal.Web.Models.Center", "Center")
+                        .WithMany()
+                        .HasForeignKey("CenterId");
+
+                    b.HasOne("Symphony.Portal.Web.Models.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId");
+
+                    b.Navigation("Center");
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.Payment", b =>
+                {
+                    b.HasOne("Symphony.Portal.Web.Models.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.StudentRegistration", b =>
+                {
+                    b.HasOne("Symphony.Portal.Web.Models.Center", "Center")
+                        .WithMany()
+                        .HasForeignKey("CenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Symphony.Portal.Web.Models.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Center");
+
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.User", b =>
@@ -441,11 +677,23 @@ namespace CP2396H07_G01.Migrations
             modelBuilder.Entity("Symphony.Portal.Web.Models.Course", b =>
                 {
                     b.Navigation("Classes");
+
+                    b.Navigation("CourseSubjects");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.StudentRegistration", b =>
+                {
+                    b.Navigation("ExamDetail");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.Subject", b =>
+                {
+                    b.Navigation("CourseSubjects");
                 });
 #pragma warning restore 612, 618
         }

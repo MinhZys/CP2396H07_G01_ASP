@@ -29,6 +29,9 @@
         main {
             margin-left: 200px; /* Width of sidebar */
         }
+        body {
+            padding-top: 0 !important; /* Override global padding for Admin layout */
+        }
     </style>
 </head>
 <body>
@@ -36,7 +39,7 @@
         <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Symphony Admin</a>
         <div class="navbar-nav">
             <div class="nav-item text-nowrap">
-                <a class="nav-link px-3" asp-area="" asp-controller="Public" asp-action="Index">Go to Site</a>
+                <a class="nav-link px-3" asp-area="" asp-controller="Home" asp-action="Index">Go to Site</a>
             </div>
         </div>
     </header>
@@ -98,8 +101,18 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdmissionExams" ? "active" : "")" asp-area="Admin" asp-controller="AdmissionExams" asp-action="Index">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "EntranceExams" ? "active" : "")" asp-area="Admin" asp-controller="EntranceExams" asp-action="Index">
                                 <i class="bi bi-pencil-square"></i> Manage Exams
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "StudentRegistration" ? "active" : "")" asp-area="Admin" asp-controller="StudentRegistration" asp-action="Index">
+                                <i class="bi bi-person-plus"></i> Registrations
+                            </a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Centers" ? "active" : "")" asp-area="Admin" asp-controller="Centers" asp-action="Index">
+                                <i class="bi bi-geo-alt"></i> Exam Centers
                             </a>
                         </li>
                         <li class="nav-item">

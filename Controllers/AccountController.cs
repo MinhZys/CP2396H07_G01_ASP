@@ -148,7 +148,7 @@ namespace Symphony.Portal.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Public");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -180,7 +180,7 @@ namespace Symphony.Portal.Web.Controllers
                 }
             }
 
-            return RedirectToAction("Index", "Public");
+            return RedirectToAction("Index", "Home");
         }
     }
 }

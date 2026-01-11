@@ -9,14 +9,16 @@ using System.Threading.Tasks;
 namespace Symphony.Portal.Web.Controllers.Admin
 {
     [Area("Admin")]
-    [Authorize(Roles = RoleNames.Admin)]
+    [Authorize(Roles = "Admin")]
     public class SubjectsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public SubjectsController(AppDbContext context)
+        public SubjectsController(AppDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         // GET: Admin/Subjects
@@ -34,7 +36,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         // POST: Admin/Subjects/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,StudyTime,Description")] Subject subject)
+        public async Task<IActionResult> Create([Bind("Id,Name,StudyTime,Description")] Subject subject, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
@@ -43,6 +45,23 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     ModelState.AddModelError("Id", "Subject ID already exists.");
                     return View(subject);
                 }
+
+                // Handle Image Upload
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(_environment.WebRootPath, "images", "subjects");
+                    if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await imageFile.CopyToAsync(fileStream);
+                    }
+                    subject.Image = "/images/subjects/" + uniqueFileName;
+                }
+
                 _context.Add(subject);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -69,7 +88,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         // POST: Admin/Subjects/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,StudyTime,Description")] Subject subject)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,StudyTime,Description")] Subject subject, IFormFile? imageFile)
         {
             if (id != subject.Id)
             {
@@ -80,6 +99,31 @@ namespace Symphony.Portal.Web.Controllers.Admin
             {
                 try
                 {
+                     // Handle Image Upload
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        var uploadsFolder = Path.Combine(_environment.WebRootPath, "images", "subjects");
+                        if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+
+                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await imageFile.CopyToAsync(fileStream);
+                        }
+                        subject.Image = "/images/subjects/" + uniqueFileName;
+                    }
+                    else
+                    {
+                         // Keep existing image if no new file is uploaded
+                        var existingSubject = await _context.Subjects.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
+                        if (existingSubject != null)
+                        {
+                            subject.Image = existingSubject.Image;
+                        }
+                    }
+
                     _context.Update(subject);
                     await _context.SaveChangesAsync();
                 }

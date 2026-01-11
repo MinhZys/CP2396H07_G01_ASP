@@ -269,3 +269,157 @@ CREATE TABLE IF NOT EXISTS course_reviews (
 
 SET FOREIGN_KEY_CHECKS = 1;
 ```
+
+---
+
+# Actual Implementation Schema (SQL Server/MSSQL)
+
+Dưới đây là schema thực tế đang được triển khai trong Code (Entity Framework Core), sử dụng **SQL Server** (`mssqllocaldb`).
+
+```sql
+-- 1. ROLES
+CREATE TABLE [Roles] (
+    [Id] int NOT NULL IDENTITY,
+    [Name] nvarchar(max) NOT NULL, -- "Admin", "Instructor", "Student"
+    [Description] nvarchar(max) NULL,
+    CONSTRAINT [PK_Roles] PRIMARY KEY ([Id])
+);
+
+-- 2. USERS
+CREATE TABLE [Users] (
+    [Id] int NOT NULL IDENTITY,
+    [FullName] nvarchar(max) NOT NULL,
+    [Email] nvarchar(max) NOT NULL,
+    [Password] nvarchar(max) NOT NULL,
+    [IsActive] bit NOT NULL,
+    [RoleId] int NOT NULL,
+    CONSTRAINT [PK_Users] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Users_Roles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles] ([Id]) ON DELETE CASCADE
+);
+
+-- 3. COURSES
+CREATE TABLE [Courses] (
+    [Id] int NOT NULL IDENTITY,
+    [Title] nvarchar(100) NOT NULL,
+    [Description] nvarchar(max) NULL,
+    [TuitionFee] decimal(18,2) NOT NULL,
+    [DurationMonths] int NOT NULL,
+    [IsActive] bit NOT NULL,
+    CONSTRAINT [PK_Courses] PRIMARY KEY ([Id])
+);
+
+-- 4. SUBJECTS (Updated: Int ID)
+CREATE TABLE [Subjects] (
+    [Id] int NOT NULL IDENTITY,
+    [Name] nvarchar(150) NOT NULL,
+    [StudyTime] int NOT NULL,
+    [Description] nvarchar(max) NULL,
+    CONSTRAINT [PK_Subjects] PRIMARY KEY ([Id])
+);
+
+-- 5. COURSE_SUBJECTS (Many-to-Many Linking Table)
+CREATE TABLE [CourseSubjects] (
+    [CourseId] int NOT NULL,
+    [SubjectId] int NOT NULL,
+    CONSTRAINT [PK_CourseSubjects] PRIMARY KEY ([CourseId], [SubjectId]),
+    CONSTRAINT [FK_CourseSubjects_Courses_CourseId] FOREIGN KEY ([CourseId]) REFERENCES [Courses] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_CourseSubjects_Subjects_SubjectId] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects] ([Id]) ON DELETE CASCADE
+);
+
+-- 6. CLASSES
+CREATE TABLE [Classes] (
+    [Id] int NOT NULL IDENTITY,
+    [Name] nvarchar(max) NOT NULL,
+    [CourseId] int NOT NULL,
+    [InstructorId] int NULL,
+    [StartDate] datetime2 NOT NULL,
+    [EndDate] datetime2 NOT NULL,
+    [IsOnline] bit NOT NULL DEFAULT 0,
+    [Room] nvarchar(max) NULL,
+    [OfflineFee] decimal(18,2) NOT NULL DEFAULT 0,
+    CONSTRAINT [PK_Classes] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Classes_Courses_CourseId] FOREIGN KEY ([CourseId]) REFERENCES [Courses] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Classes_Users_InstructorId] FOREIGN KEY ([InstructorId]) REFERENCES [Users] ([Id])
+);
+
+-- 7. ENTRANCE EXAMS (Renamed from AdmissionExams)
+CREATE TABLE [EntranceExams] (
+    [Id] int NOT NULL IDENTITY,
+    [Title] nvarchar(max) NOT NULL,
+    [ExamDate] datetime2 NOT NULL,
+    [Fee] decimal(18,2) NOT NULL,
+    [IsActive] bit NOT NULL,
+    CONSTRAINT [PK_EntranceExams] PRIMARY KEY ([Id])
+);
+
+-- 8. EXAM RESULTS
+CREATE TABLE [ExamResults] (
+    [Id] int NOT NULL IDENTITY,
+    [StudentId] int NOT NULL,
+    [EntranceExamId] int NOT NULL,
+    [Score] float NOT NULL,
+    [IsPassed] bit NOT NULL,
+    [ExamDate] datetime2 NOT NULL,
+    CONSTRAINT [PK_ExamResults] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_ExamResults_Users_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_ExamResults_EntranceExams_EntranceExamId] FOREIGN KEY ([EntranceExamId]) REFERENCES [EntranceExams] ([Id]) ON DELETE CASCADE
+);
+
+-- 9. ENROLLMENTS
+CREATE TABLE [Enrollments] (
+    [Id] int NOT NULL IDENTITY,
+    [ClassId] int NOT NULL,
+    [StudentId] int NOT NULL,
+    [EnrolledDate] datetime2 NOT NULL,
+    [IsApproved] bit NOT NULL DEFAULT 0,
+    [IsPaid] bit NOT NULL DEFAULT 0,
+    [PaymentReference] nvarchar(max) NULL,
+    CONSTRAINT [PK_Enrollments] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Enrollments_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Enrollments_Users_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Users] ([Id]) ON DELETE NO ACTION
+);
+
+-- 10. FAQs
+CREATE TABLE [FAQs] (
+    [Id] int NOT NULL IDENTITY,
+    [Question] nvarchar(max) NOT NULL,
+    [Answer] nvarchar(max) NOT NULL,
+    [DisplayOrder] int NOT NULL,
+    CONSTRAINT [PK_FAQs] PRIMARY KEY ([Id])
+);
+
+-- 11. CENTERS (New)
+CREATE TABLE [Centers] (
+    [Id] int NOT NULL IDENTITY,
+    [Name] nvarchar(max) NOT NULL,
+    [Address] nvarchar(max) NULL,
+    [Phone] nvarchar(max) NULL,
+    CONSTRAINT [PK_Centers] PRIMARY KEY ([Id])
+);
+
+-- 12. PAGE CONTENTS
+CREATE TABLE [PageContents] (
+    [Id] int NOT NULL IDENTITY,
+    [Slug] nvarchar(50) NOT NULL,
+    [Title] nvarchar(max) NOT NULL,
+    [Content] nvarchar(max) NOT NULL,
+    [LastUpdated] datetime2 NOT NULL,
+    [SubjectId] int NULL, -- Linked via CourseSubjects logic in requirement
+    [CenterId] int NULL,
+    CONSTRAINT [PK_PageContents] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_PageContents_Subjects_SubjectId] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects] ([Id]),
+    CONSTRAINT [FK_PageContents_Centers_CenterId] FOREIGN KEY ([CenterId]) REFERENCES [Centers] ([Id])
+);
+
+-- 13. PAYMENTS (New)
+CREATE TABLE [Payments] (
+    [Id] int NOT NULL IDENTITY,
+    [StudentId] int NOT NULL,
+    [Amount] decimal(18,2) NOT NULL,
+    [PaymentMethod] nvarchar(max) NOT NULL,
+    [PaymentDate] datetime2 NOT NULL,
+    [ReceiptNumber] nvarchar(max) NOT NULL,
+    CONSTRAINT [PK_Payments] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Payments_Users_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
+);
+```

@@ -1,0 +1,110 @@
+@model Symphony.Portal.Web.Models.StudentRegistration
+
+@{
+    ViewData["Title"] = "Register for Course";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-primary text-white text-center py-4 rounded-top-3">
+                    <h3 class="mb-0">Student Registration Form</h3>
+                    <p class="mb-0 opacity-75">Start your journey with Symphony today</p>
+                </div>
+                <div class="card-body p-5">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <!-- Personal Info -->
+                        <h5 class="text-primary mb-3"><i class="fa-solid fa-user me-2"></i>Personal Information</h5>
+                        <div class="form-floating mb-3">
+                            <input asp-for="FullName" class="form-control" placeholder="Full Name" />
+                            <label asp-for="FullName">Full Name</label>
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Email" class="form-control" placeholder="Email" />
+                                    <label asp-for="Email">Email Address</label>
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Phone" class="form-control" placeholder="Phone" />
+                                    <label asp-for="Phone">Phone Number</label>
+                                    <span asp-validation-for="Phone" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select asp-for="Gender" class="form-select">
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <label asp-for="Gender">Gender</label>
+                                    <span asp-validation-for="Gender" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="DateOfBirth" type="date" class="form-control" />
+                                    <label asp-for="DateOfBirth">Date of Birth</label>
+                                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- Course & Exam -->
+                        <h5 class="text-primary mb-3"><i class="fa-solid fa-graduation-cap me-2"></i>Course & Exam Selection</h5>
+                        
+                        <div class="form-floating mb-3">
+                            <select asp-for="CourseId" class="form-select" asp-items="ViewBag.CourseId">
+                                <option value="">-- Select a Course --</option>
+                            </select>
+                            <label asp-for="CourseId">Select Course</label>
+                            <span asp-validation-for="CourseId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <select asp-for="CenterId" class="form-select" asp-items="ViewBag.CenterId">
+                                <option value="">-- Select Exam Center --</option>
+                            </select>
+                            <label asp-for="CenterId">Select Exam Center</label>
+                            <span asp-validation-for="CenterId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-4 p-3 bg-light rounded border">
+                            <input class="form-check-input" asp-for="HasExtraPractice" type="checkbox" id="extraPracticeCheck" />
+                            <label class="form-check-label ms-2" for="extraPracticeCheck">
+                                <strong>Register for Extra Practice Session?</strong>
+                                <br />
+                                <small class="text-muted">Additional fees may apply. Includes 3 mock exams and review sessions.</small>
+                            </label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg py-3 rounded-pill fw-bold">Submit Registration</button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary rounded-pill">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

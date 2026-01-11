@@ -1,0 +1,48 @@
+@model Symphony.Portal.Web.Models.Course
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-5 mb-5 fade-in-up">
+    <div class="row">
+        <div class="col-md-5">
+            @if (!string.IsNullOrEmpty(Model.Image))
+            {
+                <img src="@Model.Image" alt="@Model.Title" class="img-fluid rounded shadow-sm" style="width: 100%; object-fit: cover;" />
+            }
+            else
+            {
+                <img src="https://via.placeholder.com/800x600?text=No+Image" alt="@Model.Title" class="img-fluid rounded shadow-sm" />
+            }
+        </div>
+        <div class="col-md-7">
+            <h1 class="display-5 fw-bold">@Model.Title</h1>
+            <div class="d-flex gap-3 text-muted mb-3">
+                <span><i class="fa-regular fa-clock"></i> @Model.DurationMonths Months</span>
+                <span><i class="fa-solid fa-layer-group"></i> @Model.Level</span>
+                <span class="text-primary fw-bold" style="font-size: 1.2rem;">$@Model.TuitionFee.ToString("N2")</span>
+            </div>
+            
+            <p class="lead">@Model.Description</p>
+
+            @if (Model.CourseSubjects != null && Model.CourseSubjects.Any())
+            {
+                <h4 class="mt-4">Subjects Covered</h4>
+                <ul class="list-group list-group-flush mb-4">
+                    @foreach (var cs in Model.CourseSubjects)
+                    {
+                        <li class="list-group-item bg-transparent">
+                            <i class="fa-solid fa-check text-success me-2"></i> @cs.Subject.Name <span class="text-muted">(@cs.Subject.StudyTime hours)</span>
+                        </li>
+                    }
+                </ul>
+            }
+
+            <div class="d-flex gap-2 mt-4">
+                <a href="#" class="btn btn-primary btn-lg px-4">Register Now</a>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</div>

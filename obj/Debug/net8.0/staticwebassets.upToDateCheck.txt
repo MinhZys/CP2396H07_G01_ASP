@@ -2,6 +2,9 @@ wwwroot\css\auth.css
 wwwroot\css\home.css
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\images\courses\30e9b219-2719-46bd-9867-2b2a1fbb2c12_OIP (1).webp
+wwwroot\images\courses\ed05ba59-7a29-4b20-9501-80156b1b02c4_OIP (3).webp
+wwwroot\images\subjects\5cceab72-5466-45e7-a7f4-0b867fc8aa9e_aodo3.webp
 wwwroot\js\home.js
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css

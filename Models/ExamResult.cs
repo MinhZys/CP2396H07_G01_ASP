@@ -5,15 +5,17 @@ namespace Symphony.Portal.Web.Models
 {
     public class ExamResult
     {
-        public int Id { get; set; }
+        [Key]
+        [StringLength(36)]
+        public string Id { get; set; } = string.Empty;
         
-        [Required]
-        public int StudentId { get; set; }
+        public string StudentId { get; set; } = string.Empty;
         [ForeignKey("StudentId")]
         public User? Student { get; set; }
 
-        public int AdmissionExamId { get; set; }
-        public AdmissionExam? AdmissionExam { get; set; }
+        public string EntranceExamId { get; set; } = string.Empty;
+        [ForeignKey("EntranceExamId")]
+        public EntranceExam? EntranceExam { get; set; }
 
         public double Score { get; set; }
         public bool IsPassed { get; set; }

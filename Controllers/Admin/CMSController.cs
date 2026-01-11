@@ -40,6 +40,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
+                if(string.IsNullOrEmpty(faq.Id)) faq.Id = Guid.NewGuid().ToString();
+
                 _context.Add(faq);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(ManageFAQs));
@@ -47,7 +49,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             return View(faq);
         }
 
-        public async Task<IActionResult> EditFAQ(int? id)
+        public async Task<IActionResult> EditFAQ(string? id)
         {
             if (id == null) return NotFound();
             var faq = await _context.FAQs.FindAsync(id);
@@ -57,7 +59,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditFAQ(int id, FAQ faq)
+        public async Task<IActionResult> EditFAQ(string id, FAQ faq)
         {
             if (id != faq.Id) return NotFound();
 
@@ -78,7 +80,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             return View(faq);
         }
 
-        public async Task<IActionResult> DeleteFAQ(int? id)
+        public async Task<IActionResult> DeleteFAQ(string? id)
         {
              if (id == null) return NotFound();
              var faq = await _context.FAQs.FindAsync(id);
@@ -102,6 +104,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 {
                     _context.PageContents.Add(new PageContent
                     {
+                        Id = Guid.NewGuid().ToString(),
                         Slug = slug,
                         Title = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(slug.Replace("-", " ")),
                         Content = "Content goes here..."
@@ -113,7 +116,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             return View(await _context.PageContents.ToListAsync());
         }
 
-        public async Task<IActionResult> EditPage(int? id)
+        public async Task<IActionResult> EditPage(string? id)
         {
             if (id == null) return NotFound();
             var page = await _context.PageContents.FindAsync(id);
@@ -123,7 +126,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPage(int id, PageContent page)
+        public async Task<IActionResult> EditPage(string id, PageContent page)
         {
             if (id != page.Id) return NotFound();
 

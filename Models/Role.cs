@@ -1,10 +1,13 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Symphony.Portal.Web.Models
 {
     public class Role
     {
-        public int Id { get; set; }
+        [Key]
+        [StringLength(36)]
+        public string Id { get; set; } = string.Empty;
         
         [Required]
         public string Name { get; set; } = string.Empty; // e.g., "Admin", "Instructor", "Student"

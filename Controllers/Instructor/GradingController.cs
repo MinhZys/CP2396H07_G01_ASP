@@ -14,7 +14,7 @@ namespace Symphony.Portal.Web.Controllers.Instructor
             return View();
         }
 
-        public IActionResult Input(int id)
+        public IActionResult Input(string id)
         {
             ViewBag.ExamId = id;
             return View();

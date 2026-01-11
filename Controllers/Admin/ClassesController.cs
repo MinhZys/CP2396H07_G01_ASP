@@ -25,7 +25,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             return View(classes);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string? id)
         {
             if (id == null) return NotFound();
             var @class = await _context.Classes
@@ -52,6 +52,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
+                if (string.IsNullOrEmpty(@class.Id)) @class.Id = Guid.NewGuid().ToString();
+
                 _context.Add(@class);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -61,7 +63,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             return View(@class);
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null) return NotFound();
             var @class = await _context.Classes.FindAsync(id);
@@ -74,7 +76,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Class @class)
+        public async Task<IActionResult> Edit(string id, Class @class)
         {
             if (id != @class.Id) return NotFound();
 
@@ -97,7 +99,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             return View(@class);
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string? id)
         {
             if (id == null) return NotFound();
             var @class = await _context.Classes
@@ -110,7 +112,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var @class = await _context.Classes.FindAsync(id);
             if (@class != null)
@@ -134,7 +136,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         [HttpPost]
-        public async Task<IActionResult> ApproveEnrollment(int id)
+        public async Task<IActionResult> ApproveEnrollment(string id)
         {
             var enrollment = await _context.Enrollments.FindAsync(id);
             if (enrollment == null) return NotFound();
@@ -147,7 +149,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         [HttpPost]
-        public async Task<IActionResult> RejectEnrollment(int id)
+        public async Task<IActionResult> RejectEnrollment(string id)
         {
             var enrollment = await _context.Enrollments.FindAsync(id);
             if (enrollment != null)

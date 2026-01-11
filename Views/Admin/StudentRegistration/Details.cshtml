@@ -1,0 +1,63 @@
+@model Symphony.Portal.Web.Models.StudentRegistration
+
+@{
+    ViewData["Title"] = "Registration Details";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<div>
+    <h4>Registration Details</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-3">Full Name</dt>
+        <dd class = "col-sm-9">@Html.DisplayFor(model => model.FullName)</dd>
+
+        <dt class = "col-sm-3">Email</dt>
+        <dd class = "col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+
+        <dt class = "col-sm-3">Phone</dt>
+        <dd class = "col-sm-9">@Html.DisplayFor(model => model.Phone)</dd>
+
+        <dt class = "col-sm-3">Date of Birth</dt>
+        <dd class = "col-sm-9">@Model.DateOfBirth.ToShortDateString()</dd>
+
+        <dt class = "col-sm-3">Gender</dt>
+        <dd class = "col-sm-9">@Html.DisplayFor(model => model.Gender)</dd>
+
+        <dt class = "col-sm-3">Course</dt>
+        <dd class = "col-sm-9">@Html.DisplayFor(model => model.Course.Title)</dd>
+
+        <dt class = "col-sm-3">Center</dt>
+        <dd class = "col-sm-9">@Html.DisplayFor(model => model.Center.Name)</dd>
+
+        <dt class = "col-sm-3">Extra Practice</dt>
+        <dd class = "col-sm-9">@(Model.HasExtraPractice ? "Yes" : "No")</dd>
+
+        <dt class = "col-sm-3">Status</dt>
+        <dd class = "col-sm-9">
+             <span class="badge @(Model.Status == "Pending" ? "bg-warning" : Model.Status == "Approved" ? "bg-success" : "bg-danger")">
+                @Html.DisplayFor(model => model.Status)
+            </span>
+        </dd>
+    </dl>
+    
+    @if(Model.ExamDetail != null)
+    {
+        <h5 class="mt-4">Exam Assignment</h5>
+        <dl class="row">
+             <dt class = "col-sm-3">Exam Time</dt>
+             <dd class = "col-sm-9">@Model.ExamDetail.ExamTime.ToString("g")</dd>
+
+             <dt class = "col-sm-3">Room</dt>
+             <dd class = "col-sm-9">@Model.ExamDetail.ExamRoom</dd>
+        </dl>
+    }
+
+</div>
+<div>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    @if (Model.Status == "Pending")
+    {
+        <a asp-action="Approve" asp-route-id="@Model.Id" class="btn btn-success">Approve</a>
+    }
+</div>

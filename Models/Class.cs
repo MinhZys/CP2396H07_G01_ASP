@@ -5,24 +5,26 @@ namespace Symphony.Portal.Web.Models
 {
     public class Class
     {
-        public int Id { get; set; }
+        [Key]
+        [StringLength(36)]
+        public string Id { get; set; } = string.Empty;
         
         [Required]
         public string Name { get; set; } = string.Empty;
         
-        public int CourseId { get; set; }
+        public string CourseId { get; set; } = string.Empty;
         public Course? Course { get; set; }
 
-        public int? InstructorId { get; set; }
+        public string? InstructorId { get; set; }
         [ForeignKey("InstructorId")]
         public User? Instructor { get; set; }
 
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         
-        public bool IsOnline { get; set; } = false;
+        public bool IsOnline { get; set; }
         public string? Room { get; set; }
-        public decimal OfflineFee { get; set; } = 0; // Extra fee for offline
+        public decimal OfflineFee { get; set; }
         
         public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
