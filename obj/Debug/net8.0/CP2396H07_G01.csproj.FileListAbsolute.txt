@@ -138,4 +138,15 @@ D:\ASP.net\CP2396H07_G01\CP2396H07_G01\obj\Debug\net8.0\refint\CP2396H07_G01.dll
 D:\ASP.net\CP2396H07_G01\CP2396H07_G01\obj\Debug\net8.0\CP2396H07_G01.pdb
 D:\ASP.net\CP2396H07_G01\CP2396H07_G01\obj\Debug\net8.0\CP2396H07_G01.genruntimeconfig.cache
 D:\ASP.net\CP2396H07_G01\CP2396H07_G01\obj\Debug\net8.0\ref\CP2396H07_G01.dll
+D:\ASP.net\CP2396H07_G01\CP2396H07_G01\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.Google.dll
+D:\ASP.net\CP2396H07_G01\CP2396H07_G01\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\ASP.net\CP2396H07_G01\CP2396H07_G01\bin\Debug\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+D:\ASP.net\CP2396H07_G01\CP2396H07_G01\bin\Debug\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll
+D:\ASP.net\CP2396H07_G01\CP2396H07_G01\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+D:\ASP.net\CP2396H07_G01\CP2396H07_G01\bin\Debug\net8.0\Microsoft.Extensions.ObjectPool.dll
+D:\ASP.net\CP2396H07_G01\CP2396H07_G01\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+D:\ASP.net\CP2396H07_G01\CP2396H07_G01\bin\Debug\net8.0\Microsoft.Extensions.WebEncoders.dll
+D:\ASP.net\CP2396H07_G01\CP2396H07_G01\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+D:\ASP.net\CP2396H07_G01\CP2396H07_G01\bin\Debug\net8.0\System.Security.Cryptography.Xml.dll
+D:\ASP.net\CP2396H07_G01\CP2396H07_G01\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
 D:\ASP.net\CP2396H07_G01\CP2396H07_G01\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

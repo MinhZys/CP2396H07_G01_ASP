@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
-using Microsoft.AspNetCore.Authentication.Cookies;
-
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
@@ -32,6 +33,19 @@ builder.Services.AddControllersWithViews()
         options.AreaViewLocationFormats.Add("/Views/{2}/{1}/{0}.cshtml");
         options.AreaViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
     });
+//Configuration Login Google Account
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+{
+    options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
+    options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+});
+
 
 var app = builder.Build();
 
@@ -44,6 +58,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Fix: Add Cookie Policy to prevent "Correlation failed" error
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax,
+    Secure = CookieSecurePolicy.Always // Required for Google Auth usually, ensure running on HTTPS
+});
 
 app.UseRouting();
 
