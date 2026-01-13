@@ -1,0 +1,52 @@
+@model Symphony.Portal.Web.Models.CourseReview
+
+@{
+    ViewData["Title"] = "Review Details";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Review Details</h1>
+     <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light fw-bold">
+                Review Information
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Student</dt>
+                    <dd class="col-sm-8 fw-bold">@Model.Student?.FullName</dd>
+
+                    <dt class="col-sm-4">Course</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Course.Title)</dd>
+
+                    <dt class="col-sm-4">Date</dt>
+                    <dd class="col-sm-8">@Model.ReviewDate.ToString("g")</dd>
+
+                    <dt class="col-sm-4">Rating</dt>
+                    <dd class="col-sm-8">
+                         @for(int i=0; i < Model.Rating; i++)
+                        {
+                            <i class="fas fa-star text-warning"></i>
+                        }
+                        <span class="fw-bold ms-2">@Model.Rating / 5</span>
+                    </dd>
+
+                    <dt class="col-sm-4">Comment</dt>
+                    <dd class="col-sm-8 fst-italic">"@Model.ReviewText"</dd>
+                </dl>
+            </div>
+            <div class="card-footer bg-white text-end">
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash-alt me-1"></i> Delete Review
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

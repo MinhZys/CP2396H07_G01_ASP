@@ -1,0 +1,39 @@
+@model Symphony.Portal.Web.Models.Lesson
+
+@{
+    ViewData["Title"] = "Delete Lesson";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">
+                <i class="fas fa-exclamation-triangle me-2"></i> Confirm Delete
+            </div>
+            <div class="card-body">
+                <h4 class="card-title text-center mb-4">Are you sure you want to delete this lesson?</h4>
+                
+                <dl class="row">
+                    <dt class="col-sm-4">Title</dt>
+                    <dd class="col-sm-8 fw-bold">@Model.Title</dd>
+
+                    <dt class="col-sm-4">Course</dt>
+                    <dd class="col-sm-8">@Model.Course?.Title</dd>
+
+                    <dt class="col-sm-4">Subject</dt>
+                    <dd class="col-sm-8">@Model.Subject?.Name</dd>
+
+                    <dt class="col-sm-4">Duration</dt>
+                    <dd class="col-sm-8">@Model.DurationMinutes mins</dd>
+                </dl>
+
+                <form asp-action="Delete" class="text-center mt-4">
+                    <input type="hidden" asp-for="Id" />
+                    <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-danger">Delete Lesson</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

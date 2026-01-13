@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Models.Enums;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -72,7 +73,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 _context.Add(examDetail);
 
                 // 2. Update status
-                registration.Status = "Approved";
+                registration.Status = RegistrationStatus.Approved;
                 _context.Update(registration);
 
                 // 3. Save
@@ -93,7 +94,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
              var registration = await _context.StudentRegistrations.FindAsync(id);
              if (registration != null)
              {
-                 registration.Status = "Rejected";
+                 registration.Status = RegistrationStatus.Rejected;
                  await _context.SaveChangesAsync();
              }
              return RedirectToAction(nameof(Index));

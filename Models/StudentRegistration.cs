@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Symphony.Portal.Web.Models.Enums;
 
 namespace Symphony.Portal.Web.Models
 {
@@ -18,7 +19,7 @@ namespace Symphony.Portal.Web.Models
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        public string Gender { get; set; } = string.Empty; // Male/Female/Other
+        public Gender Gender { get; set; }
 
         public DateTime DateOfBirth { get; set; }
 
@@ -40,7 +41,7 @@ namespace Symphony.Portal.Web.Models
 
         public DateTime RegisteredAt { get; set; } = DateTime.Now;
 
-        public string Status { get; set; } = "Pending"; // Pending, Approved, Rejected
+        public RegistrationStatus Status { get; set; } = RegistrationStatus.Pending;
 
         // Navigation for Exam Details
         public ExamDetail? ExamDetail { get; set; }

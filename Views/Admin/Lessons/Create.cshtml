@@ -1,0 +1,90 @@
+@model Symphony.Portal.Web.Models.Lesson
+
+@{
+    ViewData["Title"] = "Create Lesson";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary mb-0"><i class="fas fa-plus-circle me-2"></i>Create New Lesson</h2>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back to List
+            </a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form asp-action="Create" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label asp-for="Title" class="form-label fw-bold">Lesson Title</label>
+                            <input asp-for="Title" class="form-control" placeholder="Enter lesson title" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CourseId" class="form-label fw-bold">Course</label>
+                            <select asp-for="CourseId" class="form-select" asp-items="ViewBag.CourseId">
+                                <option value="">-- Select Course --</option>
+                            </select>
+                            <span asp-validation-for="CourseId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="SubjectId" class="form-label fw-bold">Subject</label>
+                            <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.SubjectId">
+                                <option value="">-- Select Subject --</option>
+                            </select>
+                            <span asp-validation-for="SubjectId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="imageFile" class="form-label fw-bold">Lesson Thumbnail</label>
+                            <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                            <div class="form-text">Recommended size: 600x400px.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="DurationMinutes" class="form-label fw-bold">Duration (Minutes)</label>
+                            <input asp-for="DurationMinutes" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="DurationMinutes" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label asp-for="Description" class="form-label fw-bold">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="contentFile" class="form-label fw-bold">Lesson Content (File)</label>
+                            <input type="file" name="contentFile" class="form-control" />
+                            <div class="form-text">Upload video, PDF, or any lesson material.</div>
+                        </div>
+
+                        <!-- OR define simple link if needed 
+                        <div class="col-md-12">
+                             <label asp-for="ContentLink" class="form-label">Or External Link</label>
+                             <input asp-for="ContentLink" class="form-control" placeholder="https://..." />
+                        </div>
+                        -->
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save me-2"></i> Create Lesson
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

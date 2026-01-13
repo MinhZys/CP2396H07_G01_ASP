@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Symphony.Portal.Web.Models.Enums;
 
 namespace Symphony.Portal.Web.Models
 {
@@ -24,7 +25,7 @@ namespace Symphony.Portal.Web.Models
 
         public string? Image { get; set; }
 
-        public string Level { get; set; } = "Beginner";
+        public CourseLevel Level { get; set; } = CourseLevel.Beginner;
 
         
         public ICollection<Class> Classes { get; set; } = new List<Class>();

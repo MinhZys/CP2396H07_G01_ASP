@@ -165,3 +165,39 @@ Bước 2 - Thanh toán:
 Trước khi thi: Thí sinh đóng Lệ phí thi.
 Sau khi Đậu & Xếp lớp: Học viên đóng Học phí + Phí thực hành (Lab).
 Bước 3 - Kiểm soát: Hệ thống chỉ cho phép Học viên tham gia lớp học đầy đủ sau khi đã hoàn tất nghĩa vụ tài chính (hoặc theo chính sách của Admin).
+
+---
+
+## III. Danh Sách Chức Năng Đã Triển Khai Thực Tế (Implemented Features)
+
+Dưới đây là danh sách các chức năng **đã có và đang hoạt động** trên hệ thống (dựa trên source code hiện tại):
+
+### 1. Phân hệ Quản trị (Admin Module)
+*   **Quản lý Khóa học (Course Management):**
+    *   Thêm mới, Chỉnh sửa, Xóa khóa học.
+    *   Quản lý danh sách Môn học (Subjects) và Bài học (Lessons).
+*   **Quản lý Tuyển sinh (Entrance Exam Management):**
+    *   Tạo lịch thi tuyển sinh (Exam Schedule).
+    *   Xem danh sách hồ sơ đăng ký (`StudentRegistrations`).
+    *   **Duyệt hồ sơ (Approve):** Chuyển trạng thái từ Pending -> Approved.
+    *   **Từ chối hồ sơ (Reject):** Hủy đơn đăng ký.
+*   **Quản lý Người dùng (User Management):**
+    *   Xem danh sách toàn bộ tài khoản.
+    *   Phân quyền (Admin/Instructor/Student).
+*   **CMS (Content Management System):**
+    *   Quản lý nội dung trang FAQ.
+    *   Quản lý thông tin Trung tâm (Centers).
+
+### 2. Phân hệ Công khai (Public Portal - Guest)
+*   **Trang chủ:** Xem danh sách khóa học và thông tin giới thiệu.
+*   **Đăng ký Tuyển sinh:** Form đăng ký trực tuyến (lưu thông tin vào bảng `StudentRegistrations`).
+*   **Xác thực:** Đăng ký tài khoản, Đăng nhập.
+
+### 3. Phân hệ Giảng viên (Instructor Area)
+*   **Instructor Dashboard:** Trang tổng quan cơ bản.
+*   **Quản lý Lớp học:** Xem danh sách lớp được phân công.
+*   **Chấm điểm (Grading):** Nhập điểm cho học viên (Backend logic đã có).
+
+### 4. Phân hệ Học viên (Student Area)
+*   **Student Dashboard:** Trang chủ dành riêng cho học viên.
+*   *(Các chức năng học tập chi tiết đang trong quá trình hoàn thiện)*

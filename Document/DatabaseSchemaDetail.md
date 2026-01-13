@@ -279,48 +279,52 @@ Dưới đây là schema thực tế đang được triển khai trong Code (Ent
 ```sql
 -- 1. ROLES
 CREATE TABLE [Roles] (
-    [Id] int NOT NULL IDENTITY,
-    [Name] nvarchar(max) NOT NULL, -- "Admin", "Instructor", "Student"
+    [Id] nvarchar(36) NOT NULL,
+    [Name] nvarchar(max) NOT NULL, 
     [Description] nvarchar(max) NULL,
     CONSTRAINT [PK_Roles] PRIMARY KEY ([Id])
 );
 
 -- 2. USERS
 CREATE TABLE [Users] (
-    [Id] int NOT NULL IDENTITY,
+    [Id] nvarchar(36) NOT NULL,
     [FullName] nvarchar(max) NOT NULL,
     [Email] nvarchar(max) NOT NULL,
     [Password] nvarchar(max) NOT NULL,
     [IsActive] bit NOT NULL,
-    [RoleId] int NOT NULL,
+    [RoleId] nvarchar(36) NOT NULL,
     CONSTRAINT [PK_Users] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_Users_Roles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles] ([Id]) ON DELETE CASCADE
 );
 
 -- 3. COURSES
 CREATE TABLE [Courses] (
-    [Id] int NOT NULL IDENTITY,
-    [Title] nvarchar(100) NOT NULL,
+    [Id] nvarchar(36) NOT NULL,
+    [Title] nvarchar(max) NOT NULL,
     [Description] nvarchar(max) NULL,
     [TuitionFee] decimal(18,2) NOT NULL,
     [DurationMonths] int NOT NULL,
+    [Certification] nvarchar(max) NULL,
     [IsActive] bit NOT NULL,
+    [Image] nvarchar(max) NULL,
+    [Level] nvarchar(max) NULL,
     CONSTRAINT [PK_Courses] PRIMARY KEY ([Id])
 );
 
--- 4. SUBJECTS (Updated: Int ID)
+-- 4. SUBJECTS
 CREATE TABLE [Subjects] (
-    [Id] int NOT NULL IDENTITY,
-    [Name] nvarchar(150) NOT NULL,
+    [Id] nvarchar(36) NOT NULL,
+    [Name] nvarchar(max) NOT NULL,
     [StudyTime] int NOT NULL,
     [Description] nvarchar(max) NULL,
+    [Image] nvarchar(max) NULL,
     CONSTRAINT [PK_Subjects] PRIMARY KEY ([Id])
 );
 
 -- 5. COURSE_SUBJECTS (Many-to-Many Linking Table)
 CREATE TABLE [CourseSubjects] (
-    [CourseId] int NOT NULL,
-    [SubjectId] int NOT NULL,
+    [CourseId] nvarchar(36) NOT NULL,
+    [SubjectId] nvarchar(36) NOT NULL,
     CONSTRAINT [PK_CourseSubjects] PRIMARY KEY ([CourseId], [SubjectId]),
     CONSTRAINT [FK_CourseSubjects_Courses_CourseId] FOREIGN KEY ([CourseId]) REFERENCES [Courses] ([Id]) ON DELETE CASCADE,
     CONSTRAINT [FK_CourseSubjects_Subjects_SubjectId] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects] ([Id]) ON DELETE CASCADE
@@ -328,10 +332,10 @@ CREATE TABLE [CourseSubjects] (
 
 -- 6. CLASSES
 CREATE TABLE [Classes] (
-    [Id] int NOT NULL IDENTITY,
+    [Id] nvarchar(36) NOT NULL,
     [Name] nvarchar(max) NOT NULL,
-    [CourseId] int NOT NULL,
-    [InstructorId] int NULL,
+    [CourseId] nvarchar(36) NOT NULL,
+    [InstructorId] nvarchar(36) NULL,
     [StartDate] datetime2 NOT NULL,
     [EndDate] datetime2 NOT NULL,
     [IsOnline] bit NOT NULL DEFAULT 0,
@@ -342,9 +346,9 @@ CREATE TABLE [Classes] (
     CONSTRAINT [FK_Classes_Users_InstructorId] FOREIGN KEY ([InstructorId]) REFERENCES [Users] ([Id])
 );
 
--- 7. ENTRANCE EXAMS (Renamed from AdmissionExams)
+-- 7. ENTRANCE EXAMS
 CREATE TABLE [EntranceExams] (
-    [Id] int NOT NULL IDENTITY,
+    [Id] nvarchar(36) NOT NULL,
     [Title] nvarchar(max) NOT NULL,
     [ExamDate] datetime2 NOT NULL,
     [Fee] decimal(18,2) NOT NULL,
@@ -354,9 +358,9 @@ CREATE TABLE [EntranceExams] (
 
 -- 8. EXAM RESULTS
 CREATE TABLE [ExamResults] (
-    [Id] int NOT NULL IDENTITY,
-    [StudentId] int NOT NULL,
-    [EntranceExamId] int NOT NULL,
+    [Id] nvarchar(36) NOT NULL,
+    [StudentId] nvarchar(36) NOT NULL,
+    [EntranceExamId] nvarchar(36) NOT NULL,
     [Score] float NOT NULL,
     [IsPassed] bit NOT NULL,
     [ExamDate] datetime2 NOT NULL,
@@ -367,30 +371,33 @@ CREATE TABLE [ExamResults] (
 
 -- 9. ENROLLMENTS
 CREATE TABLE [Enrollments] (
-    [Id] int NOT NULL IDENTITY,
-    [ClassId] int NOT NULL,
-    [StudentId] int NOT NULL,
+    [Id] nvarchar(36) NOT NULL,
+    [ClassId] nvarchar(36) NOT NULL,
+    [StudentId] nvarchar(36) NOT NULL,
+    [CourseId] nvarchar(36) NULL, --[ADDED]
     [EnrolledDate] datetime2 NOT NULL,
     [IsApproved] bit NOT NULL DEFAULT 0,
     [IsPaid] bit NOT NULL DEFAULT 0,
+    [IsCompleted] bit NOT NULL DEFAULT 0, --[ADDED]
     [PaymentReference] nvarchar(max) NULL,
     CONSTRAINT [PK_Enrollments] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_Enrollments_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Enrollments_Users_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Users] ([Id]) ON DELETE NO ACTION
+    CONSTRAINT [FK_Enrollments_Users_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Users] ([Id]) ON DELETE NO ACTION,
+    CONSTRAINT [FK_Enrollments_Courses_CourseId] FOREIGN KEY ([CourseId]) REFERENCES [Courses] ([Id])
 );
 
 -- 10. FAQs
 CREATE TABLE [FAQs] (
-    [Id] int NOT NULL IDENTITY,
+    [Id] nvarchar(36) NOT NULL,
     [Question] nvarchar(max) NOT NULL,
     [Answer] nvarchar(max) NOT NULL,
     [DisplayOrder] int NOT NULL,
     CONSTRAINT [PK_FAQs] PRIMARY KEY ([Id])
 );
 
--- 11. CENTERS (New)
+-- 11. CENTERS
 CREATE TABLE [Centers] (
-    [Id] int NOT NULL IDENTITY,
+    [Id] nvarchar(36) NOT NULL,
     [Name] nvarchar(max) NOT NULL,
     [Address] nvarchar(max) NULL,
     [Phone] nvarchar(max) NULL,
@@ -399,27 +406,107 @@ CREATE TABLE [Centers] (
 
 -- 12. PAGE CONTENTS
 CREATE TABLE [PageContents] (
-    [Id] int NOT NULL IDENTITY,
+    [Id] nvarchar(36) NOT NULL,
     [Slug] nvarchar(50) NOT NULL,
     [Title] nvarchar(max) NOT NULL,
     [Content] nvarchar(max) NOT NULL,
     [LastUpdated] datetime2 NOT NULL,
-    [SubjectId] int NULL, -- Linked via CourseSubjects logic in requirement
-    [CenterId] int NULL,
+    [SubjectId] nvarchar(36) NULL,
+    [CenterId] nvarchar(36) NULL,
     CONSTRAINT [PK_PageContents] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_PageContents_Subjects_SubjectId] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects] ([Id]),
     CONSTRAINT [FK_PageContents_Centers_CenterId] FOREIGN KEY ([CenterId]) REFERENCES [Centers] ([Id])
 );
 
--- 13. PAYMENTS (New)
+-- 13. PAYMENTS
 CREATE TABLE [Payments] (
-    [Id] int NOT NULL IDENTITY,
-    [StudentId] int NOT NULL,
+    [Id] nvarchar(36) NOT NULL,
+    [StudentId] nvarchar(36) NOT NULL,
     [Amount] decimal(18,2) NOT NULL,
     [PaymentMethod] nvarchar(max) NOT NULL,
     [PaymentDate] datetime2 NOT NULL,
     [ReceiptNumber] nvarchar(max) NOT NULL,
     CONSTRAINT [PK_Payments] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_Payments_Users_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
+);
+
+-- 14. STUDENT REGISTRATIONS
+CREATE TABLE [StudentRegistrations] (
+   [Id] nvarchar(36) NOT NULL,
+   [FullName] nvarchar(100) NOT NULL,
+   [Email] nvarchar(max) NOT NULL,
+   [Gender] nvarchar(max) NULL,
+   [DateOfBirth] datetime2 NOT NULL,
+   [Phone] nvarchar(max) NULL,
+   [CourseId] nvarchar(36) NOT NULL,
+   [CenterId] nvarchar(36) NULL,
+   [HasExtraPractice] bit NOT NULL,
+   [RegisteredAt] datetime2 NOT NULL,
+   [Status] nvarchar(max) NOT NULL,
+   CONSTRAINT [PK_StudentRegistrations] PRIMARY KEY ([Id]),
+   CONSTRAINT [FK_StudentRegistrations_Courses_CourseId] FOREIGN KEY ([CourseId]) REFERENCES [Courses] ([Id]),
+   CONSTRAINT [FK_StudentRegistrations_Centers_CenterId] FOREIGN KEY ([CenterId]) REFERENCES [Centers] ([Id])
+);
+
+-- 15. EXAM DETAILS
+CREATE TABLE [ExamDetails] (
+   [Id] nvarchar(36) NOT NULL,
+   [RegistrationId] nvarchar(36) NOT NULL,
+   [ExamTime] datetime2 NOT NULL,
+   [ExamRoom] nvarchar(max) NULL,
+   [ExamDescription] nvarchar(max) NULL,
+   CONSTRAINT [PK_ExamDetails] PRIMARY KEY ([Id]),
+   CONSTRAINT [FK_ExamDetails_StudentRegistrations_RegistrationId] FOREIGN KEY ([RegistrationId]) REFERENCES [StudentRegistrations] ([Id]) ON DELETE CASCADE
+);
+
+-- 16. LESSONS (New)
+CREATE TABLE [Lessons] (
+    [Id] nvarchar(36) NOT NULL,
+    [Title] nvarchar(max) NOT NULL,
+    [Description] nvarchar(max) NULL,
+    [ContentLink] nvarchar(max) NULL,
+    [DurationMinutes] int NOT NULL,
+    [CourseId] nvarchar(36) NULL,
+    [SubjectId] nvarchar(36) NULL,
+    CONSTRAINT [PK_Lessons] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Lessons_Courses_CourseId] FOREIGN KEY ([CourseId]) REFERENCES [Courses] ([Id]),
+    CONSTRAINT [FK_Lessons_Subjects_SubjectId] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects] ([Id])
+);
+
+-- 17. QUIZZES (New)
+CREATE TABLE [Quizzes] (
+    [Id] nvarchar(36) NOT NULL,
+    [Title] nvarchar(max) NOT NULL,
+    [Description] nvarchar(max) NULL,
+    [TotalQuestions] int NOT NULL,
+    [MaxScore] int NOT NULL,
+    [DateCreated] datetime2 NOT NULL,
+    [CourseId] nvarchar(36) NULL,
+    CONSTRAINT [PK_Quizzes] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Quizzes_Courses_CourseId] FOREIGN KEY ([CourseId]) REFERENCES [Courses] ([Id])
+);
+
+-- 18. QUIZ QUESTIONS (New)
+CREATE TABLE [QuizQuestions] (
+    [Id] nvarchar(36) NOT NULL,
+    [QuestionText] nvarchar(max) NOT NULL,
+    [Answer] nvarchar(max) NOT NULL,
+    [QuizId] nvarchar(36) NULL,
+    CONSTRAINT [PK_QuizQuestions] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_QuizQuestions_Quizzes_QuizId] FOREIGN KEY ([QuizId]) REFERENCES [Quizzes] ([Id])
+);
+
+-- 19. COURSE REVIEWS (New)
+CREATE TABLE [CourseReviews] (
+    [Id] nvarchar(36) NOT NULL,
+    [CourseId] nvarchar(36) NULL,
+    [StudentId] nvarchar(36) NULL,
+    [Rating] int NOT NULL,
+    [ReviewText] nvarchar(max) NULL,
+    [ReviewDate] datetime2 NOT NULL,
+    [IsApproved] bit NOT NULL,
+    CONSTRAINT [PK_CourseReviews] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_CourseReviews_Courses_CourseId] FOREIGN KEY ([CourseId]) REFERENCES [Courses] ([Id]),
+    CONSTRAINT [FK_CourseReviews_Users_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Users] ([Id])
 );
 ```

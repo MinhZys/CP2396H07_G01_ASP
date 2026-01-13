@@ -2,63 +2,118 @@
     ViewData["Title"] = "Instructor Dashboard";
 }
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Welcome back, Instructor</h1>
-</div>
-
-<div class="row">
-    <!-- 1. My Classes -->
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 border-primary">
-            <div class="card-body">
-                <h5 class="card-title text-primary"><i class="bi bi-easel"></i> My Classes</h5>
-                <p class="card-text">Manage your assigned classes, view student lists, and track attendance.</p>
-                <a asp-controller="Classes" asp-action="Index" class="btn btn-primary btn-sm">Go to Classes</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. Exam Supervision -->
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 border-warning">
-            <div class="card-body">
-                <h5 class="card-title text-warning"><i class="bi bi-calendar-check"></i> Exam Schedule</h5>
-                <p class="card-text">View your upcoming exam proctoring assignments and instructions.</p>
-                <a asp-controller="ExamSchedule" asp-action="Index" class="btn btn-warning btn-sm text-dark">View Schedule</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. Grading -->
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 border-success">
-            <div class="card-body">
-                <h5 class="card-title text-success"><i class="bi bi-clipboard-check"></i> Grading</h5>
-                <p class="card-text">Input grades for entrance exams and final course exams.</p>
-                <a asp-controller="Grading" asp-action="Index" class="btn btn-success btn-sm">Enter Grades</a>
-            </div>
-        </div>
-    </div>
-    
-     <!-- 4. Teaching Schedule -->
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 border-info">
-            <div class="card-body">
-                <h5 class="card-title text-info"><i class="bi bi-calendar3"></i> Teaching Schedule</h5>
-                <p class="card-text">Check your weekly teaching schedule and room allocations.</p>
-                 <a asp-controller="Classes" asp-action="Index" class="btn btn-info btn-sm text-white">View Timetable</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- 5. Materials -->
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 border-secondary">
-            <div class="card-body">
-                <h5 class="card-title text-secondary"><i class="bi bi-folder2-open"></i> Materials</h5>
-                <p class="card-text">Upload and manage learning materials for your students.</p>
-                <a asp-controller="Materials" asp-action="Index" class="btn btn-secondary btn-sm">Manage Materials</a>
-            </div>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+    <h1 class="h2 text-dark">Instructor Dashboard</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-calendar-alt me-1"></i> View Calendar
+            </button>
         </div>
     </div>
 </div>
+
+<!-- Quick Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                     <h5 class="card-title fw-bold"><i class="fas fa-chalkboard me-2"></i>My Classes</h5>
+                     <h2 class="display-6 fw-bold my-2">--</h2> 
+                </div>
+                 <p class="card-text small opacity-75">Assigned active classes</p>
+                 <a href="/Instructor/Classes/Index" class="stretched-link text-white text-decoration-none small">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                     <h5 class="card-title fw-bold text-dark"><i class="fas fa-calendar-check me-2"></i>Exams</h5>
+                     <h2 class="display-6 fw-bold my-2 text-dark">--</h2>
+                </div>
+                <p class="card-text small text-dark opacity-75">Upcoming proctoring duties</p>
+                <a href="/Instructor/ExamSchedule/Index" class="stretched-link text-dark text-decoration-none small">Check Schedule <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+        </div>
+    </div>
+     <div class="col-md-3">
+        <div class="card text-white bg-success h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                     <h5 class="card-title fw-bold"><i class="fas fa-clipboard-check me-2"></i>Grading</h5>
+                     <h2 class="display-6 fw-bold my-2">--</h2>
+                </div>
+                <p class="card-text small opacity-75">Pending assessments</p>
+                <a href="/Instructor/Grading/Index" class="stretched-link text-white text-decoration-none small">Grade Now <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-between">
+                 <div>
+                     <h5 class="card-title fw-bold"><i class="fas fa-folder-open me-2"></i>Materials</h5>
+                     <h2 class="display-6 fw-bold my-2">--</h2>
+                </div>
+                <p class="card-text small opacity-75">Learning resources</p>
+                <a href="/Instructor/Materials/Index" class="stretched-link text-white text-decoration-none small">Manage <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mb-3 text-secondary">Teaching Tools</h4>
+
+<div class="row g-4">
+    <div class="col-md-12">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white fw-bold py-3">
+                <i class="fas fa-toolbox me-2 text-primary"></i> Instructor Actions
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="/Instructor/Classes/Index" class="card card-hover text-decoration-none text-center p-3 border-light bg-light h-100">
+                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                            <span class="text-dark fw-bold">Student Lists</span>
+                            <small class="text-muted d-block mt-1">View class rosters</small>
+                        </a>
+                    </div>
+                     <div class="col-md-3">
+                        <a href="/Instructor/ExamSchedule/Index" class="card card-hover text-decoration-none text-center p-3 border-light bg-light h-100">
+                            <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                            <span class="text-dark fw-bold">Exam Schedule</span>
+                            <small class="text-muted d-block mt-1">Times & Locations</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/Instructor/Grading/Index" class="card card-hover text-decoration-none text-center p-3 border-light bg-light h-100">
+                            <i class="fas fa-check-double fa-2x text-success mb-2"></i>
+                            <span class="text-dark fw-bold">Input Grades</span>
+                            <small class="text-muted d-block mt-1">Score submissions</small>
+                        </a>
+                    </div>
+                     <div class="col-md-3">
+                        <a href="/Instructor/Materials/Index" class="card card-hover text-decoration-none text-center p-3 border-light bg-light h-100">
+                            <i class="fas fa-cloud-upload-alt fa-2x text-info mb-2"></i>
+                            <span class="text-dark fw-bold">Upload Materials</span>
+                            <small class="text-muted d-block mt-1">Share files</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-hover:hover {
+        background-color: #e9ecef !important;
+        transform: translateY(-2px);
+        transition: all 0.2s;
+        border-color: #dee2e6 !important;
+    }
+</style>

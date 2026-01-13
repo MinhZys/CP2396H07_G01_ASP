@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Symphony.Portal.Web.Models.Enums;
 
 namespace Symphony.Portal.Web.Models
 {
@@ -15,7 +16,7 @@ namespace Symphony.Portal.Web.Models
 
         public decimal Amount { get; set; }
 
-        public string PaymentMethod { get; set; } = string.Empty;
+        public PaymentMethod PaymentMethod { get; set; }
 
         public DateTime PaymentDate { get; set; }
 

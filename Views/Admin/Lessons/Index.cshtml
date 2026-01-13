@@ -1,0 +1,110 @@
+@model IEnumerable<Symphony.Portal.Web.Models.Lesson>
+
+@{
+    ViewData["Title"] = "Lessons Management";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2 class="text-primary"><i class="fas fa-book-open me-2"></i>Lessons Management</h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Create New Lesson
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="searchString" class="form-control" placeholder="Search by title..." value="@ViewData["CurrentFilter"]">
+            </div>
+            <div class="col-md-3">
+                <select name="courseId" class="form-select" asp-items="ViewBag.Courses">
+                    <option value="">-- All Courses --</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="subjectId" class="form-select" asp-items="ViewBag.Subjects">
+                    <option value="">-- All Subjects --</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-secondary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-3">Image</th>
+                        <th>Title</th>
+                        <th>Course / Subject</th>
+                        <th>Duration</th>
+                        <th class="text-end pe-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-3">
+                                    @if (!string.IsNullOrEmpty(item.Image))
+                                    {
+                                        <img src="@item.Image" alt="@item.Title" class="rounded" style="width: 50px; height: 50px; object-fit: cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary bg-opacity-10 rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <i class="fas fa-image text-secondary"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="fw-bold">@item.Title</div>
+                                    <small class="text-muted">ID: @item.Id.Substring(0, 8)...</small>
+                                </td>
+                                <td>
+                                    <div class="badge bg-info text-dark mb-1">@item.Course?.Title</div>
+                                    <br />
+                                    <small class="text-muted">@item.Subject?.Name</small>
+                                </td>
+                                <td>@item.DurationMinutes mins</td>
+                                <td class="text-end pe-3">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning me-1">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info me-1">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No lessons found. Try creating one or changing filters.</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

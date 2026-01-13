@@ -1,3 +1,4 @@
+@using Symphony.Portal.Web.Models.Enums
 @model IEnumerable<Symphony.Portal.Web.Models.StudentRegistration>
 
 @{
@@ -27,15 +28,15 @@
                 <tr>
                     <td>@item.RegisteredAt.ToString("g")</td>
                     <td>
-                        @if (item.Status == "Pending")
+                        @if (item.Status == RegistrationStatus.Pending)
                         {
                             <span class="badge bg-warning text-dark">Pending</span>
                         }
-                        else if (item.Status == "Approved")
+                        else if (item.Status == RegistrationStatus.Approved)
                         {
                              <span class="badge bg-success">Approved</span>
                         }
-                         else if (item.Status == "Rejected")
+                         else if (item.Status == RegistrationStatus.Rejected)
                         {
                              <span class="badge bg-danger">Rejected</span>
                         }
@@ -49,7 +50,7 @@
                     <td>@item.Center?.Name</td>
                     <td>
                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white" title="View Details"><i class="fa-solid fa-eye"></i></a>
-                        @if (item.Status == "Pending")
+                        @if (item.Status == RegistrationStatus.Pending)
                         {
                             <a asp-action="Approve" asp-route-id="@item.Id" class="btn btn-sm btn-success" title="Approve"><i class="fa-solid fa-check"></i></a>
                             

@@ -90,3 +90,15 @@ Hệ thống đã tạo sẵn tài khoản Admin cao cấp nhất:
 *   `/Models`: Chứa các thực thể (Entity) và ViewModels.
 *   `/Views`: Chứa giao diện người dùng chung.
 *   `/wwwroot`: Chứa tài nguyên tĩnh (CSS, JS, Images).
+
+
+
+Admin (Quản trị viên):
+Email: admin@symphony.local
+Mật khẩu: admin
+Teacher (Giáo viên):
+Email: teacher@symphony.local
+Mật khẩu: 123
+Student (Học viên):
+Email: student@symphony.local
+Mật khẩu: 123

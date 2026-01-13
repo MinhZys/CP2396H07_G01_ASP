@@ -1,3 +1,4 @@
+@using Symphony.Portal.Web.Models.Enums
 @model Symphony.Portal.Web.Models.StudentRegistration
 
 @{
@@ -9,6 +10,7 @@
     <h4>Registration Details</h4>
     <hr />
     <dl class="row">
+        @* ... fields ... *@
         <dt class = "col-sm-3">Full Name</dt>
         <dd class = "col-sm-9">@Html.DisplayFor(model => model.FullName)</dd>
 
@@ -35,7 +37,7 @@
 
         <dt class = "col-sm-3">Status</dt>
         <dd class = "col-sm-9">
-             <span class="badge @(Model.Status == "Pending" ? "bg-warning" : Model.Status == "Approved" ? "bg-success" : "bg-danger")">
+             <span class="badge @(Model.Status == RegistrationStatus.Pending ? "bg-warning" : Model.Status == RegistrationStatus.Approved ? "bg-success" : "bg-danger")">
                 @Html.DisplayFor(model => model.Status)
             </span>
         </dd>
@@ -56,7 +58,7 @@
 </div>
 <div>
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    @if (Model.Status == "Pending")
+    @if (Model.Status == RegistrationStatus.Pending)
     {
         <a asp-action="Approve" asp-route-id="@Model.Id" class="btn btn-success">Approve</a>
     }

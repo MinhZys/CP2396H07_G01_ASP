@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Models.Enums;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,7 +41,7 @@ namespace Symphony.Portal.Web.Controllers
             {
                 if(string.IsNullOrEmpty(registration.Id)) registration.Id = Guid.NewGuid().ToString();
                 registration.RegisteredAt = DateTime.Now;
-                registration.Status = "Pending";
+                registration.Status = RegistrationStatus.Pending;
 
                 _context.Add(registration);
                 await _context.SaveChangesAsync();
