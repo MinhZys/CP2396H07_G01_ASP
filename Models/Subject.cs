@@ -13,6 +13,8 @@ namespace Symphony.Portal.Web.Models
 
         public string Description { get; set; } = string.Empty;
 
+        public string? LearningRoadmap { get; set; } // Stores JSON string of steps like ["Step 1", "Step 2"]
+
         public string? Image { get; set; }
         
         public ICollection<CourseSubject> CourseSubjects { get; set; } = new List<CourseSubject>();

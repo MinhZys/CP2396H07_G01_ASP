@@ -1,96 +1,200 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Symphony Portal</title>
-    <!-- Bootstrap 5 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>@ViewData["Title"] - IT Academy</title>
     
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/CP2396H07_G01.styles.css" asp-append-version="true" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#00c8ff",
+              "background-light": "#f1f2f4",
+              "background-dark": "#0e121b",
+              "surface-dark": "#1e2633",
+            },
+            fontFamily: {
+              "display": ["Space Grotesk", "sans-serif"],
+              "body": ["Noto Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+             min-height: max(884px, 100dvh);
+        }
+        .cyber-card {
+            border: 1px solid rgba(0, 200, 255, 0.1);
+            background: #1e2633;
+        }
+        .cyber-card:active {
+            border-color: #00c8ff;
+            background: rgba(0, 200, 255, 0.05);
+        }
+    </style>
+    
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark box-shadow fixed-top">
-            <div class="container">
-                <a class="navbar-brand font-weight-bold" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="fa-solid fa-layer-group text-primary"></i> Symphony Ltd
+<body class="bg-background-light dark:bg-background-dark font-body text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+    <!-- Top Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center justify-between p-4 max-w-7xl mx-auto">
+            <div class="flex items-center gap-3">
+                <a asp-controller="Home" asp-action="Index" class="flex items-center gap-3">
+                    <div class="bg-primary p-1.5 rounded-lg flex items-center justify-center">
+                        <span class="material-symbols-outlined text-background-dark text-2xl font-bold">terminal</span>
+                    </div>
+                    <h2 class="font-display text-xl font-bold tracking-tight text-slate-900 dark:text-white">IT Academy</h2>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1 justify-content-center">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="#courses">Khóa học</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="#certs">Chứng chỉ</a>
-                        </li>
-                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#schedule">Lịch khai giảng</a>
-                        </li>
-                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#instructors">Giảng viên</a>
-                        </li>
-                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#news">Tin tức</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="#contact">Liên hệ</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav">
-                         @if (User.Identity.IsAuthenticated)
-                        {
-                             <li class="nav-item">
-                                <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
-                                    <button type="submit" class="nav-link btn btn-link text-white">Logout (@User.Identity.Name)</button>
-                                </form>
-                            </li>
-                             @if (User.IsInRole("Admin"))
-                            {
-                                 <li class="nav-item"><a class="nav-link text-warning" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin Area</a></li>
-                            }
-                             @if (User.IsInRole("Instructor"))
-                            {
-                                 <li class="nav-item"><a class="nav-link text-warning" asp-area="Instructor" asp-controller="Dashboard" asp-action="Index">Instructor Area</a></li>
-                            }
-                        } 
-                        else 
-                        {
-                            <li class="nav-item">
-                                <a class="btn btn-outline-light btn-sm ms-2 rounded-pill px-4" asp-controller="Account" asp-action="Login">Đăng nhập</a>
-                            </li>
-                        }
-                    </ul>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                 <!-- DesktopNav Links -->
+                <div class="hidden md:flex items-center gap-6 text-sm font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 mr-4">
+                    <a class="hover:text-primary transition-colors" asp-controller="Home" asp-action="Index">Home</a>
+                    <a class="hover:text-primary transition-colors" asp-controller="Courses" asp-action="Index">Courses</a>
+                    <a class="hover:text-primary transition-colors" asp-controller="Mentors" asp-action="Index">Mentors</a>
+                    <a class="hover:text-primary transition-colors" asp-controller="Contact" asp-action="Index">Contact</a>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button class="p-2 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                    
+                    @using System.Security.Claims
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var fullName = User.FindFirst("FullName")?.Value ?? User.Identity.Name;
+                        <div class="relative group ml-4 z-50">
+                            <button class="flex items-center gap-3 focus:outline-none">
+                                <div class="hidden md:block text-right">
+                                    <p class="text-sm font-bold text-slate-700 dark:text-white leading-none mb-1">@fullName</p>
+                                    <p class="text-[10px] text-primary uppercase font-bold tracking-wider">
+                                        @if (User.IsInRole("Admin")) { <span>Admin</span> }
+                                        else if (User.IsInRole("Instructor")) { <span>Instructor</span> }
+                                        else { <span>Student</span> }
+                                    </p>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 overflow-hidden">
+                                     <img src="https://ui-avatars.com/api/?name=@fullName&background=0e121b&color=fff" alt="User" class="w-full h-full object-cover">
+                                </div>
+                            </button>
+                            
+                            <!-- Dropdown Menu -->
+                            <div class="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                                <div class="p-4 border-b border-slate-200 dark:border-slate-700/50">
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-1">Signed in as</p>
+                                    <p class="text-sm font-bold text-slate-800 dark:text-white truncate">@User.Identity.Name</p>
+                                </div>
+                                <div class="p-2">
+                                     @if (User.IsInRole("Admin"))
+                                    {
+                                         <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                            <span class="material-symbols-outlined text-lg">dashboard</span>
+                                            Admin Dashboard
+                                        </a>
+                                    }
+                                    <a asp-controller="Profile" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                        <span class="material-symbols-outlined text-lg">person</span>
+                                        Profile
+                                    </a>
+                                     <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                        <span class="material-symbols-outlined text-lg">school</span>
+                                        My Classroom
+                                    </a>
+                                </div>
+                                <div class="p-2 border-t border-slate-200 dark:border-slate-700/50">
+                                    <form asp-controller="Account" asp-action="Logout" method="post">
+                                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-500 hover:bg-red-500/10 rounded-lg transition-colors text-left">
+                                            <span class="material-symbols-outlined text-lg">logout</span>
+                                            Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" class="hidden md:flex items-center gap-2 bg-primary text-background-dark px-5 py-2 rounded-lg font-bold text-sm hover:opacity-90 transition-opacity">
+                            <span class="material-symbols-outlined text-lg">login</span>
+                            Login
+                        </a>
+                    }
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+        </div>
+    </nav>
+
+    <div class="flex-1 w-full max-w-7xl mx-auto p-6 md:p-8">
+        <main role="main" class="pb-3 text-slate-800 dark:text-slate-200">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Symphony Portal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!-- Footer -->
+    <footer class="pb-12 md:pb-12 pt-16 px-6 border-t border-slate-200 dark:border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10">
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="bg-primary p-1.5 rounded-lg flex items-center justify-center">
+                        <span class="material-symbols-outlined text-background-dark text-xl font-bold">terminal</span>
+                    </div>
+                    <h2 class="font-display text-xl font-bold tracking-tight">IT Academy</h2>
+                </div>
+                <p class="text-slate-500 text-sm leading-relaxed">
+                    Empowering the next generation of digital architects and security specialists.
+                </p>
+            </div>
+            <div>
+                <h5 class="font-bold mb-4 uppercase text-xs tracking-widest text-primary">Resources</h5>
+                <ul class="space-y-3 text-sm text-slate-500">
+                    <li><a class="hover:text-primary transition-colors" asp-controller="Courses" asp-action="Index">Courses</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Career Path</a></li>
+                    <li><a class="hover:text-primary transition-colors" asp-controller="Mentors" asp-action="Index">Mentors</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Scholarships</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-bold mb-4 uppercase text-xs tracking-widest text-primary">Support</h5>
+                <ul class="space-y-3 text-sm text-slate-500">
+                    <li><a class="hover:text-primary transition-colors" href="#">FAQ</a></li>
+                    <li><a class="hover:text-primary transition-colors" asp-controller="Contact" asp-action="Index">Contact Us</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-bold mb-4 uppercase text-xs tracking-widest text-primary">Newsletter</h5>
+                <div class="flex">
+                    <input class="w-full bg-slate-200 dark:bg-surface-dark border-none rounded-l-lg text-sm focus:ring-1 focus:ring-primary" placeholder="Email" type="email"/>
+                    <button class="bg-primary px-3 rounded-r-lg">
+                        <span class="material-symbols-outlined text-background-dark">send</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 text-center text-slate-600 dark:text-slate-500 text-xs">
+            © 2026 IT Training Center Academy. All rights reserved.
         </div>
     </footer>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

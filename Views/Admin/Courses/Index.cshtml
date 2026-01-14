@@ -1,65 +1,189 @@
+@using Symphony.Portal.Web.Models.Enums
 @model IEnumerable<Symphony.Portal.Web.Models.Course>
 
 @{
     ViewData["Title"] = "Manage Courses";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Manage Courses</h2>
-        <a asp-action="Create" class="btn btn-primary">Create New Course</a>
+<div class="container-fluid p-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Manage Courses</h1>
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white-50"></i> Create New Course
+        </a>
     </div>
 
-    <div class="card shadow-sm">
+    <!-- Search & Filter Card -->
+    <div class="card shadow-sm mb-4 border-0">
         <div class="card-body">
-            <table class="table table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th>Image</th>
-                        <th>Title</th>
-                        <th>Duration (Months)</th>
-                        <th>Level</th>
-                        <th>Tuition Fee</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model) {
+            <form asp-action="Index" method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Search by Name</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
+                        <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control border-start-0" placeholder="Enter course title..." />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">Category</label>
+                    <select name="categoryId" class="form-select" asp-items='ViewData["Categories"] as SelectList'>
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">Level</label>
+                    <select name="level" class="form-select" asp-items="Html.GetEnumSelectList<CourseLevel>()">
+                        <option value="">All Levels</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary" title="Reset Filters"><i class="fas fa-undo"></i></a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Course List Card -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-muted small text-uppercase">
                         <tr>
-                            <td>
-                                @if (!string.IsNullOrEmpty(item.Image))
-                                {
-                                    <img src="@item.Image" alt="@item.Title" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;" />
-                                }
-                                else
-                                {
-                                    <span class="text-muted">No Image</span>
-                                }
-                            </td>
-                            <td>
-                                <strong>@item.Title</strong>
-                                <br/>
-                                <small class="text-muted">@item.Description</small>
-                            </td>
-                            <td>@item.DurationMonths</td>
-                            <td>@item.Level</td>
-                            <td>$@item.TuitionFee</td>
-                            <td>
-                                @if(item.IsActive) {
-                                    <span class="badge bg-success">Active</span>
-                                } else {
-                                    <span class="badge bg-secondary">Inactive</span>
-                                }
-                            </td>
-                            <td>
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
-                            </td>
+                            <th class="ps-4">Course</th>
+                            <th>Duration</th>
+                            <th>Level/Category</th>
+                            <th>Certificate</th>
+                            <th>Tuition Fee</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Actions</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="fas fa-folder-open fa-3x mb-3 text-gray-300"></i>
+                                    <p>No courses found matching your criteria.</p>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model) {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0">
+                                                @if (!string.IsNullOrEmpty(item.Image))
+                                                {
+                                                    <img src="@item.Image" alt="@item.Title" class="rounded" style="width: 60px; height: 60px; object-fit: cover;" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                                        <i class="fas fa-image text-muted"></i>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="ms-3">
+                                                <h6 class="mb-0 fw-bold text-dark">@item.Title</h6>
+                                                <small class="text-muted d-block text-truncate" style="max-width: 250px;">@item.Description</small>
+                                                <small class="text-primary"><i class="fas fa-book-open me-1"></i> @item.CourseSubjects?.Count subjects</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border"><i class="far fa-clock me-1"></i> @item.DurationMonths mos</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column gap-1">
+                                            @if (item.Level == CourseLevel.Beginner)
+                                            {
+                                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill" style="width: fit-content">Beginner</span>
+                                            }
+                                            else if (item.Level == CourseLevel.Intermediate)
+                                            {
+                                                <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill" style="width: fit-content">Intermediate</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill" style="width: fit-content">Advanced</span>
+                                            }
+                                            <small class="text-muted">@item.Category?.Name</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25"><i class="fas fa-certificate me-1"></i> @item.Certificate?.Name</span>
+                                    </td>
+                                    <td class="fw-bold text-dark">$@item.TuitionFee.ToString("N2")</td>
+                                    <td>
+                                        @if(item.IsActive) {
+                                            <span class="badge bg-success w-100">Active</span>
+                                        } else {
+                                            <span class="badge bg-secondary w-100">Inactive</span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" class="d-inline form-delete">
+                                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // SweetAlert for Delete
+            const deleteButtons = document.querySelectorAll('.btn-delete');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const form = this.closest('.form-delete');
+                    Swal.fire({
+                        title: 'Bạn có chắc chắn không?',
+                        text: "Hành động này không thể hoàn tác!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Xóa!',
+                        cancelButtonText: 'Hủy'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+
+            // Set selected value for Level Checkbox (Optional enhancement to match server side if not binding automatically via asp-for/value)
+            // But asp-items helper should handle selection if we pass correct logic or use 'value' attribute manually if needed.
+            // Since we use 'name="level"' but not 'asp-for', we might need to manually set selected logic or trust browser retention?
+            // Actually, HTML helpers for SelectList don't auto-select from QueryString params without model binding or explicit 'selected' in list.
+            // I'll add a small JS script to set the selected value for level if the helper doesn't pick it up from ModelState automatically.
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const levelVal = urlParams.get('level');
+            if(levelVal) {
+                const levelSelect = document.querySelector('select[name="level"]');
+                if(levelSelect) levelSelect.value = levelVal;
+            }
+        });
+    </script>
+}

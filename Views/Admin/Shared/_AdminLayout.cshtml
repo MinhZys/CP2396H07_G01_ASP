@@ -79,7 +79,7 @@
     </style>
 </head>
 <body>
-    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow" style="height: var(--header-height); z-index: 1030;">
+    <header class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow" style="height: var(--header-height); z-index: 1030;">
         <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#" style="width: var(--sidebar-width);">
             <i class="fas fa-music me-2"></i> Symphony Admin
         </a>
@@ -116,6 +116,11 @@
                         
                         <h6 class="sidebar-heading">Academic</h6>
                         <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Categories" ? "active" : "")" asp-area="Admin" asp-controller="Categories" asp-action="Index">
+                                <i class="fas fa-list-alt"></i> Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Courses" ? "active" : "")" asp-area="Admin" asp-controller="Courses" asp-action="Index">
                                 <i class="fas fa-graduation-cap"></i> Courses
                             </a>
@@ -125,16 +130,7 @@
                                 <i class="fas fa-book"></i> Subjects
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Lessons" ? "active" : "")" asp-area="Admin" asp-controller="Lessons" asp-action="Index">
-                                <i class="fas fa-chalkboard-teacher"></i> Lessons
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Quizzes" ? "active" : "")" asp-area="Admin" asp-controller="Quizzes" asp-action="Index">
-                                <i class="fas fa-question-circle"></i> Quizzes
-                            </a>
-                        </li>
+
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "active" : "")" asp-area="Admin" asp-controller="Classes" asp-action="Index">
                                 <i class="fas fa-users-class"></i> Classes
@@ -172,6 +168,11 @@
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CourseReviews" ? "active" : "")" asp-area="Admin" asp-controller="CourseReviews" asp-action="Index">
                                 <i class="fas fa-star-half-alt"></i> Reviews
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Certificates" ? "active" : "")" asp-area="Admin" asp-controller="Certificates" asp-action="Index">
+                                <i class="fas fa-certificate"></i> Certificates
                             </a>
                         </li>
                     </ul>

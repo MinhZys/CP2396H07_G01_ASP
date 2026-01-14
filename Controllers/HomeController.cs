@@ -19,7 +19,7 @@ namespace Symphony.Portal.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var courses = await _context.Courses.Where(c => c.IsActive).ToListAsync();
+            var courses = await _context.Courses.Include(c => c.Category).Where(c => c.IsActive).ToListAsync();
             return View(courses);
         }
 

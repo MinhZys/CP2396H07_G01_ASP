@@ -41,7 +41,29 @@ Dành cho Admin đăng nhập để quản lý dữ liệu.
 
 1.  **Quản Lý Khóa Học:**
     *   Thêm/Sửa/Xóa khóa học.
+    *   Thêm/Sửa/Xóa khóa học.
     *   Cập nhật danh sách chủ đề giảng dạy.
+    *   **Quản Lý Môn Học (Manage Subject):**
+        *   **Xem Danh Sách (View Subjects List):**
+            *   *Mục đích:* Hiển thị toàn bộ các môn học để quản lý.
+            *   *Đầu vào:* Truy cập menu "Subjects".
+            *   *Đầu ra:* Bảng danh sách gồm Hình ảnh, Mã môn, Tên môn, Thời gian học, Mô tả.
+        *   **Tìm Kiếm Môn Học (Search Subject):**
+            *   *Mục đích:* Lọc nhanh môn học theo tên.
+            *   *Đầu vào:* Nhập từ khóa tên môn.
+            *   *Đầu ra:* Danh sách môn học chứa từ khóa tìm kiếm.
+        *   **Tạo Môn Học (Create Subject):**
+            *   *Mục đích:* Thêm môn học mới.
+            *   *Đầu vào:* Mã môn (Unique), Tên môn, Thời gian, Mô tả, Hình ảnh.
+            *   *Đầu ra:* Môn học mới được lưu, chuyển về danh sách.
+        *   **Chỉnh Sửa Môn Học (Edit Subject):**
+            *   *Mục đích:* Cập nhật thông tin môn học.
+            *   *Đầu vào:* Tên môn, Thời gian, Mô tả, Hình ảnh mới. (Không sửa Mã môn).
+            *   *Đầu ra:* Thông tin được cập nhật.
+        *   **Xóa Môn Học (Delete Subject):**
+            *   *Mục đích:* Loại bỏ môn học.
+            *   *Đầu vào:* Chọn xóa và xác nhận.
+            *   *Đầu ra:* Môn học bị xóa khỏi hệ thống.
 2.  **Quản Lý Kỳ Thi (Entrance Exam Management):**
     *   Tạo kỳ thi mới.
     *   Cập nhật lệ phí thi.

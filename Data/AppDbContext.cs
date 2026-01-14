@@ -14,6 +14,7 @@ namespace Symphony.Portal.Web.Data
         public DbSet<Class> Classes { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseSubject> CourseSubjects { get; set; }
+        public DbSet<CourseInstructor> CourseInstructors { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<EntranceExam> EntranceExams { get; set; }
         public DbSet<ExamDetail> ExamDetails { get; set; }
@@ -31,6 +32,11 @@ namespace Symphony.Portal.Web.Data
         public DbSet<Quiz> Quizzes { get; set; }
         public DbSet<QuizQuestion> QuizQuestions { get; set; }
         public DbSet<CourseReview> CourseReviews { get; set; }
+        public DbSet<Material> Materials { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Certificate> Certificates { get; set; }
+        public DbSet<StudentProfile> StudentProfiles { get; set; }
+        public DbSet<InstructorProfile> InstructorProfiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,9 +59,13 @@ namespace Symphony.Portal.Web.Data
                 .Property(e => e.PaymentMethod)
                 .HasConversion<string>();
 
-            // Composite Key for CourseSubject
+             // Composite Key for CourseSubject
             modelBuilder.Entity<CourseSubject>()
                 .HasKey(cs => new { cs.CourseId, cs.SubjectId });
+
+            // Composite Key for CourseInstructor
+            modelBuilder.Entity<CourseInstructor>()
+                .HasKey(ci => new { ci.CourseId, ci.InstructorId });
 
             // Seeding Roles
             modelBuilder.Entity<Role>().HasData(
@@ -93,6 +103,19 @@ namespace Symphony.Portal.Web.Data
                     RoleId = "3", 
                     IsActive = true 
                 }
+            );
+
+            // Seed Categories
+            modelBuilder.Entity<Category>().HasData(
+                new Category { Id = "1", Name = "Programming", Description = "Software Development Courses" },
+                new Category { Id = "2", Name = "Music", Description = "Music Theory and Instruments" },
+                new Category { Id = "3", Name = "Art", Description = "Visual Arts and Design" }
+            );
+
+            // Seed Certificates
+            modelBuilder.Entity<Certificate>().HasData(
+                new Certificate { Id = "1", Name = "Certificate of Completion", Description = "Awarded upon completing all course requirements.", IsActive = true },
+                new Certificate { Id = "2", Name = "Professional Certification", Description = "Recognized industry standard certification.", IsActive = true }
             );
         }
     }

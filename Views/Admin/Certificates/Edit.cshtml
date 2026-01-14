@@ -1,0 +1,47 @@
+@model Symphony.Portal.Web.Models.Certificate
+
+@{
+    ViewData["Title"] = "Edit Certificate";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Edit Certificate</h1>
+    <a asp-action="Index" class="btn btn-sm btn-secondary">Back to List</a>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 form-check form-switch p-3 border rounded bg-light">
+                <input class="form-check-input" asp-for="IsActive" style="transform: scale(1.5); margin-left: -2.5em; margin-right: 1em; cursor: pointer;" />
+                <label class="form-check-label fw-bold" asp-for="IsActive" style="margin-left: 0.5em;">
+                    Active
+                </label>
+            </div>
+
+            <div class="mb-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

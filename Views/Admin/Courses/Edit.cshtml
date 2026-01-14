@@ -27,6 +27,16 @@
                 </div>
 
                 <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label">Category</label>
+                    <select asp-for="CategoryId" class ="form-select" asp-items="ViewBag.CategoryId"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CertificateId" class="form-label">Certificate</label>
+                    <select asp-for="CertificateId" class ="form-select" asp-items="ViewBag.CertificateId"></select>
+                </div>
+
+                <div class="mb-3">
                     <label for="imageFile" class="form-label">Course Image</label>
                     <input type="file" name="imageFile" class="form-control" accept="image/*" />
                     @if (!string.IsNullOrEmpty(Model.Image))
@@ -54,6 +64,38 @@
                         <label asp-for="TuitionFee" class="form-label">Tuition Fee ($)</label>
                         <input asp-for="TuitionFee" class="form-control" type="number" step="0.01" />
                         <span asp-validation-for="TuitionFee" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Assign Instructors</label>
+                        <select name="selectedInstructorIds" class="form-select" multiple style="height: 120px;">
+                            @if (ViewBag.Instructors != null)
+                            {
+                                var selectedInstIds = ViewBag.SelectedInstructorIds as List<string> ?? new List<string>();
+                                foreach (var inst in ViewBag.Instructors) // Assuming ViewBag.Instructors is IEnumerable<dynamic> or similar from Controller Select
+                                {
+                                    // Need to reflect properties since it was anonymous object in controller
+                                    // Actually better to cast or use dynamic in view if possible, or Viewbag is list of objects
+                                    // Controller sent: .Select(u => new { u.Id, u.FullName }) which is anonymous. 
+                                    // Accessing anonymous type properties in View can be tricky.
+                                    // Better to use SelectList in Controller or here.
+                                    // Let's rely on constructing SelectOptions manually to handle selection logic easily
+                                    
+                                    // Reflection for anonymous type or just use dynamic
+                                    var id = inst.GetType().GetProperty("Id").GetValue(inst, null).ToString();
+                                    var name = inst.GetType().GetProperty("FullName").GetValue(inst, null).ToString();
+                                    
+                                    if (selectedInstIds.Contains(id))
+                                    {
+                                        <option value="@id" selected>@name</option>
+                                    }
+                                    else
+                                    {
+                                         <option value="@id">@name</option>
+                                    }
+                                }
+                            }
+                        </select>
+                         <div class="form-text">Hold Ctrl (Windows) or Command (Mac) to select multiple options.</div>
                     </div>
                 <div class="mb-4">
                     <label class="form-label fw-bold">Manage Subjects</label>

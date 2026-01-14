@@ -1,0 +1,87 @@
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+@section Styles {
+    <style>
+        .cyber-card {
+            border: 1px solid rgba(0, 200, 255, 0.1);
+            background: #1e2633;
+        }
+    </style>
+}
+
+<header class="py-12 border-b border-slate-200 dark:border-slate-800 bg-white/5 -mx-6 md:-mx-8 px-6 md:px-8 mb-8">
+    <div class="max-w-[1600px] mx-auto">
+        <h1 class="font-display text-4xl font-bold mb-2">Contact <span class="text-primary">Us</span></h1>
+        <p class="text-slate-400 max-w-2xl">Have questions? We're here to help you start your journey in IT.</p>
+    </div>
+</header>
+
+<div class="max-w-4xl mx-auto">
+    <div class="cyber-card rounded-2xl p-8 md:p-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+                <h2 class="font-display text-2xl font-bold mb-6">Get in touch</h2>
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-primary">location_on</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1">Visit Us</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                123 Tech Street, Silicon Valley<br>
+                                Innovation District, CA 94000
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-primary">mail</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1">Email Us</h3>
+                            <p class="text-slate-400 text-sm">
+                                hello@itacademy.com<br>
+                                support@itacademy.com
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-primary">call</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1">Call Us</h3>
+                            <p class="text-slate-400 text-sm">
+                                +1 (555) 123-4567<br>
+                                Mon-Fri from 8am to 5pm
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Your Name</label>
+                    <input type="text" class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="John Doe">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Email Address</label>
+                    <input type="email" class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="john@example.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Message</label>
+                    <textarea rows="4" class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="How can we help you?"></textarea>
+                </div>
+                <button type="button" class="w-full bg-primary text-background-dark font-bold py-3 rounded-lg hover:brightness-110 transition-all">
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

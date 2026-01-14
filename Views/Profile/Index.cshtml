@@ -1,0 +1,296 @@
+@model Symphony.Portal.Web.Models.ViewModels.ProfileVM
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+@section Styles {
+    <style type="text/tailwindcss">
+        .ios-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+        
+        /* Transition for view/edit mode */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @@keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #00c8ff;
+            border-radius: 10px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function toggleEditMode() {
+            const viewSection = document.getElementById('view-section');
+            const editSection = document.getElementById('edit-section');
+            const editBtn = document.getElementById('edit-btn');
+            const cancelBtn = document.getElementById('cancel-btn');
+            const saveBtn = document.getElementById('save-btn');
+            
+            // Avatar controls
+            const avatarEditControls = document.getElementById('avatar-edit-controls');
+            const avatarActions = document.getElementById('avatar-actions');
+
+            if (viewSection.classList.contains('hidden')) {
+                // Switch to View Mode
+                viewSection.classList.remove('hidden');
+                editSection.classList.add('hidden');
+                editBtn.classList.remove('hidden');
+                cancelBtn.classList.add('hidden');
+                saveBtn.classList.add('hidden');
+                
+                avatarEditControls.classList.add('hidden');
+                avatarActions.classList.add('hidden');
+            } else {
+                 // Switch to Edit Mode
+                viewSection.classList.add('hidden');
+                editSection.classList.remove('hidden');
+                editBtn.classList.add('hidden');
+                cancelBtn.classList.remove('hidden');
+                saveBtn.classList.remove('hidden');
+                
+                avatarEditControls.classList.remove('hidden');
+                avatarActions.classList.remove('hidden');
+            }
+        }
+    </script>
+}
+
+<div class="flex flex-col md:flex-row gap-8 -mx-6 md:-mx-8">
+    <!-- Sidebar -->
+    <aside class="w-full md:w-64 flex-shrink-0 border-b md:border-b-0 md:border-r border-slate-800 p-6">
+        <div class="space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary font-bold transition-all" href="#">
+                <span class="material-symbols-outlined">person</span>
+                <span>Profile</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all" href="#">
+                <span class="material-symbols-outlined">school</span>
+                <span>My Classroom</span>
+            </a>
+            
+            <!-- Logout Button Form -->
+            <form asp-controller="Account" asp-action="Logout" method="post" class="w-full">
+                <button type="submit" class="flex items-center gap-3 px-4 py-3 rounded-xl text-left w-full text-slate-400 hover:text-red-500 hover:bg-white/5 transition-all">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Logout</span>
+                </button>
+            </form>
+        </div>
+        <div class="mt-8 pt-8 border-t border-slate-800 md:mt-auto md:pt-10">
+            <div class="p-4 rounded-xl bg-surface-dark border border-primary/5">
+                <p class="text-xs text-slate-500 mb-2 uppercase tracking-widest font-bold">Tiến độ hồ sơ</p>
+                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-primary" style="width: 85%;"></div>
+                </div>
+                <p class="text-[10px] text-primary mt-2">Đã hoàn thành 85%</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 lg:p-12 overflow-y-auto custom-scrollbar">
+        <div class="max-w-4xl mx-auto">
+            <header class="mb-10 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2 font-display">Edit Profile</h2>
+                    <p class="text-slate-400">Update your personal information to get the best learning path.</p>
+                </div>
+                <button id="edit-btn" onclick="toggleEditMode()" class="bg-primary/10 text-primary px-6 py-2 rounded-lg font-bold hover:bg-primary hover:text-background-dark transition-all flex items-center gap-2">
+                    <span class="material-symbols-outlined">edit</span>
+                    Edit Profile
+                </button>
+            </header>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="bg-green-500/10 border border-green-500/20 text-green-500 px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    <span>@TempData["SuccessMessage"]</span>
+                </div>
+            }
+
+            <form asp-action="Index" method="post" enctype="multipart/form-data" class="space-y-10">
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="Email" />
+                <input type="hidden" asp-for="Role" />
+                <input type="hidden" asp-for="IsInstructor" />
+
+                <!-- Avatar Section -->
+                <section class="flex flex-col items-center sm:flex-row gap-8 bg-surface-dark p-8 rounded-2xl border border-slate-700/50">
+                    <div class="relative group">
+                        <div class="w-32 h-32 lg:w-40 lg:h-40 rounded-full border-4 border-primary/20 p-1 bg-background-dark overflow-hidden">
+                            <img id="avatar-preview" src="@(string.IsNullOrEmpty(Model.AvatarUrl) ? $"https://ui-avatars.com/api/?name={Model.FullName}&background=0e121b&color=fff" : Model.AvatarUrl)" 
+                                    class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <!-- Edit Mode Only -->
+                        <div id="avatar-edit-controls" class="hidden">
+                            <label for="AvatarImage" class="absolute bottom-2 right-2 bg-primary text-background-dark p-2.5 rounded-full shadow-lg border-4 border-surface-dark hover:scale-110 transition-transform cursor-pointer">
+                                <span class="material-symbols-outlined text-sm">photo_camera</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="flex-1 space-y-3 text-center sm:text-left">
+                        <h3 class="text-xl font-bold font-display">Your Avatar</h3>
+                        <p class="text-sm text-slate-400 max-w-sm">Upload a clear portrait. Supports JPG, PNG, GIF. Max 5MB.</p>
+                            <!-- Edit Mode Only -->
+                        <div id="avatar-actions" class="hidden flex flex-wrap gap-3 justify-center sm:justify-start">
+                            <label for="AvatarImage" class="px-4 py-2 bg-primary/20 text-primary rounded-lg text-sm font-bold hover:bg-primary/30 transition-colors cursor-pointer">Upload New</label>
+                            <input asp-for="AvatarImage" type="file" class="hidden" accept="image/*" onchange="document.getElementById('avatar-preview').src = window.URL.createObjectURL(this.files[0])" />
+                            <input type="hidden" asp-for="AvatarUrl" />
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW SECTION -->
+                <section id="view-section" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 fade-in">
+                    <div class="border-b border-slate-800 pb-2">
+                        <label class="text-xs font-bold text-primary uppercase tracking-widest mb-1 block">Full Name</label>
+                        <p class="text-lg font-medium text-slate-200">@Model.FullName</p>
+                    </div>
+                        <div class="border-b border-slate-800 pb-2">
+                        <label class="text-xs font-bold text-primary uppercase tracking-widest mb-1 block">Date of Birth</label>
+                        <p class="text-lg font-medium text-slate-200">@(Model.DateOfBirth?.ToString("dd/MM/yyyy") ?? "Not updated")</p>
+                    </div>
+                    <div class="border-b border-slate-800 pb-2">
+                            <label class="text-xs font-bold text-primary uppercase tracking-widest mb-1 block">Gender</label>
+                        <p class="text-lg font-medium text-slate-200">@(string.IsNullOrEmpty(Model.Gender) ? "Not updated" : Model.Gender)</p>
+                    </div>
+                        <div class="border-b border-slate-800 pb-2">
+                        <label class="text-xs font-bold text-primary uppercase tracking-widest mb-1 block">Phone Number</label>
+                        <p class="text-lg font-medium text-slate-200">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Not updated" : Model.PhoneNumber)</p>
+                    </div>
+                        <div class="md:col-span-2 border-b border-slate-800 pb-2">
+                        <label class="text-xs font-bold text-primary uppercase tracking-widest mb-1 block">Address</label>
+                        <p class="text-lg font-medium text-slate-200">@(string.IsNullOrEmpty(Model.AddressLine) ? "Not updated" : Model.AddressLine)</p>
+                    </div>
+                    
+                    @if (Model.IsInstructor)
+                    {
+                            <div class="md:col-span-2 pt-6">
+                            <h3 class="text-xl font-bold mb-4 font-display text-white">Instructor Info</h3>
+                        </div>
+                            <div class="border-b border-slate-800 pb-2">
+                            <label class="text-xs font-bold text-primary uppercase tracking-widest mb-1 block">Specialization</label>
+                            <p class="text-lg font-medium text-slate-200">@Model.Specialization</p>
+                        </div>
+                            <div class="border-b border-slate-800 pb-2">
+                            <label class="text-xs font-bold text-primary uppercase tracking-widest mb-1 block">Github URL</label>
+                            <a href="@Model.GithubUrl" target="_blank" class="text-lg font-medium text-primary hover:underline truncate block">@Model.GithubUrl</a>
+                        </div>
+                            <div class="md:col-span-2 border-b border-slate-800 pb-2">
+                            <label class="text-xs font-bold text-primary uppercase tracking-widest mb-1 block">Bio</label>
+                            <p class="text-lg font-medium text-slate-200 leading-relaxed">@Model.Bio</p>
+                        </div>
+                    }
+                </section>
+
+                <!-- EDIT SECTION -->
+                <section id="edit-section" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 fade-in">
+                    <div class="flex flex-col gap-2">
+                        <label asp-for="FullName" class="text-xs font-bold text-slate-400 uppercase tracking-widest">Full Name</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-500 text-lg">person</span>
+                            <input asp-for="FullName" class="w-full bg-surface-dark border border-slate-700 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-slate-600 text-white" placeholder="Enter full name" />
+                        </div>
+                        <span asp-validation-for="FullName" class="text-red-500 text-xs"></span>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label asp-for="DateOfBirth" class="text-xs font-bold text-slate-400 uppercase tracking-widest">Date of Birth</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-500 text-lg">calendar_today</span>
+                            <input asp-for="DateOfBirth" type="date" class="w-full bg-surface-dark border border-slate-700 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all text-white" />
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label asp-for="Gender" class="text-xs font-bold text-slate-400 uppercase tracking-widest">Gender</label>
+                        <div class="flex gap-2">
+                            <label class="flex-1">
+                                <input type="radio" asp-for="Gender" value="Male" class="hidden peer" />
+                                <div class="text-center py-3.5 rounded-xl border border-slate-700 bg-surface-dark peer-checked:bg-primary peer-checked:text-background-dark peer-checked:font-bold hover:border-primary/50 transition-all text-sm cursor-pointer text-slate-300">Male</div>
+                            </label>
+                            <label class="flex-1">
+                                <input type="radio" asp-for="Gender" value="Female" class="hidden peer" />
+                                <div class="text-center py-3.5 rounded-xl border border-slate-700 bg-surface-dark peer-checked:bg-primary peer-checked:text-background-dark peer-checked:font-bold hover:border-primary/50 transition-all text-sm cursor-pointer text-slate-300">Female</div>
+                            </label>
+                            <label class="flex-1">
+                                <input type="radio" asp-for="Gender" value="Other" class="hidden peer" />
+                                <div class="text-center py-3.5 rounded-xl border border-slate-700 bg-surface-dark peer-checked:bg-primary peer-checked:text-background-dark peer-checked:font-bold hover:border-primary/50 transition-all text-sm cursor-pointer text-slate-300">Other</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label asp-for="PhoneNumber" class="text-xs font-bold text-slate-400 uppercase tracking-widest">Phone Number</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-500 text-lg">call</span>
+                            <input asp-for="PhoneNumber" class="w-full bg-surface-dark border border-slate-700 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-slate-600 text-white" placeholder="Phone Number" />
+                        </div>
+                        <span asp-validation-for="PhoneNumber" class="text-red-500 text-xs"></span>
+                    </div>
+
+                    <div class="flex flex-col gap-2 md:col-span-2">
+                        <label asp-for="AddressLine" class="text-xs font-bold text-slate-400 uppercase tracking-widest">Address</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-500 text-lg">location_on</span>
+                            <input asp-for="AddressLine" class="w-full bg-surface-dark border border-slate-700 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-slate-600 text-white" placeholder="Full Address" />
+                        </div>
+                    </div>
+                    
+                    @if (Model.IsInstructor)
+                    {
+                        <div class="md:col-span-2 pt-6 border-t border-slate-800">
+                            <h3 class="text-xl font-bold mb-4 font-display text-white">Instructor Info</h3>
+                        </div>
+                            <div class="flex flex-col gap-2">
+                            <label asp-for="Specialization" class="text-xs font-bold text-slate-400 uppercase tracking-widest">Specialization</label>
+                            <input asp-for="Specialization" class="w-full bg-surface-dark border border-slate-700 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all text-white" />
+                        </div>
+                            <div class="flex flex-col gap-2">
+                            <label asp-for="GithubUrl" class="text-xs font-bold text-slate-400 uppercase tracking-widest">Github URL</label>
+                            <input asp-for="GithubUrl" class="w-full bg-surface-dark border border-slate-700 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all text-white" />
+                        </div>
+                        <div class="flex flex-col gap-2 md:col-span-2">
+                            <label asp-for="Bio" class="text-xs font-bold text-slate-400 uppercase tracking-widest">Bio</label>
+                            <textarea asp-for="Bio" rows="4" class="w-full bg-surface-dark border border-slate-700 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all text-white"></textarea>
+                        </div>
+                    }
+
+                </section>
+                
+                <div class="pt-8 flex items-center justify-end gap-4 border-t border-slate-800">
+                    <button type="button" id="cancel-btn" onclick="toggleEditMode()" class="hidden px-8 py-3 rounded-xl border border-slate-700 text-slate-400 font-bold text-sm hover:bg-white/5 hover:text-white transition-all text-center">
+                        Cancel
+                    </button>
+                    <button type="submit" id="save-btn" class="hidden px-10 py-3 rounded-xl bg-primary text-background-dark font-bold text-sm shadow-lg shadow-primary/20 hover:brightness-110 active:scale-95 transition-all">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>

@@ -5,53 +5,135 @@
     Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
 }
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Create Subject</h1>
-</div>
-
 <div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            <div class="mb-3">
-                <label asp-for="Id" class="form-label"></label>
-                <input asp-for="Id" class="form-control" placeholder="e.g. SUB001" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-                <div class="form-text">Max 26 characters. Must be unique.</div>
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h4 class="card-title text-primary mb-0">Create Subject</h4>
             </div>
+            <div class="card-body">
+                <form asp-action="Create" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            @* ID will be auto-generated *@
+                            
+                            <div class="form-group mb-3">
+                                <label asp-for="Name" class="control-label fw-bold"></label>
+                                <input asp-for="Name" class="form-control" placeholder="Enter Subject Name" required />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
 
-            <div class="mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+                            <div class="form-group mb-3">
+                                <label asp-for="StudyTime" class="control-label fw-bold">Study Time (hours)</label>
+                                <input asp-for="StudyTime" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="StudyTime" class="text-danger"></span>
+                            </div>
 
-            <div class="mb-3">
-                <label asp-for="StudyTime" class="form-label"></label>
-                <input asp-for="StudyTime" class="form-control" />
-                <span asp-validation-for="StudyTime" class="text-danger"></span>
-            </div>
+                             <div class="form-group mb-3">
+                                <label for="imageFile" class="control-label fw-bold">Subject Image</label>
+                                <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                            </div>
+                        </div>
 
-            <div class="mb-3">
-                <label asp-for="Description" class="form-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="Description" class="control-label fw-bold"></label>
+                                <textarea asp-for="Description" class="form-control" rows="8" placeholder="Enter Description" required></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="mb-3">
-                <label for="imageFile" class="form-label">Subject Image</label>
-                <input type="file" name="imageFile" class="form-control" accept="image/*" />
-            </div>
+                    <hr />
 
-            <div class="mb-3">
-                <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                             <h5 class="text-secondary">Learning Roadmap</h5>
+                             <p class="text-muted small">Add steps for the learning roadmap. Click "+" to add a new step.</p>
+                             
+                             @if (ViewData.ModelState["LearningRoadmap"]?.Errors.Count > 0)
+                             {
+                                 <div class="alert alert-danger">
+                                     @ViewData.ModelState["LearningRoadmap"]?.Errors[0].ErrorMessage
+                                 </div>
+                             }
+
+                             <div id="roadmap-container">
+                                 <!-- Initial Step -->
+                                 <div class="roadmap-step input-group mb-2" data-step="1">
+                                     <span class="input-group-text bg-light fw-bold gap-2" style="width: 40px; justify-content: center;">1</span>
+                                     <input type="text" name="roadmapSteps" class="form-control" placeholder="Enter step content..." required />
+                                     <button type="button" class="btn btn-outline-primary add-step-btn">
+                                         <i class="fas fa-plus"></i>
+                                     </button>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4 text-end">
+                        <a asp-action="Index" class="btn btn-secondary me-2">Back to List</a>
+                        <button type="submit" class="btn btn-primary px-4">Create</button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('roadmap-container');
+
+            container.addEventListener('click', function(e) {
+                // Check if add button clicked
+                if (e.target.closest('.add-step-btn')) {
+                    const currentStep = e.target.closest('.roadmap-step');
+                    const currentStepNum = parseInt(currentStep.getAttribute('data-step'));
+                    const nextStepNum = currentStepNum + 1;
+
+                    // Remove "+" from current button if desired, or keep it to insert?
+                    // Requirement: "bấm “+” ở dòng i ⇒ tạo thêm 1 dòng mới (i+1) bên dưới và focus vào ô nhập mới."
+                    
+                    const newRow = document.createElement('div');
+                    newRow.className = 'roadmap-step input-group mb-2';
+                    newRow.setAttribute('data-step', nextStepNum);
+                    newRow.innerHTML = `
+                        <span class="input-group-text bg-light fw-bold gap-2" style="width: 40px; justify-content: center;">${nextStepNum}</span>
+                        <input type="text" name="roadmapSteps" class="form-control" placeholder="Enter step content..." />
+                        <button type="button" class="btn btn-outline-primary add-step-btn">
+                             <i class="fas fa-plus"></i>
+                        </button>
+                    `;
+
+                    // Insert after current row
+                    currentStep.insertAdjacentElement('afterend', newRow);
+
+                    // Re-index subsequent rows if inserting in middle (though "+" is usually at end, this handles general case)
+                    // For now, simpler to just append or simple valid numbering logic. 
+                    // To follow strict "i+1" logic and keep flow:
+                    reindexSteps();
+
+                    // Focus new input
+                    newRow.querySelector('input').focus();
+                }
+            });
+
+            function reindexSteps() {
+                const steps = container.querySelectorAll('.roadmap-step');
+                steps.forEach((step, index) => {
+                    const num = index + 1;
+                    step.setAttribute('data-step', num);
+                    step.querySelector('.input-group-text').textContent = num;
+                });
+            }
+        });
+    </script>
+    <!-- FontAwesome for icons if not already included -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 }

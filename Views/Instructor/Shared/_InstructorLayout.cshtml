@@ -119,6 +119,16 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Lessons" ? "active" : "")" asp-area="Instructor" asp-controller="Lessons" asp-action="Index">
+                                <i class="fas fa-chalkboard-teacher"></i> Lessons
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Quizzes" ? "active" : "")" asp-area="Instructor" asp-controller="Quizzes" asp-action="Index">
+                                <i class="fas fa-question-circle"></i> Quizzes
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Grading" ? "active" : "")" asp-area="Instructor" asp-controller="Grading" asp-action="Index">
                                 <i class="fas fa-user-graduate"></i> Grading & Scores
                             </a>

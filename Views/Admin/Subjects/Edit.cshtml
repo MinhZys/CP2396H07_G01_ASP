@@ -1,63 +1,161 @@
 @model Symphony.Portal.Web.Models.Subject
-
+@using System.Text.Json;
 @{
     ViewData["Title"] = "Edit Subject";
     Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+
+    // Deserialize roadmap
+    List<string> roadmapList = new List<string>();
+    if (!string.IsNullOrEmpty(Model.LearningRoadmap))
+    {
+        try
+        {
+            roadmapList = JsonSerializer.Deserialize<List<string>>(Model.LearningRoadmap) ?? new List<string>();
+        }
+        catch
+        {
+            // fallback if invalid json
+            roadmapList = new List<string>();
+        }
+    }
+    // Ensure at least one empty step if list is empty (though validation prevents this, good for safety)
+    if (!roadmapList.Any())
+    {
+        roadmapList.Add("");
+    }
 }
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Edit Subject</h1>
-</div>
-
 <div class="row">
-    <div class="col-md-6">
-        <form asp-action="Edit" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            
-            <div class="mb-3">
-                <label class="form-label">Subject ID</label>
-                <input type="text" class="form-control" value="@Model.Id" disabled />
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h4 class="card-title text-primary mb-0">Edit Subject</h4>
             </div>
+            <div class="card-body">
+                <form asp-action="Edit" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="Name" class="control-label fw-bold"></label>
+                                <input asp-for="Name" class="form-control" placeholder="Enter Subject Name" required />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
 
-            <div class="mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+                            <div class="form-group mb-3">
+                                <label asp-for="StudyTime" class="control-label fw-bold">Study Time (hours)</label>
+                                <input asp-for="StudyTime" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="StudyTime" class="text-danger"></span>
+                            </div>
 
-            <div class="mb-3">
-                <label asp-for="StudyTime" class="form-label"></label>
-                <input asp-for="StudyTime" class="form-control" />
-                <span asp-validation-for="StudyTime" class="text-danger"></span>
-            </div>
+                             <div class="form-group mb-3">
+                                <label for="imageFile" class="control-label fw-bold">Subject Image</label>
+                                <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                                @if (!string.IsNullOrEmpty(Model.Image))
+                                {
+                                    <div class="mt-2">
+                                        <img src="@Model.Image" alt="Subject Image" class="img-thumbnail" style="max-height: 150px" />
+                                    </div>
+                                }
+                            </div>
+                        </div>
 
-            <div class="mb-3">
-                <label asp-for="Description" class="form-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label for="imageFile" class="form-label">Subject Image</label>
-                <input type="file" name="imageFile" class="form-control" accept="image/*" />
-                @if (!string.IsNullOrEmpty(Model.Image))
-                {
-                    <div class="mt-2">
-                        <p>Current Image:</p>
-                        <img src="@Model.Image" alt="Subject Image" class="img-thumbnail" style="max-height: 150px;" />
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="Description" class="control-label fw-bold"></label>
+                                <textarea asp-for="Description" class="form-control" rows="8" placeholder="Enter Description" required></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-                }
-            </div>
 
-            <div class="mb-3">
-                <input type="submit" value="Save" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    <hr />
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                             <h5 class="text-secondary">Learning Roadmap</h5>
+                             <p class="text-muted small">Add steps for the learning roadmap. Click "+" to add a new step.</p>
+                             
+                             @if (ViewData.ModelState["LearningRoadmap"]?.Errors.Count > 0)
+                             {
+                                 <div class="alert alert-danger">
+                                     @ViewData.ModelState["LearningRoadmap"]?.Errors[0].ErrorMessage
+                                 </div>
+                             }
+
+                             <div id="roadmap-container">
+                                 @for (int i = 0; i < roadmapList.Count; i++)
+                                 {
+                                     <div class="roadmap-step input-group mb-2" data-step="@(i + 1)">
+                                         <span class="input-group-text bg-light fw-bold gap-2" style="width: 40px; justify-content: center;">@(i + 1)</span>
+                                         <input type="text" name="roadmapSteps" class="form-control" value="@roadmapList[i]" placeholder="Enter step content..." required />
+                                         <button type="button" class="btn btn-outline-primary add-step-btn">
+                                             <i class="fas fa-plus"></i>
+                                         </button>
+                                     </div>
+                                 }
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4 text-end">
+                        <a asp-action="Index" class="btn btn-secondary me-2">Back to List</a>
+                        <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('roadmap-container');
+
+            container.addEventListener('click', function(e) {
+                // Check if add button clicked
+                if (e.target.closest('.add-step-btn')) {
+                    const currentStep = e.target.closest('.roadmap-step');
+                    const currentStepNum = parseInt(currentStep.getAttribute('data-step'));
+                    const nextStepNum = currentStepNum + 1;
+
+                    // Add new row
+                    const newRow = document.createElement('div');
+                    newRow.className = 'roadmap-step input-group mb-2';
+                    newRow.setAttribute('data-step', nextStepNum);
+                    newRow.innerHTML = `
+                        <span class="input-group-text bg-light fw-bold gap-2" style="width: 40px; justify-content: center;">${nextStepNum}</span>
+                        <input type="text" name="roadmapSteps" class="form-control" placeholder="Enter step content..." />
+                        <button type="button" class="btn btn-outline-primary add-step-btn">
+                             <i class="fas fa-plus"></i>
+                        </button>
+                    `;
+
+                    // Insert after current row
+                    currentStep.insertAdjacentElement('afterend', newRow);
+
+                    // Re-index subsequent rows
+                    reindexSteps();
+
+                    // Focus new input
+                    newRow.querySelector('input').focus();
+                }
+            });
+
+            function reindexSteps() {
+                const steps = container.querySelectorAll('.roadmap-step');
+                steps.forEach((step, index) => {
+                    const num = index + 1;
+                    step.setAttribute('data-step', num);
+                    step.querySelector('.input-group-text').textContent = num;
+                });
+            }
+        });
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 }

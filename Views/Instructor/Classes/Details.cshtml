@@ -1,34 +1,41 @@
+@model Symphony.Portal.Web.Models.Class
+
 @{
-    ViewData["Title"] = "Class Details";
+    ViewData["Title"] = "Class Details: " + Model.Name;
 }
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Class Details: T2401-A</h1>
+    <h1 class="h2">Class Details: @Model.Name</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Back to List
+            <i class="fas fa-arrow-left"></i> Back to List
         </a>
     </div>
 </div>
 
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card bg-light">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3"><strong>Course:</strong> Basic Music Theory</div>
-                    <div class="col-md-3"><strong>Room:</strong> 301 - Lab A</div>
-                    <div class="col-md-3"><strong>Time:</strong> Mon-Wed-Fri (08:00 - 10:00)</div>
-                    <div class="col-md-3"><strong>Total Students:</strong> 25</div>
-                </div>
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <strong>Course:</strong> <span class="text-muted">@Model.Course?.Title</span>
+            </div>
+            <div class="col-md-3">
+                <strong>Room:</strong> <span class="text-muted">@Model.Room</span>
+            </div>
+            <div class="col-md-3">
+                <strong>Time:</strong> <span class="text-muted">@Model.StartDate.ToShortDateString() - @Model.EndDate.ToShortDateString()</span>
+            </div>
+             <div class="col-md-3">
+                <strong>Total Students:</strong> <span class="badge bg-info text-dark">@Model.Enrollments.Count</span>
             </div>
         </div>
     </div>
 </div>
 
-<h3>Student List</h3>
+<h3 class="h4 mt-4 mb-3">Student List</h3>
+
 <div class="table-responsive">
-    <table class="table table-striped table-hover">
+    <table class="table table-hover table-striped">
         <thead class="table-dark">
             <tr>
                 <th>#</th>
@@ -40,31 +47,38 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Mock Data -->
-            <tr>
-                <td>1</td>
-                <td>STU001</td>
-                <td>Nguyen Van A</td>
-                <td>a.nguyen@example.com</td>
-                <td><span class="badge bg-success">Active</span></td>
-                <td><button class="btn btn-xs btn-outline-info">View Profile</button></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>STU002</td>
-                <td>Tran Thi B</td>
-                <td>b.tran@example.com</td>
-                <td><span class="badge bg-success">Active</span></td>
-                <td><button class="btn btn-xs btn-outline-info">View Profile</button></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>STU003</td>
-                <td>Le Van C</td>
-                <td>c.le@example.com</td>
-                <td><span class="badge bg-warning">Warning</span></td>
-                <td><button class="btn btn-xs btn-outline-info">View Profile</button></td>
-            </tr>
+            @if (Model.Enrollments.Any())
+            {
+                int index = 1;
+                foreach (var enrollment in Model.Enrollments)
+                {
+                    <tr>
+                        <td>@(index++)</td>
+                        <td>@enrollment.Student?.Id</td> <!-- Assuming Id is displayable ID, or add a rollback property -->
+                        <td>@enrollment.Student?.FullName</td>
+                        <td>@enrollment.Student?.Email</td>
+                        <td>
+                            @if (enrollment.IsApproved)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                        </td>
+                        <td>
+                             <a href="#" class="btn btn-sm btn-outline-info disabled" aria-disabled="true">View Profile</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+               <tr>
+                    <td colspan="6" class="text-center py-3">No students enrolled in this class yet.</td>
+                </tr> 
+            }
         </tbody>
     </table>
 </div>

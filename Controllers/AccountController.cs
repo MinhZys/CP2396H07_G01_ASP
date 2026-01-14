@@ -53,6 +53,7 @@ namespace Symphony.Portal.Web.Controllers
                         // Create Claims
                         var claims = new List<Claim>
                         {
+                            new Claim(ClaimTypes.NameIdentifier, user.Id), // Fix: Add User ID claim
                             new Claim(ClaimTypes.Name, user.Email),
                             new Claim(ClaimTypes.Email, user.Email),
                             new Claim("FullName", user.FullName)
@@ -74,6 +75,7 @@ namespace Symphony.Portal.Web.Controllers
                             new ClaimsPrincipal(claimsIdentity),
                             authProperties);
 
+                        TempData["SuccessMessage"] = "Đăng nhập thành công! Chào mừng bạn quay trở lại.";
                         return RedirectToLocal(returnUrl, user);
                     }
                 }
@@ -155,6 +157,7 @@ namespace Symphony.Portal.Web.Controllers
                 // Fix: Properly Sign In with App Claims (Role)
                 var appClaims = new List<Claim>
                 {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id), // Fix: Add User ID claim
                     new Claim(ClaimTypes.Name, user.Email),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim("FullName", user.FullName)
@@ -227,6 +230,7 @@ namespace Symphony.Portal.Web.Controllers
                 // Auto Login
                 var claims = new List<Claim>
                 {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id), // Fix: Add User ID claim
                     new Claim(ClaimTypes.Name, user.Email),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim("FullName", user.FullName),
@@ -277,7 +281,8 @@ namespace Symphony.Portal.Web.Controllers
                 }
                 if (user.Role.Name == RoleNames.Student)
                 {
-                    return RedirectToAction("Index", "Home", new { area = "Student" });
+                    // Fix: Redirect to Public Home instead of Student Area
+                    return RedirectToAction("Index", "Home", new { area = "" });
                 }
             }
 

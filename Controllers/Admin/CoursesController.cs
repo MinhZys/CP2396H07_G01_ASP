@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Models.Enums;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
 
 namespace Symphony.Portal.Web.Controllers.Admin
-{
+{   
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
     [Route("Admin/[controller]/[action]")]
@@ -21,22 +24,60 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // GET: Admin/Courses
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string categoryId, CourseLevel? level)
         {
-            return View(await _context.Courses.ToListAsync());
+             var query = _context.Courses
+                .Include(c => c.Category)
+                .Include(c => c.Certificate)
+                .Include(c => c.CourseSubjects)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(c => c.Title.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(categoryId))
+            {
+                query = query.Where(c => c.CategoryId == categoryId);
+            }
+
+            if (level.HasValue)
+            {
+                query = query.Where(c => c.Level == level);
+            }
+
+            // Populate filter lists
+            ViewData["Categories"] = new SelectList(_context.Categories, "Id", "Name", categoryId);
+            
+            // Pass current filter values back to view
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentCategory"] = categoryId;
+            ViewData["CurrentLevel"] = level;
+
+            return View(await query.ToListAsync());
         }
 
         // GET: Admin/Courses/Create
         public async Task<IActionResult> Create()
         {
             ViewBag.Subjects = await _context.Subjects.ToListAsync();
+            
+             // Fetch Instructors
+            ViewBag.Instructors = await _context.Users
+                .Where(u => u.Role.Name == RoleNames.Instructor)
+                .Select(u => new { u.Id, u.FullName })
+                .ToListAsync();
+
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["CertificateId"] = new SelectList(_context.Certificates, "Id", "Name");
             return View();
         }
 
         // POST: Admin/Courses/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Course course, string[] selectedSubjectIds, IFormFile? imageFile)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,TuitionFee,DurationMonths,Level,IsActive,CategoryId,CertificateId")] Course course, string[] selectedSubjectIds, string[] selectedInstructorIds, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
@@ -67,11 +108,29 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     }
                 }
 
+                // Add selected instructors
+                if (selectedInstructorIds != null)
+                {
+                    foreach (var instructorId in selectedInstructorIds)
+                    {
+                        course.CourseInstructors.Add(new CourseInstructor { CourseId = course.Id, InstructorId = instructorId });
+                    }
+                }
+
                 _context.Add(course);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.Subjects = await _context.Subjects.ToListAsync();
+            
+             // Fetch Instructors
+            ViewBag.Instructors = await _context.Users
+                .Where(u => u.Role.Name == RoleNames.Instructor)
+                .Select(u => new { u.Id, u.FullName })
+                .ToListAsync();
+
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", course.CategoryId);
+            ViewData["CertificateId"] = new SelectList(_context.Certificates, "Id", "Name", course.CertificateId);
             return View(course);
         }
 
@@ -89,13 +148,26 @@ namespace Symphony.Portal.Web.Controllers.Admin
             ViewBag.Subjects = await _context.Subjects.ToListAsync();
             ViewBag.SelectedSubjectIds = course.CourseSubjects.Select(cs => cs.SubjectId).ToList();
 
+             // Fetch Instructors
+            ViewBag.Instructors = await _context.Users
+                .Where(u => u.Role.Name == RoleNames.Instructor)
+                .Select(u => new { u.Id, u.FullName })
+                .ToListAsync();
+            ViewBag.SelectedInstructorIds = await _context.CourseInstructors
+                .Where(ci => ci.CourseId == id)
+                .Select(ci => ci.InstructorId)
+                .ToListAsync();
+
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", course.CategoryId);
+            ViewData["CertificateId"] = new SelectList(_context.Certificates, "Id", "Name", course.CertificateId);
+
             return View(course);
         }
 
         // POST: Admin/Courses/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, Course course, string[] selectedSubjectIds, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Title,Description,TuitionFee,DurationMonths,Level,IsActive,CategoryId,CertificateId")] Course course, string[] selectedSubjectIds, string[] selectedInstructorIds, IFormFile? imageFile)
         {
             if (id != course.Id) return NotFound();
 
@@ -151,6 +223,25 @@ namespace Symphony.Portal.Web.Controllers.Admin
                         _context.CourseSubjects.Add(new CourseSubject { CourseId = id, SubjectId = subjectId });
                     }
 
+                    // Update Instructors
+                    var currentInstructors = await _context.CourseInstructors
+                        .Where(ci => ci.CourseId == id)
+                        .ToListAsync();
+                    
+                    var selectedInstIds = selectedInstructorIds?.ToList() ?? new List<string>();
+                    var currentInstIds = currentInstructors.Select(ci => ci.InstructorId).ToList();
+
+                    // Remove unselected
+                    var instToRemove = currentInstructors.Where(ci => !selectedInstIds.Contains(ci.InstructorId));
+                    _context.CourseInstructors.RemoveRange(instToRemove);
+
+                    // Add new
+                    var instToAdd = selectedInstIds.Where(id => !currentInstIds.Contains(id));
+                    foreach (var instId in instToAdd)
+                    {
+                        _context.CourseInstructors.Add(new CourseInstructor { CourseId = id, InstructorId = instId });
+                    }
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -162,6 +253,16 @@ namespace Symphony.Portal.Web.Controllers.Admin
             }
              ViewBag.Subjects = await _context.Subjects.ToListAsync();
              ViewBag.SelectedSubjectIds = selectedSubjectIds.ToList();
+
+              // Fetch Instructors
+            ViewBag.Instructors = await _context.Users
+                .Where(u => u.Role.Name == RoleNames.Instructor)
+                .Select(u => new { u.Id, u.FullName })
+                .ToListAsync();
+            ViewBag.SelectedInstructorIds = selectedInstructorIds.ToList();
+
+             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", course.CategoryId);
+             ViewData["CertificateId"] = new SelectList(_context.Certificates, "Id", "Name", course.CertificateId);
             return View(course);
         }
 

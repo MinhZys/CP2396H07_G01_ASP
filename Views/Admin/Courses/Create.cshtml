@@ -26,6 +26,16 @@
                 </div>
 
                 <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label">Category</label>
+                    <select asp-for="CategoryId" class ="form-select" asp-items="ViewBag.CategoryId"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CertificateId" class="form-label">Certificate</label>
+                    <select asp-for="CertificateId" class ="form-select" asp-items="ViewBag.CertificateId"></select>
+                </div>
+
+                <div class="mb-3">
                     <label for="imageFile" class="form-label">Course Image</label>
                     <input type="file" name="imageFile" class="form-control" accept="image/*" />
                 </div>

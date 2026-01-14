@@ -1,3 +1,5 @@
+@model IEnumerable<Symphony.Portal.Web.Models.Class>
+
 @{
     ViewData["Title"] = "My Classes";
 }
@@ -6,46 +8,59 @@
     <h1 class="h2">My Assigned Classes</h1>
 </div>
 
-<div class="row">
-    <!-- Mock Class 1 -->
-    <div class="col-md-6 mb-4">
-        <div class="card shadow-sm border-left-primary h-100">
-            <div class="card-body">
-                <h5 class="card-title text-primary font-weight-bold">T2401-A (Basic Music Theory)</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Room: 301 - Lab A</h6>
-                <p class="card-text">
-                    <strong><i class="bi bi-clock"></i> Time:</strong> Mon-Wed-Fri (08:00 - 10:00)<br />
-                    <strong><i class="bi bi-people"></i> Students:</strong> 25 Enrolled
-                </p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                        <a asp-action="Details" asp-route-id="1" class="btn btn-sm btn-outline-primary">View Student List</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Upload Material</a>
-                    </div>
-                    <small class="text-muted">Ongoing</small>
-                </div>
-            </div>
-        </div>
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        You have not been assigned to any classes yet.
     </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-left-primary">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary fw-bold">
+                            @item.Name 
+                            <span class="badge bg-secondary text-white float-end" style="font-size: 0.8rem;">@item.Course?.Title</span>
+                        </h5>
+                        
+                        <p class="card-text mt-3">
+                            <i class="fas fa-map-marker-alt me-2 text-muted"></i>
+                            <strong>Room:</strong> @(item.IsOnline ? "Online" : item.Room)
+                        </p>
+                        
+                        <p class="card-text">
+                            <i class="far fa-calendar-alt me-2 text-muted"></i>
+                            <strong>Time:</strong> @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
+                        </p>
+                        
+                        <p class="card-text">
+                            <i class="fas fa-users me-2 text-muted"></i>
+                            <strong>Students:</strong> @item.Enrollments.Count Enrolled
+                        </p>
 
-    <!-- Mock Class 2 -->
-    <div class="col-md-6 mb-4">
-        <div class="card shadow-sm border-left-success h-100">
-            <div class="card-body">
-                <h5 class="card-title text-success font-weight-bold">T2402-B (Advanced Piano)</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Room: 205 - Music Hall</h6>
-                <p class="card-text">
-                    <strong><i class="bi bi-clock"></i> Time:</strong> Tue-Thu-Sat (14:00 - 16:00)<br />
-                    <strong><i class="bi bi-people"></i> Students:</strong> 15 Enrolled
-                </p>
-                <div class="d-flex justify-content-between align-items-center">
-                     <div class="btn-group">
-                        <a asp-action="Details" asp-route-id="2" class="btn btn-sm btn-outline-success">View Student List</a>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Upload Material</a>
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-list-ul me-1"></i> View Student List
+                            </a>
+                            <a asp-controller="Materials" asp-action="Index" asp-route-classId="@item.Id" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-file-upload me-1"></i> Upload Material
+                            </a>
+                        </div>
                     </div>
-                    <small class="text-muted">Starting Soon</small>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <small class="text-muted">
+                            Status: 
+                            @if(item.EndDate < DateTime.Now) { <span class="text-danger">Ended</span> }
+                            else if(item.StartDate > DateTime.Now) { <span class="text-info">Starting Soon</span> }
+                            else { <span class="text-success fw-bold">Ongoing</span> }
+                        </small>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
-</div>
+}

@@ -19,7 +19,9 @@ namespace Symphony.Portal.Web.Models
         
         public int DurationMonths { get; set; }
 
-        public string Certification { get; set; } = string.Empty;
+        [Required]
+        public string CertificateId { get; set; } = string.Empty;
+        public Certificate? Certificate { get; set; }
         
         public bool IsActive { get; set; } = true;
 
@@ -27,8 +29,14 @@ namespace Symphony.Portal.Web.Models
 
         public CourseLevel Level { get; set; } = CourseLevel.Beginner;
 
+        [Required]
+        public string CategoryId { get; set; } = string.Empty;
+        public Category? Category { get; set; }
+
         
         public ICollection<Class> Classes { get; set; } = new List<Class>();
         public ICollection<CourseSubject> CourseSubjects { get; set; } = new List<CourseSubject>();
+        public ICollection<CourseInstructor> CourseInstructors { get; set; } = new List<CourseInstructor>();
+        public ICollection<CourseReview> CourseReviews { get; set; } = new List<CourseReview>();
     }
 }

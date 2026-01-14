@@ -43,10 +43,41 @@
                 </dl>
             </div>
             <div class="card-footer bg-white text-end">
-                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-sm">
-                    <i class="fas fa-trash-alt me-1"></i> Delete Review
-                </a>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline form-delete">
+                    <button type="button" class="btn btn-danger btn-sm btn-delete">
+                         <i class="fas fa-trash-alt me-1"></i> Delete Review
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteButtons = document.querySelectorAll('.btn-delete');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const form = this.closest('.form-delete');
+                    Swal.fire({
+                        title: 'Bạn có chắc chắn không?',
+                        text: "Hành động này không thể hoàn tác!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Xóa!',
+                        cancelButtonText: 'Hủy'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

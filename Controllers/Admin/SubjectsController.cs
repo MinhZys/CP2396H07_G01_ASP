@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using System.Linq;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -22,9 +24,18 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // GET: Admin/Subjects
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Subjects.ToListAsync());
+            var subjects = from s in _context.Subjects
+                           select s;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                subjects = subjects.Where(s => s.Name.Contains(searchString));
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+            return View(await subjects.ToListAsync());
         }
 
         // GET: Admin/Subjects/Create
@@ -36,15 +47,31 @@ namespace Symphony.Portal.Web.Controllers.Admin
         // POST: Admin/Subjects/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,StudyTime,Description")] Subject subject, IFormFile? imageFile)
+        public async Task<IActionResult> Create([Bind("Name,StudyTime,Description")] Subject subject, IFormFile? imageFile, string[] roadmapSteps)
         {
+            // Auto-generate ID
+            subject.Id = Guid.NewGuid().ToString();
+
+            // Clear validation for Id since it's not bound
+            ModelState.Remove("Id");
+
             if (ModelState.IsValid)
             {
+                // Check collision just in case (very rare with GUID)
                 if (SubjectExists(subject.Id))
                 {
                     ModelState.AddModelError("Id", "Subject ID already exists.");
                     return View(subject);
                 }
+
+                // Handle Roadmap Steps
+                var stepsList = roadmapSteps.Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+                if (!stepsList.Any())
+                {
+                     ModelState.AddModelError("LearningRoadmap", "The Learning Roadmap must have at least one step.");
+                     return View(subject);
+                }
+                subject.LearningRoadmap = JsonSerializer.Serialize(stepsList);
 
                 // Handle Image Upload
                 if (imageFile != null && imageFile.Length > 0)
@@ -88,7 +115,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         // POST: Admin/Subjects/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,StudyTime,Description")] Subject subject, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,StudyTime,Description")] Subject subject, IFormFile? imageFile, string[] roadmapSteps)
         {
             if (id != subject.Id)
             {
@@ -99,6 +126,18 @@ namespace Symphony.Portal.Web.Controllers.Admin
             {
                 try
                 {
+                    // Handle Roadmap Steps
+                    var stepsList = roadmapSteps.Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+                    if (!stepsList.Any())
+                    {
+                        ModelState.AddModelError("LearningRoadmap", "The Learning Roadmap must have at least one step.");
+                        // Keep current image to avoid losing it on error
+                        var existing = await _context.Subjects.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
+                        if (existing != null) subject.Image = existing.Image;
+                        return View(subject);
+                    }
+                    subject.LearningRoadmap = JsonSerializer.Serialize(stepsList);
+
                      // Handle Image Upload
                     if (imageFile != null && imageFile.Length > 0)
                     {

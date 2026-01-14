@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "Mentors";
+}
+
+@section Styles {
+    <style type="text/tailwindcss">
+        .cyber-card {
+            border: 1px solid rgba(0, 200, 255, 0.1);
+            background: #1e2633;
+        }
+        .cyber-card:hover {
+            border-color: #00c8ff;
+            background: rgba(0, 200, 255, 0.05);
+        }
+    </style>
+}
+
+<header class="py-12 border-b border-slate-200 dark:border-slate-800 bg-white/5 -mx-6 md:-mx-8 px-6 md:px-8 mb-8">
+    <div class="max-w-[1600px] mx-auto">
+        <h1 class="font-display text-4xl font-bold mb-2">Expert <span class="text-primary">Mentors</span></h1>
+        <p class="text-slate-400 max-w-2xl">Learn directly from industry leaders who have built the systems you use every day.</p>
+    </div>
+</header>
+
+<div class="max-w-[1600px] mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Static Mentor Cards -->
+        <div class="cyber-card rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1">
+            <div class="relative aspect-square overflow-hidden bg-surface-dark">
+                <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=00c8ff&color=fff" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Mentor">
+                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-background-dark to-transparent p-4">
+                    <h3 class="font-display font-bold text-lg text-white">Alex Johnson</h3>
+                    <p class="text-primary text-sm font-bold">Cloud Architect</p>
+                </div>
+            </div>
+            <div class="p-4">
+                <p class="text-slate-400 text-sm line-clamp-2">10+ years at AWS and Azure. Specializes in scalable infrastructure.</p>
+            </div>
+        </div>
+
+        <div class="cyber-card rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1">
+            <div class="relative aspect-square overflow-hidden bg-surface-dark">
+                    <img src="https://ui-avatars.com/api/?name=Sarah+Lee&background=00c8ff&color=fff" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Mentor">
+                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-background-dark to-transparent p-4">
+                    <h3 class="font-display font-bold text-lg text-white">Sarah Lee</h3>
+                    <p class="text-primary text-sm font-bold">Cyber Security Lead</p>
+                </div>
+            </div>
+            <div class="p-4">
+                <p class="text-slate-400 text-sm line-clamp-2">Ex-Red Team operator. Expert in penetration testing and defense.</p>
+            </div>
+        </div>
+            <div class="cyber-card rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1">
+            <div class="relative aspect-square overflow-hidden bg-surface-dark">
+                    <img src="https://ui-avatars.com/api/?name=Mike+Chen&background=00c8ff&color=fff" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Mentor">
+                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-background-dark to-transparent p-4">
+                    <h3 class="font-display font-bold text-lg text-white">Mike Chen</h3>
+                    <p class="text-primary text-sm font-bold">Full Stack Dev</p>
+                </div>
+            </div>
+            <div class="p-4">
+                <p class="text-slate-400 text-sm line-clamp-2">Frontend wizard and Node.js core contributor. Passionate about clean code.</p>
+            </div>
+        </div>
+            <div class="cyber-card rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1">
+            <div class="relative aspect-square overflow-hidden bg-surface-dark">
+                    <img src="https://ui-avatars.com/api/?name=Emily+Davis&background=00c8ff&color=fff" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Mentor">
+                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-background-dark to-transparent p-4">
+                    <h3 class="font-display font-bold text-lg text-white">Emily Davis</h3>
+                    <p class="text-primary text-sm font-bold">Data Scientist</p>
+                </div>
+            </div>
+            <div class="p-4">
+                <p class="text-slate-400 text-sm line-clamp-2">PhD in AI. Helps companies leverage data for strategic decisions.</p>
+            </div>
+        </div>
+    </div>
+</div>

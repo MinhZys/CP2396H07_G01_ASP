@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 
-namespace Symphony.Portal.Web.Controllers.Admin
+namespace Symphony.Portal.Web.Controllers.Instructor
 {
-    [Area("Admin")]
+    [Area("Instructor")]
     public class QuizzesController : Controller
     {
         private readonly AppDbContext _context;

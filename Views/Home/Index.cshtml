@@ -1,162 +1,142 @@
-﻿@using Symphony.Portal.Web.Models.Enums
 @model IEnumerable<Symphony.Portal.Web.Models.Course>
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/home.css" />
+    <style>
+        .cyber-card {
+            border: 1px solid rgba(0, 200, 255, 0.1);
+            background: #1e2633;
+        }
+        .cyber-card:active {
+            border-color: #00c8ff;
+            background: rgba(0, 200, 255, 0.05);
+        }
+    </style>
 }
 
-<!-- ... existing code ... -->
-<!-- I need to be careful with replace_file_content matching context. -->
-<!-- I'll use multi_replace for safety or just target the block if I can match it exactly. -->
-<!-- The file has 152 lines. -->
-<!-- I will target the top to add using, and the loop block. -->
-<!-- Actually, replace_file_content for the whole file or chunk is safer if I have the content. -->
-<!-- I will use multi_replace. -->
-
-
-
 <!-- Hero Section -->
-<section class="hero-section text-center">
-    <div class="hero-overlay"></div>
-    <div class="container hero-content fade-in-up">
-        <h1 class="hero-title">Nâng tầm sự nghiệp CNTT cùng Symphony</h1>
-        <p class="hero-subtitle mb-4">Mở khóa tiềm năng của bạn với các khóa học Lập trình, Mạng và Cơ sở dữ liệu chuẩn quốc tế.</p>
-        
-        <div class="d-flex justify-content-center gap-3 mb-5">
-            <a href="#courses" class="btn btn-primary-custom">Xem khóa học</a>
-            <a href="#contact" class="btn btn-outline-custom">Tư vấn miễn phí</a>
-        </div>
-
-        <!-- Search Bar -->
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="search-container d-flex gap-2">
-                    <input type="text" class="form-control form-control-custom flex-grow-1" placeholder="Bạn muốn học gì hôm nay? (VD: Java, SQL...)">
-                    <select class="form-select form-select-custom w-25 d-none d-md-block">
-                        <option value="">Tất cả danh mục</option>
-                        <option value="software">Software Dev</option>
-                        <option value="network">Networking</option>
-                        <option value="db">Database</option>
-                    </select>
-                    <button class="btn btn-primary-custom px-4"><i class="fa-solid fa-magnifying-glass"></i></button>
-                </div>
+<header class="relative overflow-hidden">
+    <div class="relative z-10 px-6 py-16 md:py-32 max-w-7xl mx-auto">
+        <div class="max-w-2xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-6">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                Next cohort starts in 4 days
+            </div>
+            <h1 class="font-display text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight mb-6">
+                Master <span class="text-primary italic">Technology</span> Today
+            </h1>
+            <p class="text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-md leading-relaxed">
+                Unlock your potential with industry-leading IT certifications and expert-led mentorship in cloud, security, and dev.
+            </p>
+            <div class="flex flex-wrap gap-4">
+                <button class="bg-primary text-background-dark px-8 py-4 rounded-lg font-bold font-display hover:opacity-90 transition-all flex items-center gap-2" onclick="window.location.href='/Courses'">
+                    Explore Courses
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <button class="bg-white/5 border border-white/10 dark:bg-surface-dark px-8 py-4 rounded-lg font-bold font-display hover:bg-white/10 transition-all" onclick="window.location.href='/Mentors'">
+                    View Mentors
+                </button>
             </div>
         </div>
     </div>
-</section>
-
-<!-- Why Choose Us -->
-<section class="section-padding bg-light">
-    <div class="container">
-        <div class="text-center mb-5 fade-in-up">
-            <h2 class="section-title">Tại sao chọn Symphony?</h2>
-        </div>
-        <div class="row">
-            <div class="col-md-3 mb-4 fade-in-up">
-                <div class="feature-box h-100">
-                    <i class="fa-solid fa-medal feature-icon"></i>
-                    <h4>Chứng chỉ Quốc tế</h4>
-                    <p class="text-muted">Chương trình đào tạo chuẩn global, được công nhận bởi các tập đoàn lớn.</p>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4 fade-in-up">
-                <div class="feature-box h-100">
-                    <i class="fa-solid fa-chalkboard-user feature-icon"></i>
-                    <h4>Giảng viên Chuyên gia</h4>
-                    <p class="text-muted">Đội ngũ giảng viên giàu kinh nghiệm thực chiến từ doanh nghiệp.</p>
-                </div>
-            </div>
-             <div class="col-md-3 mb-4 fade-in-up">
-                <div class="feature-box h-100">
-                    <i class="fa-solid fa-laptop-code feature-icon"></i>
-                    <h4>Thực hành 70%</h4>
-                    <p class="text-muted">Hệ thống phòng Lab hiện đại, cam kết thời lượng thực hành lên đến 70%.</p>
-                </div>
-            </div>
-             <div class="col-md-3 mb-4 fade-in-up">
-                <div class="feature-box h-100">
-                    <i class="fa-solid fa-briefcase feature-icon"></i>
-                    <h4>Hỗ trợ Việc làm</h4>
-                    <p class="text-muted">Kết nối doanh nghiệp, hỗ trợ phỏng vấn và tư vấn career path trọn đời.</p>
-                </div>
-            </div>
-        </div>
+    <!-- Background Decorative Element -->
+    <div class="absolute top-0 right-0 w-full h-full -z-0 opacity-20 dark:opacity-40">
+        <div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent"></div>
+        <div class="w-full h-full bg-[url('https://placeholder.pics/svg/1200')] bg-cover bg-center" data-alt="High-tech server room with glowing blue lights"></div>
     </div>
-</section>
+</header>
 
-<!-- Featured Courses -->
-<section id="courses" class="section-padding">
-    <div class="container">
-        <div class="text-center mb-5 fade-in-up">
-            <h2 class="section-title">Khóa học Nổi bật</h2>
+<!-- Featured Courses Section -->
+<section class="py-12 px-4 max-w-7xl mx-auto" id="courses">
+    <div class="flex items-end justify-between mb-8 px-2">
+        <div>
+            <p class="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-2">Curated Paths</p>
+            <h2 class="font-display text-3xl font-bold">Featured Courses</h2>
         </div>
-        <div class="row">
-            @foreach (var item in Model)
-            {
-                <div class="col-md-4 mb-4 fade-in-up">
-                    <div class="course-card">
-                        <div class="course-img-wrapper">
-                            <a asp-action="Details" asp-route-id="@item.Id">
-                                @if (!string.IsNullOrEmpty(item.Image))
-                                {
-                                    <img src="@item.Image" alt="@item.Title" class="course-img">
-                                }
-                                else
-                                {
-                                    <img src="https://via.placeholder.com/800x600?text=No+Image" alt="@item.Title" class="course-img">
-                                }
-                            </a>
-                            @if (item.Level == CourseLevel.Advanced)
-                            {
-                                <span class="badge badge-custom badge-hot">HOT</span>
-                            }
-                            else if (item.Level == CourseLevel.Beginner)
-                            {
-                                <span class="badge badge-custom badge-new">NEW</span>
-                            }
+        <a class="text-sm font-bold text-primary flex items-center gap-1 hover:underline" asp-controller="Courses" asp-action="Index">
+            View All <span class="material-symbols-outlined text-sm">open_in_new</span>
+        </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        @foreach (var item in Model.Take(3)) {
+            <!-- Card -->
+            <div class="cyber-card rounded-xl overflow-hidden group cursor-pointer" onclick="window.location.href='@Url.Action("Details", "Courses", new { id = item.Id })'">
+                <div class="relative aspect-video overflow-hidden">
+                    <div class="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500" style="background-image: url('@(string.IsNullOrEmpty(item.Image) ? "https://placeholder.pics/svg/600" : item.Image)');"></div>
+                    <div class="absolute top-3 left-3 bg-background-dark/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary uppercase">
+                        @(item.Category?.Name ?? "Featured")
+                    </div>
+                </div>
+                <div class="p-5">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-display font-bold text-lg group-hover:text-primary transition-colors">@item.Title</h3>
+                        <span class="text-primary font-bold">$@item.TuitionFee.ToString("N0")</span>
+                    </div>
+                    <p class="text-slate-400 text-sm mb-4 line-clamp-2">@item.Description</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-slate-500 text-sm">schedule</span>
+                            <span class="text-xs text-slate-500">@(item.DurationMonths * 4) Weeks</span>
                         </div>
-                        <div class="course-body">
-                            <h5 class="course-title">
-                                <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none text-dark">@item.Title</a>
-                            </h5>
-                            <div class="course-meta d-flex justify-content-between">
-                                <span><i class="fa-regular fa-clock"></i> @item.DurationMonths Tháng</span>
-                                <span><i class="fa-solid fa-layer-group"></i> @item.Level</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <div class="course-rating">
-                                    <i class="fa-solid fa-star text-warning"></i>
-                                    <i class="fa-solid fa-star text-warning"></i>
-                                    <i class="fa-solid fa-star text-warning"></i>
-                                    <i class="fa-solid fa-star text-warning"></i>
-                                    <i class="fa-solid fa-star text-warning"></i>
-                                    <small class="text-muted">(5.0)</small>
-                                </div>
-                                <div class="course-price">$@item.TuitionFee.ToString("N2")</div>
-                            </div>
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-slate-500 text-sm">bar_chart</span>
+                            <span class="text-xs text-slate-500">@item.Level</span>
                         </div>
                     </div>
                 </div>
-            }
-        </div>
-        <div class="text-center mt-4 fade-in-up">
-             <a href="#" class="btn btn-outline-dark rounded-pill px-5 py-2">Xem toàn bộ khóa học</a>
-        </div>
+            </div>
+        }
+
     </div>
 </section>
 
-<!-- Call to Action -->
-<section class="section-padding bg-dark text-white text-center">
-    <div class="container fade-in-up">
-        <h2 class="section-title text-white">Sẵn sàng bắt đầu hành trình của bạn?</h2>
-        <p class="mb-5 lead">Đừng bỏ lỡ cơ hội trở thành chuyên gia công nghệ được săn đón hàng đầu.</p>
-        <a href="#" class="btn btn-primary-custom btn-lg">Đăng ký tư vấn ngay</a>
+<!-- About Us Section -->
+<section class="py-16 px-4 bg-slate-100 dark:bg-surface-dark/30 -mx-6 md:-mx-8">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 px-6">
+        <div class="w-full md:w-1/2">
+            <div class="relative">
+                <div class="absolute -top-4 -left-4 w-24 h-24 bg-primary/20 rounded-xl -z-10"></div>
+                <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden border-2 border-primary/30">
+                    <img class="w-full h-full object-cover" data-alt="Team of professional IT instructors in a modern office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCN9RLC-eQk0IaHAaqlJ6SS8rErqf1YW3c_PUXLeS_kC8OSStfBX3Jht3TSLsw92gpmaVUQ2bDdmXa28v7x_CMIJmPEQw6gqPyis0UrBIOZXNFkTttqqIxC0Oue_eepeiX1WuzMfHVxNWKwByfzeKVvcBeRzMbEGe79z0Oy9R7AfCS9YG8_bm36NnBMjr_AiZAQv8aCjWu1nBJ7X4F8anW2l36a_0KUbfw7WE-4L3qyw0chnO9lAgbVdUoc_Rt3YEL2O6T-7JOQsZI"/>
+                </div>
+                <div class="absolute -bottom-6 -right-6 bg-primary p-6 rounded-xl hidden md:block">
+                    <p class="text-background-dark font-display font-black text-4xl">15+</p>
+                    <p class="text-background-dark font-bold text-xs uppercase tracking-tighter leading-tight">Years of<br/>Excellence</p>
+                </div>
+            </div>
+        </div>
+        <div class="w-full md:w-1/2">
+            <p class="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-4">Our Mission</p>
+            <h2 class="font-display text-4xl font-bold mb-6">Shaping the Future of IT Professionals</h2>
+            <p class="text-slate-600 dark:text-slate-400 text-lg mb-8 leading-relaxed">
+                We don't just teach code; we build careers. Our training center bridges the gap between theoretical knowledge and industry demands through hands-on labs and direct mentorship from Fortune 500 engineers.
+            </p>
+            <div class="space-y-4">
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary">verified</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg">Industry Certification</h4>
+                        <p class="text-sm text-slate-500">Get prepared for globally recognized IT certifications.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary">group</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg">Expert Mentorship</h4>
+                        <p class="text-sm text-slate-500">Direct access to professionals currently working in the field.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
-
-@section Scripts {
-    <script src="~/js/home.js"></script>
-}
