@@ -21,5 +21,11 @@ namespace Symphony.Portal.Web.Models
         public bool IsApproved { get; set; }
         public bool IsPaid { get; set; }
         public string PaymentReference { get; set; } = string.Empty;
+
+        public bool IsCompleted { get; set; } = false;
+
+        public string? CourseId { get; set; }
+        [ForeignKey("CourseId")]
+        public Course? Course { get; set; }
     }
 }

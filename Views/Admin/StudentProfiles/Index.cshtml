@@ -1,0 +1,63 @@
+@model IEnumerable<Symphony.Portal.Web.Models.ViewModels.ProfileVM>
+
+@{
+    ViewData["Title"] = "Manage Student Profiles";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Manage Student Profiles</h1>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>DOB</th>
+            <th>Profile Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        @if (!string.IsNullOrEmpty(item.AvatarUrl))
+                        {
+                            <img src="@item.AvatarUrl" alt="Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="bg-secondary rounded-circle me-2 d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px;">
+                                @item.FullName.Substring(0, 1).ToUpper()
+                            </div>
+                        }
+                        <span>@item.FullName</span>
+                    </div>
+                </td>
+                <td>@item.Email</td>
+                <td>@item.PhoneNumber</td>
+                <td>@item.AddressLine</td>
+                <td>@(item.DateOfBirth?.ToShortDateString() ?? "-")</td>
+                <td>
+                    @if (item.DateOfBirth.HasValue || !string.IsNullOrEmpty(item.PhoneNumber))
+                    {
+                        <span class="badge bg-success">Updated</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">Basic</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-sm btn-primary">Edit Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

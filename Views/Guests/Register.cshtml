@@ -1,0 +1,127 @@
+@model Symphony.Portal.Web.Models.Guest
+@{
+    ViewData["Title"] = "Guest Registration";
+}
+
+<div class="min-h-screen bg-background-light dark:bg-background-dark py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-surface-dark border border-slate-800 rounded-2xl p-8 shadow-2xl">
+            <!-- Header -->
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 text-primary mb-4">
+                    <span class="material-symbols-outlined text-3xl">app_registration</span>
+                </div>
+                <h2 class="text-3xl font-display font-bold text-white mb-2">Đăng ký dự thi</h2>
+                <p class="text-slate-400">Điền thông tin cá nhân để đăng ký kỳ thi đầu vào</p>
+            </div>
+
+            <form asp-action="Register" method="post" class="space-y-6">
+                <!-- Validation Summary -->
+                <div asp-validation-summary="ModelOnly" class="bg-red-500/10 border border-red-500/50 rounded-lg p-4 text-red-500 text-sm mb-6"></div>
+
+                <!-- Full Name -->
+                <div>
+                    <label asp-for="FullName" class="block text-sm font-medium text-slate-300 mb-2">Họ và tên</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-symbols-outlined text-slate-500">person</span>
+                        </div>
+                        <input asp-for="FullName" class="block w-full pl-10 pr-3 py-3 bg-background-dark border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm transition-colors" placeholder="Nguyễn Văn A" />
+                    </div>
+                    <span asp-validation-for="FullName" class="text-red-500 text-xs mt-1 block"></span>
+                </div>
+
+                <!-- Email & Phone Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Email -->
+                    <div>
+                        <label asp-for="Email" class="block text-sm font-medium text-slate-300 mb-2">Email</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-slate-500">mail</span>
+                            </div>
+                            <input asp-for="Email" type="email" class="block w-full pl-10 pr-3 py-3 bg-background-dark border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm transition-colors" placeholder="email@example.com" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-red-500 text-xs mt-1 block"></span>
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label asp-for="PhoneNumber" class="block text-sm font-medium text-slate-300 mb-2">Số điện thoại</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-slate-500">call</span>
+                            </div>
+                            <input asp-for="PhoneNumber" class="block w-full pl-10 pr-3 py-3 bg-background-dark border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm transition-colors" placeholder="0901234567" />
+                        </div>
+                        <span asp-validation-for="PhoneNumber" class="text-red-500 text-xs mt-1 block"></span>
+                    </div>
+                </div>
+
+                <!-- DOB & Address Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- DOB -->
+                    <div>
+                        <label asp-for="Dob" class="block text-sm font-medium text-slate-300 mb-2">Ngày sinh</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-slate-500">calendar_today</span>
+                            </div>
+                            <input asp-for="Dob" type="date" class="block w-full pl-10 pr-3 py-3 bg-background-dark border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm transition-colors [color-scheme:dark]" />
+                        </div>
+                        <span asp-validation-for="Dob" class="text-red-500 text-xs mt-1 block"></span>
+                    </div>
+
+                    <!-- Address -->
+                    <div>
+                        <label asp-for="Address" class="block text-sm font-medium text-slate-300 mb-2">Địa chỉ</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-slate-500">home</span>
+                            </div>
+                            <input asp-for="Address" class="block w-full pl-10 pr-3 py-3 bg-background-dark border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm transition-colors" placeholder="123 Đường ABC..." />
+                        </div>
+                        <span asp-validation-for="Address" class="text-red-500 text-xs mt-1 block"></span>
+                    </div>
+                </div>
+
+                <!-- Exam Selection -->
+                <div>
+                    <label asp-for="SelectedEntranceExamId" class="block text-sm font-medium text-slate-300 mb-2">Chọn kỳ thi đầu vào</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-symbols-outlined text-slate-500">edit_note</span>
+                        </div>
+                        <select asp-for="SelectedEntranceExamId" asp-items="@(new SelectList(ViewBag.EntranceExams, "Id", "Title"))" class="block w-full pl-10 pr-10 py-3 bg-background-dark border border-slate-700 rounded-lg text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm appearance-none transition-colors">
+                            <option value="">-- Vui lòng chọn kỳ thi --</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <span class="material-symbols-outlined text-slate-500">expand_more</span>
+                        </div>
+                    </div>
+                    <p class="mt-2 text-xs text-slate-500">* Lệ phí thi sẽ được hiển thị ở bước thanh toán tiếp theo.</p>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-6">
+                    <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-background-dark bg-primary hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <span class="material-symbols-outlined group-hover:animate-pulse">arrow_forward</span>
+                        </span>
+                        Đăng ký và Thanh toán
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Help Text -->
+        <p class="mt-8 text-center text-sm text-slate-500">
+            Bạn đã có tài khoản? 
+            <a asp-controller="Account" asp-action="Login" class="font-medium text-primary hover:text-primary/80 transition-colors">Đăng nhập ngay</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -60,6 +60,36 @@
 | **Inputs** | User ID, Confirm Delete |
 | **Outputs** | User removed from database (with confirmation dialog). |
 
+### 1.3 Manage Student Profiles (Admin)
+#### 1.3.1 List Student Profiles
+| Field | Description |
+|-------|-------------|
+| **Purpose** | View detailed list of students including extra profile info. |
+| **Inputs** | Filter by Class, Search by Name |
+| **Outputs** | List of students with Address, Phone, Enrollment Date. |
+
+#### 1.3.2 Edit Student Profile
+| Field | Description |
+|-------|-------------|
+| **Purpose** | Admin updates student specific details. |
+| **Inputs** | Address, Phone, Date of Birth, Gender, Avatar |
+| **Outputs** | Student profile updated. |
+
+### 1.4 Manage Instructor Profiles (Admin)
+#### 1.4.1 List Instructor Profiles
+| Field | Description |
+|-------|-------------|
+| **Purpose** | View detailed list of instructors. |
+| **Inputs** | Search by Name, Specialization |
+| **Outputs** | List of instructors with Bio, Experience, Specialization. |
+
+#### 1.4.2 Edit Instructor Profile
+| Field | Description |
+|-------|-------------|
+| **Purpose** | Admin updates instructor specific details. |
+| **Inputs** | Bio, Specialization, Years of Experience, Certifications, Github URL |
+| **Outputs** | Instructor profile updated. |
+
 ---
 
 ## 2. ACADEMIC MANAGEMENT (Admin)

@@ -10,9 +10,13 @@ namespace Symphony.Portal.Web.Models
         [StringLength(36)]
         public string Id { get; set; } = string.Empty;
 
-        public string StudentId { get; set; } = string.Empty;
+        public string? StudentId { get; set; }
         [ForeignKey("StudentId")]
         public User? Student { get; set; }
+
+        public string? GuestId { get; set; }
+        [ForeignKey("GuestId")]
+        public Guest? Guest { get; set; }
 
         public decimal Amount { get; set; }
 

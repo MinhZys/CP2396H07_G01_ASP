@@ -27,6 +27,8 @@ namespace Symphony.Portal.Web.Data
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<User> Users { get; set; }
         
+        public DbSet<Guest> Guests { get; set; }
+
         // New Models
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Quiz> Quizzes { get; set; }
@@ -43,6 +45,10 @@ namespace Symphony.Portal.Web.Data
             base.OnModelCreating(modelBuilder);
 
             // Configure Enums as Strings
+            modelBuilder.Entity<Guest>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
+
             modelBuilder.Entity<StudentRegistration>()
                 .Property(e => e.Status)
                 .HasConversion<string>();
@@ -71,7 +77,8 @@ namespace Symphony.Portal.Web.Data
             modelBuilder.Entity<Role>().HasData(
                 new Role { Id = "1", Name = "Admin", Description = "System Administrator" },
                 new Role { Id = "2", Name = "Instructor", Description = "Course Instructor" },
-                new Role { Id = "3", Name = "Student", Description = "Learner" }
+                new Role { Id = "3", Name = "Student", Description = "Learner" },
+                new Role { Id = "4", Name = "Guest", Description = "Prospective Student" }
             );
 
             // Seeding Users

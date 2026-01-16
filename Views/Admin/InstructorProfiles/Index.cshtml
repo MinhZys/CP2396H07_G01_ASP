@@ -1,0 +1,72 @@
+@model IEnumerable<Symphony.Portal.Web.Models.ViewModels.ProfileVM>
+
+@{
+    ViewData["Title"] = "Manage Instructor Profiles";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Manage Instructor Profiles</h1>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Instructor</th>
+            <th>Specialization</th>
+            <th>Experience (Years)</th>
+            <th>Bio</th>
+            <th>Github</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        @if (!string.IsNullOrEmpty(item.AvatarUrl))
+                        {
+                            <img src="@item.AvatarUrl" alt="Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="bg-secondary rounded-circle me-2 d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px;">
+                                @item.FullName.Substring(0, 1).ToUpper()
+                            </div>
+                        }
+                        <div>
+                            <strong>@item.FullName</strong><br/>
+                            <small class="text-muted">@item.Email</small>
+                        </div>
+                    </div>
+                </td>
+                <td>@item.Specialization</td>
+                <td>@item.YearsOfExperience</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.Bio))
+                    {
+                        if (item.Bio.Length > 50)
+                        {
+                             <span title="@item.Bio">@item.Bio.Substring(0, 50)...</span>
+                        }
+                        else
+                        {
+                            @item.Bio
+                        }
+                    }
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.GithubUrl))
+                    {
+                        <a href="@item.GithubUrl" target="_blank">View</a>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-sm btn-primary">Edit Profile</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

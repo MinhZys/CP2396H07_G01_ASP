@@ -1,0 +1,179 @@
+@model Symphony.Portal.Web.Models.Guest
+@using Symphony.Portal.Web.Models.Enums
+@{
+    ViewData["Title"] = "Guest Dashboard";
+    var results = ViewBag.ExamResults as IEnumerable<Symphony.Portal.Web.Models.ExamResult>;
+}
+
+<div class="min-h-screen bg-background-light dark:bg-background-dark py-12 px-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Dashboard Header -->
+        <div class="mb-10">
+            <h1 class="text-3xl font-display font-bold text-slate-900 dark:text-white mb-2">My Dashboard</h1>
+            <p class="text-slate-500 dark:text-slate-400">Manage your profile, exam schedule, and view results.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Sidebar / Profile Info -->
+            <div class="lg:col-span-1">
+                <div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm sticky top-28">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                            <span class="material-symbols-outlined text-3xl">person</span>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-xl text-slate-900 dark:text-white">@Model.FullName</h2>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs font-bold uppercase rounded-full tracking-wider">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                @Model.Status
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 border-t border-slate-100 dark:border-slate-700/50 pt-6">
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block">Email</label>
+                            <p class="text-slate-800 dark:text-slate-200 font-medium truncate">@Model.Email</p>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block">Phone</label>
+                            <p class="text-slate-800 dark:text-slate-200 font-medium">@Model.PhoneNumber</p>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block">Date of Birth</label>
+                            <p class="text-slate-800 dark:text-slate-200 font-medium">@Model.Dob.ToString("dd/MM/yyyy")</p>
+                        </div>
+                         <div>
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block">Address</label>
+                            <p class="text-slate-800 dark:text-slate-200 font-medium">@Model.Address</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Exam Schedule -->
+                <div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl p-8 shadow-sm">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="material-symbols-outlined text-primary text-2xl">calendar_month</span>
+                        <h3 class="font-display text-xl font-bold text-slate-900 dark:text-white">My Exam Schedule</h3>
+                    </div>
+
+                    @if (Model.SelectedEntranceExam != null)
+                    {
+                        <div class="bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-slate-700 rounded-xl p-6 relative overflow-hidden group">
+                           <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <span class="material-symbols-outlined text-9xl text-slate-500">event_available</span>
+                           </div>
+                           
+                           <div class="relative z-10">
+                                <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-4">@Model.SelectedEntranceExam.Title</h4>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                                            <span class="material-symbols-outlined">schedule</span>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-slate-500 font-bold uppercase">Date & Time</p>
+                                            <p class="text-slate-900 dark:text-white font-medium">@Model.SelectedEntranceExam.ExamDate.ToString("dd/MM/yyyy")</p>
+                                            <p class="text-slate-500 text-sm">@Model.SelectedEntranceExam.ExamDate.ToString("HH:mm tt")</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center">
+                                            <span class="material-symbols-outlined">location_on</span>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-slate-500 font-bold uppercase">Location</p>
+                                            <p class="text-slate-900 dark:text-white font-medium">Center Office</p>
+                                            <p class="text-slate-500 text-sm">Room details via email</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6 flex gap-3">
+                                    @if(Model.SelectedEntranceExam.ExamDate > DateTime.Now)
+                                    {
+                                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-500 text-sm font-bold">
+                                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                            Upcoming
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                         <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-500/10 text-slate-500 text-sm font-bold">
+                                            Completed
+                                        </div>
+                                    }
+                                </div>
+                           </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-10">
+                            <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                                <span class="material-symbols-outlined text-3xl">event_busy</span>
+                            </div>
+                            <p class="text-slate-600 dark:text-slate-400">You have not registered for any entrance exam yet.</p>
+                            <a asp-controller="Guests" asp-action="Register" class="inline-block mt-4 text-primary font-bold hover:underline">Register Now</a>
+                        </div>
+                    }
+                </div>
+
+                <!-- Exam Results -->
+                <div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl p-8 shadow-sm">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="material-symbols-outlined text-primary text-2xl">school</span>
+                        <h3 class="font-display text-xl font-bold text-slate-900 dark:text-white">Entrance Exam Results</h3>
+                    </div>
+
+                    @if (results != null && results.Any())
+                    {
+                        <div class="overflow-hidden border border-slate-200 dark:border-slate-700 rounded-xl">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 dark:bg-slate-800 text-xs font-bold uppercase text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                                        <th class="py-3 px-4">Exam</th>
+                                        <th class="py-3 px-4">Date</th>
+                                        <th class="py-3 px-4">Score</th>
+                                        <th class="py-3 px-4 text-right">Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm">
+                                    @foreach (var res in results)
+                                    {
+                                        <tr class="border-b last:border-0 border-slate-200 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                            <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">@(res.EntranceExam?.Title ?? "N/A")</td>
+                                            <td class="py-3 px-4 text-slate-500">@res.ExamDate.ToString("dd/MM/yyyy")</td>
+                                            <td class="py-3 px-4 font-mono font-bold">@res.Score</td>
+                                            <td class="py-3 px-4 text-right">
+                                                @if (res.IsPassed)
+                                                {
+                                                    <span class="inline-flex items-center px-2 py-1 rounded bg-green-500/10 text-green-500 text-xs font-bold uppercase">Pass</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="inline-flex items-center px-2 py-1 rounded bg-red-500/10 text-red-500 text-xs font-bold uppercase">Fail</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-10 border border-dashed border-slate-700 rounded-xl">
+                            <p class="text-slate-500 italic">No exam results available yet.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

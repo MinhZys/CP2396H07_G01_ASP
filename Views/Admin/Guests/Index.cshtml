@@ -1,0 +1,76 @@
+@model IEnumerable<Symphony.Portal.Web.Models.Guest>
+@using Symphony.Portal.Web.Models.Enums
+
+@{
+    ViewData["Title"] = "Manage Guest Registrations";
+    string currentStatus = ViewBag.CurrentStatus as string;
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Guest Registrations</h6>
+        <div>
+            <a href="@Url.Action("Index", new { status = "PendingPayment" })" class="btn btn-sm btn-secondary">Pending Payment</a>
+            <a href="@Url.Action("Index", new { status = "PaidPendingApproval" })" class="btn btn-sm btn-warning">Needs Approval</a>
+            <a href="@Url.Action("Index", new { status = "Approved" })" class="btn btn-sm btn-success">Approved</a>
+            <a href="@Url.Action("Index")" class="btn btn-sm btn-outline-secondary">All</a>
+        </div>
+    </div>
+    <div class="card-body">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+         @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Created</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Exam</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        <tr>
+                            <td>@item.CreatedAt.ToShortDateString()</td>
+                            <td>@item.FullName</td>
+                            <td>@item.Email</td>
+                            <td>@item.SelectedEntranceExam?.Title</td>
+                            <td>
+                                @if(item.Status == GuestRegistrationStatus.PaidPendingApproval) {
+                                    <span class="badge bg-warning text-dark">Paid - Pending Approval</span>
+                                } else if (item.Status == GuestRegistrationStatus.Approved) {
+                                    <span class="badge bg-success">Approved</span>
+                                } else if (item.Status == GuestRegistrationStatus.Rejected) {
+                                    <span class="badge bg-danger">Rejected</span>
+                                } else {
+                                    <span class="badge bg-secondary">@item.Status</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.Status == GuestRegistrationStatus.PaidPendingApproval)
+                                {
+                                    <form asp-action="Approve" asp-route-id="@item.Id" method="post" style="display:inline">
+                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Approve and Create User?');">Approve</button>
+                                    </form>
+                                    <form asp-action="Reject" asp-route-id="@item.Id" method="post" style="display:inline">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Reject this registration?');">Reject</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
