@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Models.Enums;
 using System.Security.Claims;
 
 namespace Symphony.Portal.Web.Controllers.Instructor
@@ -25,9 +26,16 @@ namespace Symphony.Portal.Web.Controllers.Instructor
         public async Task<IActionResult> Index(string? classId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            // Get classes assigned to this instructor (Teaching)
+            var assignedClassIds = await _context.Assignments
+                .Where(a => a.InstructorId == userId && a.AssignmentType == AssignmentType.Teaching)
+                .Select(a => a.ClassId)
+                .ToListAsync();
+
             var query = _context.Materials
                 .Include(m => m.Class)
-                .Where(m => m.Class.InstructorId == userId);
+                .Where(m => assignedClassIds.Contains(m.ClassId));
 
             if (!string.IsNullOrEmpty(classId))
             {
@@ -35,13 +43,14 @@ namespace Symphony.Portal.Web.Controllers.Instructor
                 ViewData["SelectedClassId"] = classId;
             }
 
-            // Populate class dropdown for filter/upload
-            var myClasses = await _context.Classes
-                .Where(c => c.InstructorId == userId)
-                .Select(c => new { c.Id, Name = $"{c.Name} ({c.Course.Title})" })
+            // Populate class dropdown
+            var myAssignments = await _context.Assignments
+                .Include(a => a.Class)
+                .Where(a => a.InstructorId == userId && a.AssignmentType == AssignmentType.Teaching)
+                .Select(a => new { a.ClassId, Name = $"{a.Class.ClassName} ({a.TermOrExamName})" })
                 .ToListAsync();
             
-            ViewBag.Classes = new SelectList(myClasses, "Id", "Name", classId);
+            ViewBag.Classes = new SelectList(myAssignments, "ClassId", "Name", classId);
 
             var materials = await query.OrderByDescending(m => m.UploadDate).ToListAsync();
             return View(materials);
@@ -90,8 +99,8 @@ namespace Symphony.Portal.Web.Controllers.Instructor
             var material = await _context.Materials.FindAsync(id);
             if (material != null)
             {
-                // Verify ownership via Class -> Instructor
-                var isOwner = await _context.Classes.AnyAsync(c => c.Id == material.ClassId && c.InstructorId == User.FindFirstValue(ClaimTypes.NameIdentifier));
+                // Verify ownership via Assignment -> Instructor
+                var isOwner = await _context.Assignments.AnyAsync(a => a.ClassId == material.ClassId && a.InstructorId == User.FindFirstValue(ClaimTypes.NameIdentifier));
                 
                 if(isOwner)
                 {

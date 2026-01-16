@@ -121,6 +121,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ClassCategories" ? "active" : "")" asp-area="Admin" asp-controller="ClassCategories" asp-action="Index">
+                                <i class="fas fa-tags"></i> Class Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Courses" ? "active" : "")" asp-area="Admin" asp-controller="Courses" asp-action="Index">
                                 <i class="fas fa-graduation-cap"></i> Courses
                             </a>
@@ -136,9 +141,9 @@
                                 <i class="fas fa-users-class"></i> Classes
                             </a>
                         </li>
-                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "TeacherAssignment" ? "active" : "")" asp-area="Admin" asp-controller="TeacherAssignment" asp-action="Index">
-                                <i class="fas fa-user-tie"></i> Teacher Assignment
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Assignments" ? "active" : "")" asp-area="Admin" asp-controller="Assignments" asp-action="Index">
+                                <i class="fas fa-tasks"></i> Task Assignments
                             </a>
                         </li>
 

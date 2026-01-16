@@ -20,7 +20,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>@(item.Student?.FullName ?? "Unknown")</td>
-            <td>@(item.Class?.Name ?? "Unknown")</td>
+            <td>@(item.Class?.ClassName ?? "Unknown")</td>
             <td>@item.EnrolledDate.ToShortDateString()</td>
             <td>@item.PaymentReference</td>
             <td>

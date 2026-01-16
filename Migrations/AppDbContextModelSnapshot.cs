@@ -22,6 +22,53 @@ namespace CP2396H07_G01.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Symphony.Portal.Web.Models.Assignment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("AssignmentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CancellationReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClassId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InstructorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TermOrExamName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.HasIndex("InstructorId");
+
+                    b.ToTable("Assignments");
+                });
+
             modelBuilder.Entity("Symphony.Portal.Web.Models.Category", b =>
                 {
                     b.Property<string>("Id")
@@ -110,13 +157,6 @@ namespace CP2396H07_G01.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1",
-                            Description = "Awarded upon completing all course requirements.",
-                            IsActive = true,
-                            Name = "Certificate of Completion"
-                        },
-                        new
-                        {
                             Id = "2",
                             Description = "Recognized industry standard certification.",
                             IsActive = true,
@@ -130,39 +170,79 @@ namespace CP2396H07_G01.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("nvarchar(36)");
 
-                    b.Property<string>("CourseId")
+                    b.Property<string>("ClassCategoryId")
                         .IsRequired()
                         .HasColumnType("nvarchar(36)");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<string>("ClassName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("InstructorId")
+                    b.Property<int>("NumberOfSeats")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassCategoryId");
+
+                    b.ToTable("Classes");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.ClassCategory", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
                         .HasColumnType("nvarchar(36)");
 
-                    b.Property<bool>("IsOnline")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("OfflineFee")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Room")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseId");
+                    b.ToTable("ClassCategories");
 
-                    b.HasIndex("InstructorId");
-
-                    b.ToTable("Classes");
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            CreatedAt = new DateTime(2026, 1, 17, 2, 46, 17, 900, DateTimeKind.Local).AddTicks(1555),
+                            Description = "Standard classrooms",
+                            IsActive = true,
+                            Name = "Theory"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            CreatedAt = new DateTime(2026, 1, 17, 2, 46, 17, 900, DateTimeKind.Local).AddTicks(1570),
+                            Description = "Computer labs",
+                            IsActive = true,
+                            Name = "Lab"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            CreatedAt = new DateTime(2026, 1, 17, 2, 46, 17, 900, DateTimeKind.Local).AddTicks(1571),
+                            Description = "Virtual classes",
+                            IsActive = true,
+                            Name = "Online"
+                        });
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Course", b =>
@@ -440,8 +520,14 @@ namespace CP2396H07_G01.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("ClassId")
+                        .HasColumnType("nvarchar(36)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Dob")
                         .HasColumnType("datetime2");
@@ -450,6 +536,9 @@ namespace CP2396H07_G01.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ExamRoom")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -472,6 +561,8 @@ namespace CP2396H07_G01.Migrations
                         .HasColumnType("nvarchar(36)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
 
                     b.HasIndex("SelectedEntranceExamId");
 
@@ -990,21 +1081,34 @@ namespace CP2396H07_G01.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Symphony.Portal.Web.Models.Class", b =>
+            modelBuilder.Entity("Symphony.Portal.Web.Models.Assignment", b =>
                 {
-                    b.HasOne("Symphony.Portal.Web.Models.Course", "Course")
-                        .WithMany("Classes")
-                        .HasForeignKey("CourseId")
+                    b.HasOne("Symphony.Portal.Web.Models.Class", "Class")
+                        .WithMany()
+                        .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Symphony.Portal.Web.Models.User", "Instructor")
                         .WithMany()
-                        .HasForeignKey("InstructorId");
+                        .HasForeignKey("InstructorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Course");
+                    b.Navigation("Class");
 
                     b.Navigation("Instructor");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.Class", b =>
+                {
+                    b.HasOne("Symphony.Portal.Web.Models.ClassCategory", "ClassCategory")
+                        .WithMany()
+                        .HasForeignKey("ClassCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ClassCategory");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Course", b =>
@@ -1086,7 +1190,7 @@ namespace CP2396H07_G01.Migrations
             modelBuilder.Entity("Symphony.Portal.Web.Models.Enrollment", b =>
                 {
                     b.HasOne("Symphony.Portal.Web.Models.Class", "Class")
-                        .WithMany("Enrollments")
+                        .WithMany()
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1140,6 +1244,10 @@ namespace CP2396H07_G01.Migrations
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Guest", b =>
                 {
+                    b.HasOne("Symphony.Portal.Web.Models.Class", "Class")
+                        .WithMany()
+                        .HasForeignKey("ClassId");
+
                     b.HasOne("Symphony.Portal.Web.Models.EntranceExam", "SelectedEntranceExam")
                         .WithMany()
                         .HasForeignKey("SelectedEntranceExamId");
@@ -1147,6 +1255,8 @@ namespace CP2396H07_G01.Migrations
                     b.HasOne("Symphony.Portal.Web.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
+
+                    b.Navigation("Class");
 
                     b.Navigation("SelectedEntranceExam");
 
@@ -1295,15 +1405,8 @@ namespace CP2396H07_G01.Migrations
                     b.Navigation("Courses");
                 });
 
-            modelBuilder.Entity("Symphony.Portal.Web.Models.Class", b =>
-                {
-                    b.Navigation("Enrollments");
-                });
-
             modelBuilder.Entity("Symphony.Portal.Web.Models.Course", b =>
                 {
-                    b.Navigation("Classes");
-
                     b.Navigation("CourseInstructors");
 
                     b.Navigation("CourseReviews");

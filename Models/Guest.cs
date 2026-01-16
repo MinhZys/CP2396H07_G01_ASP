@@ -42,5 +42,13 @@ namespace Symphony.Portal.Web.Models
         
         [ForeignKey("UserId")]
         public User? User { get; set; }
+
+        // Enhancements for Approval
+        public string? ExamRoom { get; set; } // Room to study/exam
+        public string? Description { get; set; }
+
+        public string? ClassId { get; set; }
+        [ForeignKey("ClassId")]
+        public Class? Class { get; set; } // Link to school class side
     }
 }

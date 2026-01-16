@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Models.Enums;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -21,7 +23,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         // GET: Admin/Classes
         public async Task<IActionResult> Index()
         {
-            var classes = await _context.Classes.Include(c => c.Course).Include(c => c.Instructor).ToListAsync();
+            var classes = await _context.Classes.Include(c => c.ClassCategory).ToListAsync();
             return View(classes);
         }
 
@@ -29,9 +31,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         {
             if (id == null) return NotFound();
             var @class = await _context.Classes
-                .Include(c => c.Course)
-                .Include(c => c.Instructor)
-                .Include(c => c.Enrollments).ThenInclude(e => e.Student)
+                .Include(c => c.ClassCategory)
                 .FirstOrDefaultAsync(m => m.Id == id);
             
             if (@class == null) return NotFound();
@@ -41,25 +41,26 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
         public IActionResult Create()
         {
-            ViewBag.Courses = _context.Courses.ToList();
-            ViewBag.Instructors = _context.Users.Where(u => u.Role.Name == "Instructor").ToList();
+            ViewBag.ClassCategories = new SelectList(_context.ClassCategories.Where(c => c.IsActive), "Id", "Name");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Class @class)
+        public async Task<IActionResult> Create([Bind("Id,ClassName,ClassCategoryId,NumberOfSeats,Status")] Class @class)
         {
             if (ModelState.IsValid)
             {
                 if (string.IsNullOrEmpty(@class.Id)) @class.Id = Guid.NewGuid().ToString();
+                
+                // Ensure CreatedAt is set if not bound (though model has default, validation might need it)
+                @class.CreatedAt = DateTime.Now;
 
                 _context.Add(@class);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Courses = _context.Courses.ToList();
-            ViewBag.Instructors = _context.Users.Where(u => u.Role.Name == "Instructor").ToList();
+            ViewBag.ClassCategories = new SelectList(_context.ClassCategories.Where(c => c.IsActive), "Id", "Name", @class.ClassCategoryId);
             return View(@class);
         }
 
@@ -69,14 +70,13 @@ namespace Symphony.Portal.Web.Controllers.Admin
             var @class = await _context.Classes.FindAsync(id);
             if (@class == null) return NotFound();
             
-            ViewBag.Courses = _context.Courses.ToList();
-            ViewBag.Instructors = _context.Users.Where(u => u.Role.Name == "Instructor").ToList();
+            ViewBag.ClassCategories = new SelectList(_context.ClassCategories.Where(c => c.IsActive), "Id", "Name", @class.ClassCategoryId);
             return View(@class);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, Class @class)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,ClassName,ClassCategoryId,NumberOfSeats,Status")] Class @class)
         {
             if (id != @class.Id) return NotFound();
 
@@ -94,8 +94,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Courses = _context.Courses.ToList();
-            ViewBag.Instructors = _context.Users.Where(u => u.Role.Name == "Instructor").ToList();
+            ViewBag.ClassCategories = new SelectList(_context.ClassCategories.Where(c => c.IsActive), "Id", "Name", @class.ClassCategoryId);
             return View(@class);
         }
 
@@ -103,7 +102,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         {
             if (id == null) return NotFound();
             var @class = await _context.Classes
-                .Include(c => c.Course)
+                .Include(c => c.ClassCategory)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@class == null) return NotFound();
 
@@ -121,43 +120,6 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
-        }
-
-        // GET: Admin/Classes/PendingEnrollments
-        public async Task<IActionResult> PendingEnrollments()
-        {
-            var pending = await _context.Enrollments
-                .Include(e => e.Class).ThenInclude(c => c.Course)
-                .Include(e => e.Student)
-                .Where(e => !e.IsApproved)
-                .OrderBy(e => e.EnrolledDate)
-                .ToListAsync();
-            return View(pending);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ApproveEnrollment(string id)
-        {
-            var enrollment = await _context.Enrollments.FindAsync(id);
-            if (enrollment == null) return NotFound();
-
-            enrollment.IsApproved = true;
-            enrollment.IsPaid = true; 
-            await _context.SaveChangesAsync();
-            
-            return RedirectToAction(nameof(PendingEnrollments));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> RejectEnrollment(string id)
-        {
-            var enrollment = await _context.Enrollments.FindAsync(id);
-            if (enrollment != null)
-            {
-                _context.Enrollments.Remove(enrollment);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction(nameof(PendingEnrollments));
         }
     }
 }

@@ -1,0 +1,133 @@
+@model Symphony.Portal.Web.Models.Assignment
+@using Symphony.Portal.Web.Models.Enums
+
+@{
+    ViewData["Title"] = "Task Details";
+}
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Assignment Details</h6>
+                <a asp-action="Index" class="btn btn-secondary btn-sm">Back to List</a>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-12 text-center">
+                        <h3 class="font-weight-bold">@Model.Title</h3>
+                        <span class="badge bg-secondary p-2">@Model.AssignmentType</span>
+                        <hr/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Term / Exam:</strong> @Model.TermOrExamName</p>
+                        <p><strong>Status:</strong> 
+                            @if (Model.Status == AssignmentStatus.Assigned)
+                            {
+                                <span class="badge bg-primary">Assigned (Waiting for you)</span>
+                            }
+                            else if (Model.Status == AssignmentStatus.Received)
+                            {
+                                <span class="badge bg-success">Received</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Cancelled</span>
+                            }
+                        </p>
+                        <p><strong>Assigned Date:</strong> @Model.CreatedAt.ToString("g")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title">Class / Room Details</h5>
+                                @if(Model.Class != null)
+                                {
+                                    <p class="card-text">
+                                        <strong>Name:</strong> @Model.Class.ClassName <br/>
+                                        <strong>Category:</strong> @Model.Class.ClassCategory?.Name <br/>
+                                        <strong>Seats:</strong> @Model.Class.NumberOfSeats
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="text-muted">No class information.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h5>Notes:</h5>
+                        <div class="alert alert-secondary">
+                            @(string.IsNullOrEmpty(Model.Note) ? "No notes provided." : Model.Note)
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.Status == AssignmentStatus.Cancelled)
+                {
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5 class="text-danger">Cancellation Reason:</h5>
+                            <div class="alert alert-danger">
+                                @Model.CancellationReason
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="row mt-4">
+                    <div class="col-12 text-center">
+                        @if (Model.Status == AssignmentStatus.Assigned)
+                        {
+                            <form asp-action="UpdateStatus" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <input type="hidden" name="status" value="@AssignmentStatus.Received" />
+                                <button type="submit" class="btn btn-success btn-lg mx-2">
+                                    <i class="fas fa-check"></i> Receive Task
+                                </button>
+                            </form>
+
+                            <button type="button" class="btn btn-danger btn-lg mx-2" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                <i class="fas fa-times"></i> Cancel Task
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form asp-action="UpdateStatus" method="post">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cancelModalLabel">Cancel Assignment</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <input type="hidden" name="status" value="@AssignmentStatus.Cancelled" />
+            
+            <div class="mb-3">
+                <label for="cancellationReason" class="form-label">Reason for Cancellation</label>
+                <textarea class="form-control" name="cancellationReason" id="cancellationReason" rows="3" required placeholder="Why are you cancelling this task?"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep It</button>
+            <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>

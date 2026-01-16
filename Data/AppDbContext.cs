@@ -39,6 +39,9 @@ namespace Symphony.Portal.Web.Data
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<StudentProfile> StudentProfiles { get; set; }
         public DbSet<InstructorProfile> InstructorProfiles { get; set; }
+        // Class Management
+        public DbSet<ClassCategory> ClassCategories { get; set; }
+        public DbSet<Assignment> Assignments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,6 +51,22 @@ namespace Symphony.Portal.Web.Data
             modelBuilder.Entity<Guest>()
                 .Property(e => e.Status)
                 .HasConversion<string>();
+
+            // Class Category & Classroom Enums
+            // Class Category & Assignment Enums
+            modelBuilder.Entity<Class>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Assignment>()
+                .Property(e => e.AssignmentType)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Assignment>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
+
+
 
             modelBuilder.Entity<StudentRegistration>()
                 .Property(e => e.Status)
@@ -121,8 +140,14 @@ namespace Symphony.Portal.Web.Data
 
             // Seed Certificates
             modelBuilder.Entity<Certificate>().HasData(
-                new Certificate { Id = "1", Name = "Certificate of Completion", Description = "Awarded upon completing all course requirements.", IsActive = true },
                 new Certificate { Id = "2", Name = "Professional Certification", Description = "Recognized industry standard certification.", IsActive = true }
+            );
+
+            // Seed Class Categories
+            modelBuilder.Entity<ClassCategory>().HasData(
+                new ClassCategory { Id = "1", Name = "Theory", Description = "Standard classrooms", IsActive = true },
+                new ClassCategory { Id = "2", Name = "Lab", Description = "Computer labs", IsActive = true },
+                new ClassCategory { Id = "3", Name = "Online", Description = "Virtual classes", IsActive = true }
             );
         }
     }

@@ -1,0 +1,74 @@
+@model Symphony.Portal.Web.Models.Assignment
+@using Symphony.Portal.Web.Models.Enums
+
+@{
+    ViewData["Title"] = "Create Assignment";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Create Task Assignment</h6>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" placeholder="e.g. Teaching C#" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="TermOrExamName" class="control-label"></label>
+                <input asp-for="TermOrExamName" class="form-control" placeholder="e.g. Spring 2026 or Entrance Exam" />
+                <span asp-validation-for="TermOrExamName" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group mb-3">
+                    <label asp-for="ClassId" class="control-label">Class (Room)</label>
+                    <select asp-for="ClassId" class="form-select" asp-items="ViewBag.Classes">
+                        <option value="">-- Select Class --</option>
+                    </select>
+                    <span asp-validation-for="ClassId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                    <label asp-for="InstructorId" class="control-label">Instructor</label>
+                    <select asp-for="InstructorId" class="form-select" asp-items="ViewBag.Instructors">
+                        <option value="">-- Select Instructor --</option>
+                    </select>
+                    <span asp-validation-for="InstructorId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                 <div class="col-md-6 form-group mb-3">
+                    <label asp-for="AssignmentType" class="control-label">Task Type</label>
+                    <select asp-for="AssignmentType" class="form-select" asp-items="Html.GetEnumSelectList<AssignmentType>()"></select>
+                    <span asp-validation-for="AssignmentType" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                    <label asp-for="Status" class="control-label"></label>
+                    <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<AssignmentStatus>()"></select>
+                     <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Note" class="control-label"></label>
+                <textarea asp-for="Note" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

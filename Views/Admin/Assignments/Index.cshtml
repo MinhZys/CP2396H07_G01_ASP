@@ -1,0 +1,83 @@
+@model IEnumerable<Symphony.Portal.Web.Models.Assignment>
+@using Symphony.Portal.Web.Models.Enums
+
+@{
+    ViewData["Title"] = "Task Assignments";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Task Assignments</h6>
+        <a asp-action="Create" class="btn btn-primary btn-sm">Create Assignment</a>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-3">
+                 <select name="instructorId" class="form-select" asp-items="ViewBag.Instructors">
+                    <option value="">-- All Instructors --</option>
+                </select>
+            </div>
+             <div class="col-md-3">
+                 <select name="classId" class="form-select" asp-items="ViewBag.Classes">
+                    <option value="">-- All Classes --</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="searchTerm" class="form-control" placeholder="Search Title/Term..." value="@Context.Request.Query["searchTerm"]" />
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-secondary">Filter</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Class (Room)</th>
+                        <th>Category</th>
+                        <th>Instructor</th>
+                        <th>Term / Exam</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        <tr>
+                            <td>@item.Title</td>
+                             <td>
+                                <span class="badge bg-secondary">@item.AssignmentType</span>
+                            </td>
+                            <td>@item.Class?.ClassName</td>
+                            <td>@item.Class?.ClassCategory?.Name</td>
+                            <td>@(item.Instructor?.FullName ?? "Unassigned")</td>
+                            <td>@item.TermOrExamName</td>
+                             <td>
+                                @if (item.Status == AssignmentStatus.Assigned)
+                                {
+                                    <span class="badge bg-primary">Assigned</span>
+                                }
+                                else if (item.Status == AssignmentStatus.Received)
+                                {
+                                    <span class="badge bg-success">Received</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Cancelled</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

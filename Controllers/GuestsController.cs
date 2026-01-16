@@ -120,6 +120,7 @@ namespace Symphony.Portal.Web.Controllers
 
             var guest = await _context.Guests
                 .Include(g => g.SelectedEntranceExam)
+                .Include(g => g.Class) // Include Class Info
                 .FirstOrDefaultAsync(g => g.UserId == user.Id || g.Email == user.Email); // Fallback to Email match if Link missing
 
             if (guest == null)

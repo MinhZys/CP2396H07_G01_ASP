@@ -8,28 +8,35 @@
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New Class</a>
-    <a asp-action="PendingEnrollments" class="btn btn-warning">Approvals</a>
 </p>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Course</th>
-            <th>Instructor</th>
-            <th>Start Date</th>
-            <th>Type</th>
+        <tr>
+            <th>Class Name</th>
+            <th>Category</th>
+            <th>Seats</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>@item.Name</td>
-            <td>@item.Course?.Title</td>
-            <td>@(item.Instructor?.FullName ?? "Unassigned")</td>
-            <td>@item.StartDate.ToShortDateString()</td>
-            <td>@(item.IsOnline ? "Online" : "Offline")</td>
+            <td>@item.ClassName</td>
+            <td>@item.ClassCategory?.Name</td>
+            <td>@item.NumberOfSeats</td>
+            <td>
+                @if (item.Status == Symphony.Portal.Web.Models.Enums.ClassStatus.Active)
+                {
+                    <span class="badge bg-success">Active</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Inactive</span>
+                }
+            </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

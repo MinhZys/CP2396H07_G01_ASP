@@ -76,7 +76,7 @@ namespace Symphony.Portal.Web.Controllers
                 .Include(c => c.CourseSubjects).ThenInclude(cs => cs.Subject)
                 .Include(c => c.CourseInstructors).ThenInclude(ci => ci.Instructor)
                 .Include(c => c.CourseReviews).ThenInclude(cr => cr.Student)
-                .Include(c => c.Classes).ThenInclude(cl => cl.Instructor)
+                .Include(c => c.CourseReviews).ThenInclude(cr => cr.Student)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (course == null) return NotFound();

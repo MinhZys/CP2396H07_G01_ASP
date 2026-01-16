@@ -34,13 +34,14 @@ namespace Symphony.Portal.Web.Controllers.Admin
             }
 
             ViewBag.CurrentStatus = status;
-            return View(await query.OrderByDescending(g => g.CreatedAt).ToListAsync());
+            ViewBag.Classes = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(await _context.Classes.ToListAsync(), "Id", "ClassName");
+            return View(await query.Include(g => g.SelectedEntranceExam).OrderByDescending(g => g.CreatedAt).ToListAsync());
         }
 
         // POST: Admin/Guests/Approve/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Approve(string id)
+        public async Task<IActionResult> Approve(string id, string examRoom, string description, string classId)
         {
             var guest = await _context.Guests.FindAsync(id);
             if (guest == null) return NotFound();
@@ -72,9 +73,13 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
             _context.Users.Add(newUser);
             
-            // Link Guest
+            // Link Guest and Update Info
             guest.UserId = newUser.Id;
             guest.Status = GuestRegistrationStatus.Approved;
+            guest.ExamRoom = examRoom;
+            guest.Description = description;
+            guest.ClassId = classId;
+
             _context.Guests.Update(guest);
 
             await _context.SaveChangesAsync();
@@ -99,6 +104,28 @@ namespace Symphony.Portal.Web.Controllers.Admin
             
             TempData["Success"] = "Guest Registration Rejected.";
 
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Admin/Guests/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var guest = await _context.Guests.FindAsync(id);
+            if (guest == null) return NotFound();
+
+            // Find related payments
+            var payments = await _context.Payments.Where(p => p.GuestId == id).ToListAsync();
+            if (payments.Any())
+            {
+                _context.Payments.RemoveRange(payments);
+            }
+
+            _context.Guests.Remove(guest);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Guest Registration and related payments deleted.";
             return RedirectToAction(nameof(Index));
         }
 

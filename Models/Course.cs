@@ -34,7 +34,7 @@ namespace Symphony.Portal.Web.Models
         public Category? Category { get; set; }
 
         
-        public ICollection<Class> Classes { get; set; } = new List<Class>();
+
         public ICollection<CourseSubject> CourseSubjects { get; set; } = new List<CourseSubject>();
         public ICollection<CourseInstructor> CourseInstructors { get; set; } = new List<CourseInstructor>();
         public ICollection<CourseReview> CourseReviews { get; set; } = new List<CourseReview>();

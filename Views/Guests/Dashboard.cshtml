@@ -88,11 +88,38 @@
                                         </div>
                                         <div>
                                             <p class="text-xs text-slate-500 font-bold uppercase">Location</p>
-                                            <p class="text-slate-900 dark:text-white font-medium">Center Office</p>
-                                            <p class="text-slate-500 text-sm">Room details via email</p>
+                                            <p class="text-slate-900 dark:text-white font-medium">@(Model.ExamRoom ?? "Center Office")</p>
+                                            <p class="text-slate-500 text-sm">@(Model.ExamRoom != null ? "Assigned Room" : "Check email for room details")</p>
                                         </div>
                                     </div>
                                 </div>
+                                
+                                @if(!string.IsNullOrEmpty(Model.ClassId) || !string.IsNullOrEmpty(Model.Description))
+                                {
+                                    <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700/50">
+                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                            @if(!string.IsNullOrEmpty(Model.ClassId))
+                                            {
+                                                <div>
+                                                    <p class="text-xs text-slate-500 font-bold uppercase mb-1">Assigned Class</p>
+                                                    <a href="#" class="inline-flex items-center gap-2 text-primary font-bold hover:underline">
+                                                        <span class="material-symbols-outlined text-lg">school</span>
+                                                        @(Model.Class?.ClassName ?? Model.ClassId)
+                                                    </a>
+                                                </div>
+                                            }
+                                            @if(!string.IsNullOrEmpty(Model.Description))
+                                            {
+                                                <div class="sm:col-span-2">
+                                                    <p class="text-xs text-slate-500 font-bold uppercase mb-1">Notes from Admin</p>
+                                                    <p class="text-slate-700 dark:text-slate-300 text-sm bg-slate-50 dark:bg-black/20 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
+                                                        @Model.Description
+                                                    </p>
+                                                </div>
+                                            }
+                                         </div>
+                                    </div>
+                                }
 
                                 <div class="mt-6 flex gap-3">
                                     @if(Model.SelectedEntranceExam.ExamDate > DateTime.Now)
