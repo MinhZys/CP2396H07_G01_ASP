@@ -34,14 +34,16 @@ namespace Symphony.Portal.Web.Controllers.Admin
             }
 
             ViewBag.CurrentStatus = status;
-            ViewBag.Classes = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(await _context.Classes.ToListAsync(), "Id", "ClassName");
+            var classes = await _context.Classes.Include(c => c.ClassCategory).ToListAsync();
+            ViewBag.Classes = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(classes, "Id", "ClassName");
+            ViewBag.ClassesList = classes; // Pass full object for JS
             return View(await query.Include(g => g.SelectedEntranceExam).OrderByDescending(g => g.CreatedAt).ToListAsync());
         }
 
         // POST: Admin/Guests/Approve/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Approve(string id, string examRoom, string description, string classId)
+        public async Task<IActionResult> Approve(string id, string examRoom, string description, string classId, string examTime)
         {
             var guest = await _context.Guests.FindAsync(id);
             if (guest == null) return NotFound();
@@ -77,7 +79,15 @@ namespace Symphony.Portal.Web.Controllers.Admin
             guest.UserId = newUser.Id;
             guest.Status = GuestRegistrationStatus.Approved;
             guest.ExamRoom = examRoom;
-            guest.Description = description;
+            
+            // Append Time to Description if provided
+            var finalDescription = description;
+            if (!string.IsNullOrEmpty(examTime))
+            {
+                finalDescription = $"Exam Time: {examTime}\n" + description;
+            }
+            guest.Description = finalDescription;
+            
             guest.ClassId = classId;
 
             _context.Guests.Update(guest);

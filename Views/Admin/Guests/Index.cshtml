@@ -70,7 +70,10 @@
                                 @if (item.Status == GuestRegistrationStatus.PaidPendingApproval)
                                 {
                                     <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#approveModal" 
-                                            data-id="@item.Id" data-name="@item.FullName" data-exam="@item.SelectedEntranceExam?.Title">
+                                            data-id="@item.Id" 
+                                            data-name="@item.FullName" 
+                                            data-exam="@item.SelectedEntranceExam?.Title"
+                                            data-exam-date="@item.SelectedEntranceExam?.ExamDate.ToString("dd/MM/yyyy")">
                                         Approve
                                     </button>
                                     
@@ -108,7 +111,10 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Registered Exam</label>
-                <input type="text" class="form-control" id="approveGuestExam" readonly>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="approveGuestExam" readonly>
+                    <span class="input-group-text" id="approveGuestExamDate"></span>
+                </div>
             </div>
             
             <hr/>
@@ -124,6 +130,12 @@
                 <select name="classId" id="classId" class="form-select" asp-items="ViewBag.Classes">
                     <option value="">-- No Class Assignment --</option>
                 </select>
+                <div id="classDetails" class="alert alert-info mt-2 d-none"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="examTime" class="form-label">Exam Time</label>
+                <input type="time" class="form-control" name="examTime" id="examTime">
             </div>
 
             <div class="mb-3">
@@ -142,7 +154,12 @@
 
 @section Scripts {
     <script>
+        var classesData = @Html.Raw(Json.Serialize(ViewBag.ClassesList));
+
         var approveModal = document.getElementById('approveModal');
+        var classSelect = document.getElementById('classId');
+        var classDetailsDiv = document.getElementById('classDetails');
+
         approveModal.addEventListener('show.bs.modal', function (event) {
             // Button that triggered the modal
             var button = event.relatedTarget;
@@ -150,15 +167,43 @@
             var guestId = button.getAttribute('data-id');
             var guestName = button.getAttribute('data-name');
             var guestExam = button.getAttribute('data-exam');
+            var guestExamDate = button.getAttribute('data-exam-date');
             
             // Update the modal's content.
             var modalIdInput = approveModal.querySelector('#approveGuestId');
             var modalNameInput = approveModal.querySelector('#approveGuestName');
             var modalExamInput = approveModal.querySelector('#approveGuestExam');
+            var modalExamDateSpan = approveModal.querySelector('#approveGuestExamDate');
             
             modalIdInput.value = guestId;
             modalNameInput.value = guestName;
             modalExamInput.value = guestExam;
+            modalExamDateSpan.textContent = guestExamDate || 'N/A';
+            
+            // Reset fields
+            document.getElementById('examTime').value = '';
+            document.getElementById('description').value = '';
+            classSelect.value = '';
+            classDetailsDiv.classList.add('d-none');
+        });
+
+        classSelect.addEventListener('change', function() {
+            var selectedId = this.value;
+            if (selectedId) {
+                var selectedClass = classesData.find(c => c.id == selectedId);
+                if (selectedClass) {
+                    var categoryName = selectedClass.classCategory ? selectedClass.classCategory.name : 'N/A';
+                    classDetailsDiv.innerHTML = `
+                        <strong>Class Details:</strong><br/>
+                        Category: ${categoryName}<br/>
+                        Seats: ${selectedClass.numberOfSeats}<br/>
+                        Status: ${selectedClass.status === 0 ? 'Active' : 'Inactive'}
+                    `;
+                    classDetailsDiv.classList.remove('d-none');
+                }
+            } else {
+                classDetailsDiv.classList.add('d-none');
+            }
         });
     </script>
 }
