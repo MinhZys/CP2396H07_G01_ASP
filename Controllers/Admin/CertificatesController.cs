@@ -46,6 +46,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 
                 _context.Add(certificate);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Certificate created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(certificate);
@@ -78,6 +79,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     if (!CertificateExists(certificate.Id)) return NotFound();
                     else throw;
                 }
+                TempData["Success"] = "Certificate updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(certificate);
@@ -90,8 +92,15 @@ namespace Symphony.Portal.Web.Controllers.Admin
             var certificate = await _context.Certificates.FindAsync(id);
             if (certificate != null)
             {
+                if (await _context.Courses.AnyAsync(c => c.CertificateId == id))
+                {
+                     TempData["Error"] = "Không thể xóa chứng chỉ này vì nó đang được sử dụng cho một hoặc nhiều Khóa học.";
+                     return RedirectToAction(nameof(Index));
+                }
+
                 _context.Certificates.Remove(certificate);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Certificate deleted successfully.";
             }
             return RedirectToAction(nameof(Index));
         }

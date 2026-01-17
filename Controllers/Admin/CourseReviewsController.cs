@@ -64,6 +64,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             }
             
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Course Review deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
     }

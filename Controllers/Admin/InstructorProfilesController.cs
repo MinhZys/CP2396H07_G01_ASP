@@ -146,6 +146,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             _context.InstructorProfiles.Update(profile);
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "Instructor Profile updated successfully.";
             return RedirectToAction(nameof(Index));
         }
     }

@@ -58,6 +58,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
                 _context.Add(@class);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Class created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.ClassCategories = new SelectList(_context.ClassCategories.Where(c => c.IsActive), "Id", "Name", @class.ClassCategoryId);
@@ -92,6 +93,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     if (!_context.Classes.Any(e => e.Id == @class.Id)) return NotFound();
                     else throw;
                 }
+                TempData["Success"] = "Class updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.ClassCategories = new SelectList(_context.ClassCategories.Where(c => c.IsActive), "Id", "Name", @class.ClassCategoryId);
@@ -116,8 +118,28 @@ namespace Symphony.Portal.Web.Controllers.Admin
             var @class = await _context.Classes.FindAsync(id);
             if (@class != null)
             {
+                // Check dependencies
+                if (await _context.Guests.AnyAsync(g => g.ClassId == id))
+                {
+                    TempData["Error"] = "Không thể xóa lớp học này vì vẫn còn Khách (Guests) được gán vào lớp.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                if (await _context.Assignments.AnyAsync(a => a.ClassId == id))
+                {
+                    TempData["Error"] = "Không thể xóa lớp học này vì vẫn còn Bài tập (Assignments) được giao cho lớp.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                if (await _context.Enrollments.AnyAsync(e => e.ClassId == id))
+                {
+                    TempData["Error"] = "Không thể xóa lớp học này vì vẫn còn Học viên đăng ký (Enrollments).";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Classes.Remove(@class);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Class deleted successfully.";
             }
             return RedirectToAction(nameof(Index));
         }

@@ -71,6 +71,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
                 _context.Add(assignment);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Assignment created successfully.";
                 return RedirectToAction(nameof(Index));
             }
              ViewBag.Instructors = new SelectList(_context.Users.Where(u => u.Role.Name == "Instructor"), "Id", "FullName", assignment.InstructorId);
@@ -107,6 +108,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     if (!_context.Assignments.Any(e => e.Id == assignment.Id)) return NotFound();
                     else throw;
                 }
+                TempData["Success"] = "Assignment updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.Instructors = new SelectList(_context.Users.Where(u => u.Role.Name == "Instructor"), "Id", "FullName", assignment.InstructorId);
@@ -151,6 +153,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             {
                 _context.Assignments.Remove(assignment);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Assignment deleted successfully.";
             }
             return RedirectToAction(nameof(Index));
         }

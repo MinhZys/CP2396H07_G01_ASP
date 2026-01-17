@@ -39,6 +39,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 classCategory.Id = Guid.NewGuid().ToString();
                 _context.Add(classCategory);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Class Category created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(classCategory);
@@ -73,6 +74,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     if (!ClassCategoryExists(classCategory.Id)) return NotFound();
                     else throw;
                 }
+                TempData["Success"] = "Class Category updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(classCategory);
@@ -96,12 +98,21 @@ namespace Symphony.Portal.Web.Controllers.Admin
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var classCategory = await _context.ClassCategories.FindAsync(id);
-            if (classCategory != null)
+            if (classCategory == null)
             {
-                _context.ClassCategories.Remove(classCategory);
+                 return RedirectToAction(nameof(Index));
             }
-            
+
+            // Check if any classes exist in this category
+            if (await _context.Classes.AnyAsync(c => c.ClassCategoryId == id))
+            {
+                TempData["Error"] = "Không thể xóa danh mục này vì vẫn còn Lớp học thuộc danh mục. Vui lòng xóa các lớp học trước.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            _context.ClassCategories.Remove(classCategory);
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Class Category deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 

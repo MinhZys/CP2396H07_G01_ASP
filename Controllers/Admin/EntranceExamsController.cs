@@ -46,6 +46,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
                 _context.Add(entranceExam);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Entrance Exam created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(entranceExam);
@@ -80,6 +81,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     if (!ExamExists(entranceExam.Id)) return NotFound();
                     else throw;
                 }
+                TempData["Success"] = "Entrance Exam updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(entranceExam);

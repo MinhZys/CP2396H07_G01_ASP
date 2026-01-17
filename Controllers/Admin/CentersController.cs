@@ -40,6 +40,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 if (string.IsNullOrEmpty(center.Id)) center.Id = Guid.NewGuid().ToString();
                 _context.Add(center);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Center created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(center);
@@ -71,6 +72,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     if (!CenterExists(center.Id)) return NotFound();
                     else throw;
                 }
+                TempData["Success"] = "Center updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(center);
@@ -93,6 +95,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             {
                 _context.Centers.Remove(center);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Center deleted successfully.";
             }
             return RedirectToAction(nameof(Index));
         }

@@ -44,6 +44,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
                 _context.Add(faq);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "FAQ created successfully.";
                 return RedirectToAction(nameof(ManageFAQs));
             }
             return View(faq);
@@ -75,6 +76,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     if (!_context.FAQs.Any(e => e.Id == faq.Id)) return NotFound();
                     else throw;
                 }
+                TempData["Success"] = "FAQ updated successfully.";
                 return RedirectToAction(nameof(ManageFAQs));
             }
             return View(faq);
@@ -143,6 +145,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     if (!_context.PageContents.Any(e => e.Id == page.Id)) return NotFound();
                     else throw;
                 }
+                TempData["Success"] = "Page content updated successfully.";
                 return RedirectToAction(nameof(ManagePages));
             }
             return View(page);

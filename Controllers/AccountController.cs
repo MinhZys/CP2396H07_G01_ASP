@@ -75,7 +75,7 @@ namespace Symphony.Portal.Web.Controllers
                             new ClaimsPrincipal(claimsIdentity),
                             authProperties);
 
-                        TempData["SuccessMessage"] = "Đăng nhập thành công! Chào mừng bạn quay trở lại.";
+                        TempData["Success"] = "Đăng nhập thành công! Chào mừng bạn quay trở lại.";
                         return RedirectToLocal(returnUrl, user);
                     }
                 }
@@ -253,6 +253,7 @@ namespace Symphony.Portal.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["Success"] = "Đăng xuất thành công!";
             return RedirectToAction("Index", "Home");
         }
 

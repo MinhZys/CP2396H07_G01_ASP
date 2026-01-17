@@ -130,6 +130,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             _context.StudentProfiles.Update(profile);
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "Student Profile updated successfully.";
             return RedirectToAction(nameof(Index));
         }
     }

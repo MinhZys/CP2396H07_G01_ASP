@@ -69,6 +69,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             {
                 _context.Add(quizQuestion);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Quiz Question created successfully.";
                 return RedirectToAction("Details", "Quizzes", new { id = quizQuestion.QuizId });
             }
             ViewData["QuizId"] = new SelectList(_context.Quizzes, "Id", "Name", quizQuestion.QuizId);
@@ -106,6 +107,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     if (!QuizQuestionExists(quizQuestion.Id)) return NotFound();
                     else throw;
                 }
+                TempData["Success"] = "Quiz Question updated successfully.";
                 return RedirectToAction("Details", "Quizzes", new { id = quizQuestion.QuizId });
             }
             ViewData["QuizId"] = new SelectList(_context.Quizzes, "Id", "Name", quizQuestion.QuizId);
@@ -140,6 +142,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             }
             
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Quiz Question deleted successfully.";
             
             if (!string.IsNullOrEmpty(quizId))
                 return RedirectToAction("Details", "Quizzes", new { id = quizId });

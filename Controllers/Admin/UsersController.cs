@@ -73,6 +73,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
                 
+                TempData["Success"] = "User created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.Roles = await _context.Roles.ToListAsync();
@@ -116,6 +117,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     if (!UserExists(user.Id)) return NotFound();
                     else throw;
                 }
+                TempData["Success"] = "User updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.Roles = await _context.Roles.ToListAsync();
@@ -129,8 +131,43 @@ namespace Symphony.Portal.Web.Controllers.Admin
             var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
+                // 1. Check if User is a Guest (UserId)
+                if (await _context.Guests.AnyAsync(g => g.UserId == id))
+                {
+                    TempData["Error"] = "Không thể xóa tài khoản này vì đang liên kết với một hồ sơ Khách (Guest).";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // 2. Check if User is an Instructor in a Course (InstructorId)
+                if (await _context.CourseInstructors.AnyAsync(ci => ci.InstructorId == id))
+                {
+                    TempData["Error"] = "Không thể xóa tài khoản này vì đang là Giảng viên của một hoặc nhiều Khóa học.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // 3. Check if User is a Student in Enrollment (StudentId)
+                if (await _context.Enrollments.AnyAsync(e => e.StudentId == id))
+                {
+                    TempData["Error"] = "Không thể xóa tài khoản này vì đang có thông tin Nhập học (Enrollment).";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // 4. Check if User has Student Profile or Instructor Profile
+                if (await _context.StudentProfiles.AnyAsync(sp => sp.UserId == id))
+                {
+                     TempData["Error"] = "Không thể xóa tài khoản này vì đang có Hồ sơ Học viên (Student Profile).";
+                     return RedirectToAction(nameof(Index));
+                }
+                
+                if (await _context.InstructorProfiles.AnyAsync(ip => ip.UserId == id))
+                {
+                     TempData["Error"] = "Không thể xóa tài khoản này vì đang có Hồ sơ Giảng viên (Instructor Profile).";
+                     return RedirectToAction(nameof(Index));
+                }
+
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "User deleted successfully.";
             }
             return RedirectToAction(nameof(Index));
         }
@@ -144,6 +181,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             user.IsActive = !user.IsActive;
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "User status updated successfully.";
             return RedirectToAction(nameof(Index));
         }
 

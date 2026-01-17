@@ -119,6 +119,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
                 _context.Add(course);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Course created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.Subjects = await _context.Subjects.ToListAsync();
@@ -249,6 +250,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     if (!CourseExists(course.Id)) return NotFound();
                     else throw;
                 }
+                TempData["Success"] = "Course updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
              ViewBag.Subjects = await _context.Subjects.ToListAsync();
@@ -286,8 +288,33 @@ namespace Symphony.Portal.Web.Controllers.Admin
             var course = await _context.Courses.FindAsync(id);
             if (course != null)
             {
+                // Check dependencies
+                if (await _context.StudentRegistrations.AnyAsync(r => r.CourseId == id))
+                {
+                     TempData["Error"] = "Không thể xóa khóa học này vì đã có Học viên đăng ký (Registrations).";
+                     return RedirectToAction(nameof(Index));
+                }
+
+                if (await _context.Enrollments.AnyAsync(e => e.CourseId == id))
+                {
+                     TempData["Error"] = "Không thể xóa khóa học này vì đã có Học viên nhập học (Enrollments).";
+                     return RedirectToAction(nameof(Index));
+                }
+
+                // Optional: Check if used in CourseSubjects / CourseInstructors?
+                // Usually these are composition parts of a course, so deleting the course implies deleting them.
+                // However, user asked for "strict" constraints. 
+                // But these are junction tables owned by the course conceptually.
+                // Let's stick to "User Data" constraints (Registrations, Enrollments) as the primary blocker.
+                // Deleting a course with defined subjects is usually intended if no one has bought it yet.
+                
+                // However, to be super safe/strict as requested:
+                // We will rely on EF Core Cascade Delete for the Junction tables (CourseSubjects, CourseInstructors),
+                // BUT we BLOCK if there is "Business Data" (Registrations, Enrollments).
+
                 _context.Courses.Remove(course);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Course deleted successfully.";
             }
             return RedirectToAction(nameof(Index));
         }

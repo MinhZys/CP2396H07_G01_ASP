@@ -80,6 +80,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 await _context.SaveChangesAsync();
                 
                 // TODO: Send Email Notification here
+                TempData["Success"] = "Registration approved successfully.";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -96,6 +97,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
              {
                  registration.Status = RegistrationStatus.Rejected;
                  await _context.SaveChangesAsync();
+                 TempData["Success"] = "Registration rejected.";
              }
              return RedirectToAction(nameof(Index));
         }

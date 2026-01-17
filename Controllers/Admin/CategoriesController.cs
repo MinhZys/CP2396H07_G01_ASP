@@ -46,6 +46,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 
                 _context.Add(category);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Category created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
@@ -78,6 +79,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     if (!CategoryExists(category.Id)) return NotFound();
                     else throw;
                 }
+                TempData["Success"] = "Category updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
@@ -90,8 +92,16 @@ namespace Symphony.Portal.Web.Controllers.Admin
             var category = await _context.Categories.FindAsync(id);
             if (category != null)
             {
+                // Check for dependencies (Courses)
+                if (await _context.Courses.AnyAsync(c => c.CategoryId == id))
+                {
+                    TempData["Error"] = "Không thể xóa danh mục này vì vẫn còn Khóa học thuộc danh mục. Vui lòng xóa các khóa học trước.";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Categories.Remove(category);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Category deleted successfully.";
             }
             return RedirectToAction(nameof(Index));
         }

@@ -91,6 +91,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
                 _context.Add(subject);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Subject created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(subject);
@@ -177,6 +178,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                         throw;
                     }
                 }
+                TempData["Success"] = "Subject updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(subject);
@@ -208,8 +210,15 @@ namespace Symphony.Portal.Web.Controllers.Admin
             var subject = await _context.Subjects.FindAsync(id);
             if (subject != null)
             {
+                if (await _context.CourseSubjects.AnyAsync(cs => cs.SubjectId == id))
+                {
+                     TempData["Error"] = "Không thể xóa môn học này vì nó đang thuộc về một hoặc nhiều Khóa học.";
+                     return RedirectToAction(nameof(Index));
+                }
+
                 _context.Subjects.Remove(subject);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Subject deleted successfully.";
             }
             return RedirectToAction(nameof(Index));
         }
