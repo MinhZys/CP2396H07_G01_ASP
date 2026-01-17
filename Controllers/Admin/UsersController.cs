@@ -96,6 +96,9 @@ namespace Symphony.Portal.Web.Controllers.Admin
         public async Task<IActionResult> Edit(string id, User user)
         {
             if (id != user.Id) return NotFound();
+            
+            // Password is not edited here, remove from validation
+            ModelState.Remove("Password");
 
             if (ModelState.IsValid)
             {
@@ -152,17 +155,28 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     return RedirectToAction(nameof(Index));
                 }
 
-                // 4. Check if User has Student Profile or Instructor Profile
-                if (await _context.StudentProfiles.AnyAsync(sp => sp.UserId == id))
+                // 4. Cascade Delete Profiles (As requested)
+                var studentProfile = await _context.StudentProfiles.FirstOrDefaultAsync(sp => sp.UserId == id);
+                if (studentProfile != null)
                 {
-                     TempData["Error"] = "Không thể xóa tài khoản này vì đang có Hồ sơ Học viên (Student Profile).";
-                     return RedirectToAction(nameof(Index));
+                    _context.StudentProfiles.Remove(studentProfile);
                 }
-                
-                if (await _context.InstructorProfiles.AnyAsync(ip => ip.UserId == id))
+
+                var instructorProfile = await _context.InstructorProfiles.FirstOrDefaultAsync(ip => ip.UserId == id);
+                if (instructorProfile != null)
                 {
-                     TempData["Error"] = "Không thể xóa tài khoản này vì đang có Hồ sơ Giảng viên (Instructor Profile).";
-                     return RedirectToAction(nameof(Index));
+                    _context.InstructorProfiles.Remove(instructorProfile);
+                }
+
+                // 5. Check if it's the LAST Admin
+                if (user.RoleId == "1") // Admin Role ID
+                {
+                    var adminCount = await _context.Users.CountAsync(u => u.RoleId == "1");
+                    if (adminCount <= 1)
+                    {
+                        TempData["Error"] = "Không thể xóa Admin cuối cùng của hệ thống!";
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
 
                 _context.Users.Remove(user);
@@ -177,6 +191,17 @@ namespace Symphony.Portal.Web.Controllers.Admin
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
+
+            // Prevent deactivating the last Active Admin
+            if (user.IsActive && user.RoleId == "1")
+            {
+                var activeAdminCount = await _context.Users.CountAsync(u => u.RoleId == "1" && u.IsActive);
+                if (activeAdminCount <= 1)
+                {
+                     TempData["Error"] = "Không thể khóa Admin đang hoạt động cuối cùng của hệ thống!";
+                     return RedirectToAction(nameof(Index));
+                }
+            }
 
             user.IsActive = !user.IsActive;
             await _context.SaveChangesAsync();
