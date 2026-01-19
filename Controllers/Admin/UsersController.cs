@@ -80,7 +80,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             return View(user);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Edit(string? id)
         {
             if (id == null) return NotFound();
@@ -91,7 +91,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             return View(user);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, User user)
         {

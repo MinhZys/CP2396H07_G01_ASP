@@ -89,20 +89,33 @@ namespace Symphony.Portal.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(ProfileVM model)
+        public async Task<IActionResult> Index([FromForm] ProfileVM model)
         {
+            // Remove AvatarUrl from validation as it's handled via file upload or existing value
+            ModelState.Remove("AvatarUrl");
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == userId);
+            
+            if (user == null) return NotFound();
+
+            bool isInstructor = user.Role?.Name == RoleNames.Instructor;
+
+            if (!isInstructor)
+            {
+                ModelState.Remove("GithubUrl");
+                ModelState.Remove("Specialization");
+                ModelState.Remove("Bio");
+                ModelState.Remove("YearsOfExperience");
+                ModelState.Remove("Certifications");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId != model.UserId) return Forbid(); // Simple check
-
-            var user = await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == userId);
-            if (user == null) return NotFound();
-
-            bool isInstructor = user.Role?.Name == RoleNames.Instructor;
 
             // Handle Avatar Upload
             if (model.AvatarImage != null)
@@ -113,7 +126,7 @@ namespace Symphony.Portal.Web.Controllers
                     Directory.CreateDirectory(uploadsFolder);
                 }
 
-                string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.AvatarImage.FileName;
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(model.AvatarImage.FileName);
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
                 using (var fileStream = new FileStream(filePath, FileMode.Create))

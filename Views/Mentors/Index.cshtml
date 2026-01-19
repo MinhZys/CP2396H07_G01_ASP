@@ -1,3 +1,4 @@
+@model IEnumerable<Symphony.Portal.Web.Models.InstructorProfile>
 @{
     ViewData["Title"] = "Mentors";
 }
@@ -24,55 +25,24 @@
 
 <div class="max-w-[1600px] mx-auto">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Static Mentor Cards -->
-        <div class="cyber-card rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1">
-            <div class="relative aspect-square overflow-hidden bg-surface-dark">
-                <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=00c8ff&color=fff" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Mentor">
-                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-background-dark to-transparent p-4">
-                    <h3 class="font-display font-bold text-lg text-white">Alex Johnson</h3>
-                    <p class="text-primary text-sm font-bold">Cloud Architect</p>
+        @foreach (var item in Model) {
+            <div class="cyber-card rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1 cursor-pointer" onclick="window.location.href='/Mentors/Details/@item.Id'">
+                <div class="relative aspect-square overflow-hidden bg-surface-dark">
+                     <img src="@(string.IsNullOrEmpty(item.AvatarUrl) ? $"https://ui-avatars.com/api/?name={item.FullName}&background=00c8ff&color=fff" : item.AvatarUrl)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="@item.FullName">
+                    <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-background-dark to-transparent p-4">
+                        <h3 class="font-display font-bold text-lg text-white">@item.FullName</h3>
+                        <p class="text-primary text-sm font-bold">@item.Specialization</p>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <p class="text-slate-400 text-sm line-clamp-2">@(string.IsNullOrEmpty(item.Bio) ? "Experienced IT Professional" : item.Bio)</p>
                 </div>
             </div>
-            <div class="p-4">
-                <p class="text-slate-400 text-sm line-clamp-2">10+ years at AWS and Azure. Specializes in scalable infrastructure.</p>
-            </div>
-        </div>
-
-        <div class="cyber-card rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1">
-            <div class="relative aspect-square overflow-hidden bg-surface-dark">
-                    <img src="https://ui-avatars.com/api/?name=Sarah+Lee&background=00c8ff&color=fff" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Mentor">
-                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-background-dark to-transparent p-4">
-                    <h3 class="font-display font-bold text-lg text-white">Sarah Lee</h3>
-                    <p class="text-primary text-sm font-bold">Cyber Security Lead</p>
-                </div>
-            </div>
-            <div class="p-4">
-                <p class="text-slate-400 text-sm line-clamp-2">Ex-Red Team operator. Expert in penetration testing and defense.</p>
-            </div>
-        </div>
-            <div class="cyber-card rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1">
-            <div class="relative aspect-square overflow-hidden bg-surface-dark">
-                    <img src="https://ui-avatars.com/api/?name=Mike+Chen&background=00c8ff&color=fff" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Mentor">
-                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-background-dark to-transparent p-4">
-                    <h3 class="font-display font-bold text-lg text-white">Mike Chen</h3>
-                    <p class="text-primary text-sm font-bold">Full Stack Dev</p>
-                </div>
-            </div>
-            <div class="p-4">
-                <p class="text-slate-400 text-sm line-clamp-2">Frontend wizard and Node.js core contributor. Passionate about clean code.</p>
-            </div>
-        </div>
-            <div class="cyber-card rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1">
-            <div class="relative aspect-square overflow-hidden bg-surface-dark">
-                    <img src="https://ui-avatars.com/api/?name=Emily+Davis&background=00c8ff&color=fff" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Mentor">
-                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-background-dark to-transparent p-4">
-                    <h3 class="font-display font-bold text-lg text-white">Emily Davis</h3>
-                    <p class="text-primary text-sm font-bold">Data Scientist</p>
-                </div>
-            </div>
-            <div class="p-4">
-                <p class="text-slate-400 text-sm line-clamp-2">PhD in AI. Helps companies leverage data for strategic decisions.</p>
-            </div>
-        </div>
+        }
+        @if (!Model.Any()) {
+             <div class="col-span-4 text-center py-12 text-slate-500">
+                <p>No mentors found.</p>
+             </div>
+        }
     </div>
 </div>

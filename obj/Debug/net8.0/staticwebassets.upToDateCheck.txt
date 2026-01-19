@@ -71,3 +71,13 @@ wwwroot\images\courses\211a1314-bcc2-4bf0-bda9-18c02a7291c5_ao-thun-in-hinh-theo
 wwwroot\favicon.ico
 wwwroot\css\site.css
 wwwroot\css\auth.css
+wwwroot\images\subjects\9332e651-1404-4a48-830f-7b4c0df59fad_R.png
+wwwroot\images\subjects\ed636fae-2f1a-4ecd-9e0e-961c3ed0740c_Tim-hieu-khai-niem-mysql-la-gi.webp
+wwwroot\images\courses\6a7abc6c-e211-4f84-9092-7e703e7789ac_OIP (4).webp
+wwwroot\images\subjects\c38e4f93-5a7b-48ec-8223-48ec8ecfa31b_banphimROG1.jpg
+wwwroot\images\courses\612464c3-088c-4137-a79a-5578524a335d_screenshot_1768829925.png
+wwwroot\images\subjects\da9c3149-baba-4a67-a8f4-bff6cb1f8d46_1_1u2p917cvlyP6SuHcq3t0Q.jpg
+wwwroot\images\subjects\31c89a77-d64f-47de-bd32-6fb546d53179_R.jpg
+wwwroot\images\courses\f7e80e51-b627-43b0-9ffe-a6c8e71c1eee_let-me-design-a-html-and-css-website-for-you.png
+wwwroot\images\subjects\c93a9b19-eb75-4c1f-933e-63aad0fde298_pngtree-ui-ux-application-development-interface-design-illustration-picture-image_1531011.jpg
+wwwroot\images\courses\8a33e7ce-17ae-4fcc-9aa1-64e8b4410fb3_pngtree-ui-ux-application-development-interface-design-illustration-picture-image_1531011.jpg

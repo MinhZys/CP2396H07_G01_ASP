@@ -50,7 +50,7 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label asp-for="DurationMonths" class="form-label">Duration (Months)</label>
+                        <label asp-for="DurationMonths" class="form-label">Duration (Hour)</label>
                         <input asp-for="DurationMonths" class="form-control" />
                         <span asp-validation-for="DurationMonths" class="text-danger"></span>
                     </div>
@@ -97,6 +97,7 @@
                         </select>
                          <div class="form-text">Hold Ctrl (Windows) or Command (Mac) to select multiple options.</div>
                     </div>
+                </div>
                 <div class="mb-4">
                     <label class="form-label fw-bold">Manage Subjects</label>
                     <div class="row">
@@ -124,11 +125,11 @@
                                     {
                                         if (selectedIds.Contains(subject.Id))
                                         {
-                                            <div class="selected-item d-flex justify-content-between align-items-center p-2 mb-1 border rounded bg-white shadow-sm" 
-                                                 data-id="@subject.Id">
-                                                <span class="fw-medium">@subject.Name <small class="text-muted">(@subject.StudyTime hrs)</small></span>
-                                                <button type="button" class="btn btn-sm btn-danger remove-btn"><i class="fa-solid fa-trash"></i></button>
-                                            </div>
+                                        <div class="selected-item d-flex justify-content-between align-items-center p-2 mb-1 border rounded bg-white shadow-sm" 
+                                             data-id="@subject.Id" data-time="@subject.StudyTime">
+                                            <span class="fw-medium">@subject.Name <small class="text-muted">(@subject.StudyTime hrs)</small></span>
+                                            <button type="button" class="btn btn-sm btn-danger remove-btn"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
                                         }
                                     }
                                 }
@@ -217,6 +218,7 @@
                             const newItem = document.createElement('div');
                             newItem.className = 'selected-item d-flex justify-content-between align-items-center p-2 mb-1 border rounded bg-white shadow-sm';
                             newItem.dataset.id = id;
+                            newItem.dataset.time = time; // Store time for calculation
                             newItem.innerHTML = `<span class="fw-medium">${name} <small class="text-muted">(${time} hrs)</small></span>
                                                  <button type="button" class="btn btn-sm btn-danger remove-btn"><i class="fa-solid fa-trash"></i></button>`;
                             
@@ -259,6 +261,25 @@
                                 input.value = item.dataset.id;
                                 hiddenInputs.appendChild(input);
                             });
+                            
+                            calculateDuration();
+                        }
+
+                        function calculateDuration() {
+                            const durationInput = document.querySelector('input[name="DurationMonths"]');
+                            let totalHours = 0;
+                            
+                            const items = selectedList.querySelectorAll('.selected-item');
+                            items.forEach(item => {
+                                let time = parseInt(item.dataset.time);
+                                if (!isNaN(time)) {
+                                    totalHours += time;
+                                }
+                            });
+                            
+                            if(durationInput) {
+                                durationInput.value = totalHours;
+                            }
                         }
                     });
                 </script>

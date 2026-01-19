@@ -75,6 +75,16 @@
                 avatarActions.classList.remove('hidden');
             }
         }
+
+        // Auto-open edit mode if there are validation errors
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <text>
+            document.addEventListener('DOMContentLoaded', function() {
+                toggleEditMode();
+            });
+            </text>
+        }
     </script>
 }
 
@@ -130,6 +140,11 @@
                     <span class="material-symbols-outlined">check_circle</span>
                     <span>@TempData["SuccessMessage"]</span>
                 </div>
+            }
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="All" class="bg-red-500/10 border border-red-500/20 text-red-500 px-4 py-3 rounded-xl mb-6"></div>
             }
 
             <form asp-action="Index" method="post" enctype="multipart/form-data" class="space-y-10">
@@ -224,6 +239,7 @@
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-500 text-lg">calendar_today</span>
                             <input asp-for="DateOfBirth" type="date" class="w-full bg-surface-dark border border-slate-700 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all text-white" />
                         </div>
+                        <span asp-validation-for="DateOfBirth" class="text-red-500 text-xs mt-1"></span>
                     </div>
 
                     <div class="flex flex-col gap-2">
@@ -242,6 +258,7 @@
                                 <div class="text-center py-3.5 rounded-xl border border-slate-700 bg-surface-dark peer-checked:bg-primary peer-checked:text-background-dark peer-checked:font-bold hover:border-primary/50 transition-all text-sm cursor-pointer text-slate-300">Other</div>
                             </label>
                         </div>
+                        <span asp-validation-for="Gender" class="text-red-500 text-xs mt-1"></span>
                     </div>
 
                     <div class="flex flex-col gap-2">
@@ -259,6 +276,7 @@
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-500 text-lg">location_on</span>
                             <input asp-for="AddressLine" class="w-full bg-surface-dark border border-slate-700 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-slate-600 text-white" placeholder="Full Address" />
                         </div>
+                        <span asp-validation-for="AddressLine" class="text-red-500 text-xs mt-1"></span>
                     </div>
                     
                     @if (Model.IsInstructor)

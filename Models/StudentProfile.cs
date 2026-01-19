@@ -30,4 +30,4 @@ namespace Symphony.Portal.Web.Models
 
         public string AvatarUrl { get; set; } = string.Empty;
     }
-}
+}   

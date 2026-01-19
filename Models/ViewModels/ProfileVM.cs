@@ -33,7 +33,7 @@ namespace Symphony.Portal.Web.Models.ViewModels
         [Display(Name = "Địa chỉ")]
         public string AddressLine { get; set; } = string.Empty;
 
-        [Display(Name = "Ảnh đại diện (URL)")]
+        [Display(Name = "Ảnh đại diện")]
         public string AvatarUrl { get; set; } = string.Empty;
 
         [Display(Name = "Tải ảnh lên")]
@@ -53,7 +53,6 @@ namespace Symphony.Portal.Web.Models.ViewModels
         public string Certifications { get; set; } = string.Empty;
 
         [Display(Name = "Github URL")]
-        [Url(ErrorMessage = "Đường dẫn không hợp lệ")]
         public string GithubUrl { get; set; } = string.Empty;
     }
 }

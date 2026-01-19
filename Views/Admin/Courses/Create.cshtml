@@ -42,7 +42,7 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label asp-for="DurationMonths" class="form-label">Duration (Months)</label>
+                        <label asp-for="DurationMonths" class="form-label">Duration (Hour)</label>
                         <input asp-for="DurationMonths" class="form-control" />
                         <span asp-validation-for="DurationMonths" class="text-danger"></span>
                     </div>
@@ -155,6 +155,7 @@
                             const newItem = document.createElement('div');
                             newItem.className = 'selected-item d-flex justify-content-between align-items-center p-2 mb-1 border rounded bg-white shadow-sm';
                             newItem.dataset.id = id;
+                            newItem.dataset.time = time; // Store time for calculation
                             newItem.innerHTML = `<span class="fw-medium">${name} <small class="text-muted">(${time} hrs)</small></span>
                                                     <button type="button" class="btn btn-sm btn-danger remove-btn"><i class="fa-solid fa-trash"></i></button>`;
                             
@@ -197,6 +198,40 @@
                                 input.value = item.dataset.id;
                                 hiddenInputs.appendChild(input);
                             });
+                            
+                            calculateDuration();
+                        }
+
+                        function calculateDuration() {
+                            const durationInput = document.querySelector('input[name="DurationMonths"]');
+                            let totalHours = 0;
+                            
+                            // Iterate over selected items provided they have data-time
+                            // Note: In existing code, we are extracting data-time from available list.
+                            // But when moving to selected list, we are constructing innerHTML manually.
+                            // We need to ensure data-time is preserved on the selected item element itself or accessible.
+                            // In 'Add Subject', we did: 
+                            // const newItem = document.createElement('div');
+                            // newItem.dataset.id = id;
+                            // ...
+                            
+                            // Let's modify 'Add Subject' slightly to also store data-time on the element if not already present.
+                            // Actually, let's just parse it from the DOM or ensure we store it.
+                            // Better: Store it in dataset.
+                            
+                            const items = selectedList.querySelectorAll('.selected-item');
+                            items.forEach(item => {
+                                // We need to make sure 'data-time' attribute exists on .selected-item
+                                // It might not be there yet, so let's check existing logic or update it.
+                                let time = parseInt(item.dataset.time);
+                                if (!isNaN(time)) {
+                                    totalHours += time;
+                                }
+                            });
+                            
+                            if(durationInput) {
+                                durationInput.value = totalHours;
+                            }
                         }
                     });
                 </script>

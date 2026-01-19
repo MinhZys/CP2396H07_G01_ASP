@@ -17,7 +17,10 @@ namespace Symphony.Portal.Web.Controllers
 
         public async Task<IActionResult> Index(string[] categories, string level, string sort, int page = 1)
         {
-            var query = _context.Courses.Include(c => c.Category).AsQueryable();
+            var query = _context.Courses
+                .Include(c => c.Category)
+                .Include(c => c.CourseReviews)
+                .AsQueryable();
 
             // Filter by Category
             if (categories != null && categories.Length > 0)

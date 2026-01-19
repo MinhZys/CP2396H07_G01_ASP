@@ -112,6 +112,24 @@
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="font-display font-bold text-base group-hover:text-primary transition-colors leading-tight">@item.Title</h3>
                     </div>
+                    
+                    @* Rating Section *@
+                    <div class="flex items-center gap-2 mb-3">
+                         <div class="flex text-yellow-500 text-xs">
+                             @{
+                                 var avgRating = item.CourseReviews.Any() ? item.CourseReviews.Average(r => r.Rating) : 0;
+                                 var reviewCount = item.CourseReviews.Count;
+                                 
+                                 for(int i=1; i<=5; i++) {
+                                     if(avgRating >= i) { <span class="material-symbols-outlined text-sm fill-current">star</span> }
+                                     else if(avgRating >= i - 0.5) { <span class="material-symbols-outlined text-sm">star_half</span> }
+                                     else { <span class="material-symbols-outlined text-sm text-slate-600">star</span> }
+                                 }
+                             }
+                        </div>
+                        <span class="text-xs text-slate-500">(@reviewCount)</span>
+                    </div>
+
                     <p class="text-slate-400 text-xs mb-4 line-clamp-2">@item.Description</p>
                     <div class="flex items-center justify-between pt-3 border-t border-slate-800/50">
                         <span class="text-primary font-bold">$@item.TuitionFee.ToString("N0")</span>

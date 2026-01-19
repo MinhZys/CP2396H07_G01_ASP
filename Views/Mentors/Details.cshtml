@@ -1,0 +1,90 @@
+@model Symphony.Portal.Web.Models.InstructorProfile
+@{
+    ViewData["Title"] = Model.FullName;
+}
+
+<div class="pt-24 pb-12 max-w-4xl mx-auto px-6">
+    <div class="bg-surface-dark border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+        <!-- Cover -->
+        <div class="h-48 bg-gradient-to-r from-slate-900 to-slate-800 relative">
+            <div class="absolute inset-0 opacity-30 bg-[url('https://placeholder.pics/svg/1000')] bg-cover bg-center"></div>
+        </div>
+        
+        <div class="px-8 pb-8 relative">
+            <!-- Avatar -->
+            <div class="absolute -top-16 left-8 p-1.5 bg-surface-dark rounded-full">
+                <div class="w-32 h-32 rounded-full overflow-hidden bg-slate-700 border-4 border-surface-dark">
+                    <img src="@(string.IsNullOrEmpty(Model.AvatarUrl) ? $"https://ui-avatars.com/api/?name={Model.FullName}&background=00c8ff&color=fff" : Model.AvatarUrl)" alt="@Model.FullName" class="w-full h-full object-cover">
+                </div>
+            </div>
+
+            <!-- Header Info -->
+            <div class="ml-40 pt-4 flex flex-col md:flex-row justify-between items-start gap-4">
+                <div>
+                    <h1 class="font-display text-3xl font-bold text-white mb-1">@Model.FullName</h1>
+                    <p class="text-primary font-bold">@Model.Specialization</p>
+                </div>
+                <div class="flex gap-3">
+                    @if(!string.IsNullOrEmpty(Model.GithubUrl)) {
+                        <a href="@Model.GithubUrl" target="_blank" class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
+                            <span class="material-symbols-outlined">code</span>
+                        </a>
+                    }
+                    <a href="mailto:@Model.User?.Email" class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary hover:bg-primary/20 transition-colors">
+                        <span class="material-symbols-outlined">mail</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                <!-- Left Column -->
+                <div class="md:col-span-2 space-y-8">
+                    <div>
+                        <h3 class="font-display text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">person</span> About Me
+                        </h3>
+                        <div class="prose prose-invert prose-slate max-w-none text-slate-300">
+                           <p>@(string.IsNullOrEmpty(Model.Bio) ? "Experienced Instructor with a passion for teaching and technology." : Model.Bio)</p>
+                        </div>
+                    </div>
+
+                    @if(!string.IsNullOrEmpty(Model.Certifications)) {
+                        <div>
+                            <h3 class="font-display text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">verified</span> Certifications
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach(var cert in Model.Certifications.Split(',')) {
+                                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-sm font-medium border border-slate-700">@cert.Trim()</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-6">
+                    <div class="bg-black/20 rounded-xl p-6 border border-slate-800">
+                        <h4 class="font-bold text-white mb-4 text-sm uppercase tracking-wider">Details</h4>
+                        <ul class="space-y-4">
+                            <li class="flex items-center gap-3 text-sm text-slate-400">
+                                <span class="material-symbols-outlined text-slate-600">cake</span>
+                                <span>@(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("MMM dd, yyyy") : "N/A")</span>
+                            </li>
+                             <li class="flex items-center gap-3 text-sm text-slate-400">
+                                <span class="material-symbols-outlined text-slate-600">work_history</span>
+                                <span>@(Model.YearsOfExperience) Years Experience</span>
+                            </li>
+                             <li class="flex items-center gap-3 text-sm text-slate-400">
+                                <span class="material-symbols-outlined text-slate-600">location_on</span>
+                                <span>@(string.IsNullOrEmpty(Model.AddressLine) ? "Remote" : Model.AddressLine)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

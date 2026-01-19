@@ -117,6 +117,15 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     }
                 }
 
+                // Calculate Duration from selected subjects
+                if (selectedSubjectIds != null && selectedSubjectIds.Length > 0)
+                {
+                     var totalHours = await _context.Subjects
+                        .Where(s => selectedSubjectIds.Contains(s.Id))
+                        .SumAsync(s => s.StudyTime);
+                     course.DurationMonths = totalHours;
+                }
+
                 _context.Add(course);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Course created successfully.";
@@ -241,6 +250,27 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     foreach (var instId in instToAdd)
                     {
                         _context.CourseInstructors.Add(new CourseInstructor { CourseId = id, InstructorId = instId });
+                    }
+
+                    // Calculate Duration from selected subjects (All current subjects after update)
+                    if (selectedSubjectIds != null && selectedSubjectIds.Length > 0)
+                    {
+                         var totalHours = await _context.Subjects
+                            .Where(s => selectedSubjectIds.Contains(s.Id))
+                            .SumAsync(s => s.StudyTime);
+                         course.DurationMonths = totalHours;
+                         // We need to verify if EF Core tracks this change to 'course' object since we attached it via Update(course).
+                         // Since 'course' is the entity being updated, setting the property should be enough, 
+                         // but we called _context.Update(course) BEFORE this change. 
+                         // To be safe, let's just modify the property. EF Core's ChangeTracker should detect it before SaveChangesAsync,
+                         // mostly because 'course' instance is tracked. 
+                         // HOWEVER, _context.Update(course) marks all properties as modified. 
+                         // Changing it afterwards *should* work if the entity is tracked.
+                         // Let's force update the property to be sure, or just re-issue update? 
+                         // Simpler: Just set it and trust EF Check, or just move Update(course) later if possible?
+                         // Moving Update later is risky with the relations logic above.
+                         // Safest: Set it, and if needed, mark property as modified.
+                         _context.Entry(course).Property(u => u.DurationMonths).IsModified = true;
                     }
 
                     await _context.SaveChangesAsync();
