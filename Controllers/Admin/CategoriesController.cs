@@ -95,7 +95,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 // Check for dependencies (Courses)
                 if (await _context.Courses.AnyAsync(c => c.CategoryId == id))
                 {
-                    TempData["Error"] = "Không thể xóa danh mục này vì vẫn còn Khóa học thuộc danh mục. Vui lòng xóa các khóa học trước.";
+                    TempData["Error"] = "Cannot delete this category because there are existing courses under it. Please delete the courses first.";
                     return RedirectToAction(nameof(Index));
                 }
 

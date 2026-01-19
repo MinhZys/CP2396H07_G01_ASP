@@ -28,18 +28,18 @@
                 Next cohort starts in 4 days
             </div>
             <h1 class="font-display text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight mb-6">
-                Master <span class="text-primary italic">Technology</span> Today
+                <span data-i18n="hero.title">Master Technology Today</span>
             </h1>
-            <p class="text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-md leading-relaxed">
+            <p class="text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-md leading-relaxed" data-i18n="hero.subtitle">
                 Unlock your potential with industry-leading IT certifications and expert-led mentorship in cloud, security, and dev.
             </p>
             <div class="flex flex-wrap gap-4">
                 <button class="bg-primary text-background-dark px-8 py-4 rounded-lg font-bold font-display hover:opacity-90 transition-all flex items-center gap-2" onclick="window.location.href='/Courses'">
-                    Explore Courses
+                    <span data-i18n="hero.explore_btn">Explore Courses</span>
                     <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
                 <button class="bg-white/5 border border-white/10 dark:bg-surface-dark px-8 py-4 rounded-lg font-bold font-display hover:bg-white/10 transition-all" onclick="window.location.href='/Mentors'">
-                    View Mentors
+                    <span data-i18n="hero.view_mentors_btn">View Mentors</span>
                 </button>
             </div>
         </div>
@@ -56,7 +56,7 @@
     <div class="flex items-end justify-between mb-8 px-2">
         <div>
             <p class="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-2">Curated Paths</p>
-            <h2 class="font-display text-3xl font-bold">Featured Courses</h2>
+            <h2 class="font-display text-3xl font-bold" data-i18n="nav.courses">Featured Courses</h2>
         </div>
         <a class="text-sm font-bold text-primary flex items-center gap-1 hover:underline" asp-controller="Courses" asp-action="Index">
             View All <span class="material-symbols-outlined text-sm">open_in_new</span>

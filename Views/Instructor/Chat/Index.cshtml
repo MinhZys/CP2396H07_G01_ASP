@@ -1,0 +1,140 @@
+@model IEnumerable<Symphony.Portal.Web.Models.ChatMessage>
+@{
+    ViewData["Title"] = "Instructor Chat";
+}
+
+<div class="h-[calc(100vh-100px)] flex flex-col md:flex-row gap-6 -mx-6 md:-mx-8 p-6">
+    <!-- Sidebar List -->
+    <div class="w-full md:w-80 bg-surface-dark border border-slate-800 rounded-2xl overflow-hidden flex flex-col">
+        <div class="p-4 border-b border-slate-700 bg-background-dark/50">
+            <h3 class="font-bold text-lg text-white">Students & Support</h3>
+        </div>
+        <div class="flex-1 overflow-y-auto custom-scrollbar" id="chat-list">
+            <!-- Hardcode Admin/Support Option -->
+             <div class="chat-item p-4 border-b border-slate-800 hover:bg-white/5 cursor-pointer transition-colors" 
+                     onclick="selectChat('', 'Admin Support', null, '')">
+                    <div class="flex justify-between items-start mb-1">
+                        <h4 class="font-bold text-primary truncate">Admin Support</h4>
+                    </div>
+                    <p class="text-xs text-slate-400">Contact Administration</p>
+            </div>
+
+            @foreach (var chat in Model)
+            {
+                var identifier = chat.SenderId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value ? chat.ReceiverId : chat.SenderId;
+                // If I am sender, display Receiver. If I am receiver, display Sender.
+                // Note: logic in Controller simplified this grouping.
+                
+                // Display name logic is tricky without joining User table again in View or having it in Model.
+                // For MVP, we use what we have.
+                // Assuming Controller passed a list of Messages, we can pick SenderValidName if it's not me?
+                // But if I sent the last message, SenderValidName is Me.
+                // We need the OTHER person's name.
+                 
+                <div class="chat-item p-4 border-b border-slate-800 hover:bg-white/5 cursor-pointer transition-colors" 
+                     onclick="selectChat('@identifier', 'Student', null, '@identifier')">
+                    <div class="flex justify-between items-start mb-1">
+                        <h4 class="font-bold text-primary truncate">User @identifier.Substring(0,5)...</h4> 
+                        <span class="text-[10px] text-slate-500">@chat.Timestamp.ToString("HH:mm")</span>
+                    </div>
+                    <p class="text-xs text-slate-400 truncate">@chat.Content</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="flex-1 bg-surface-dark border border-slate-800 rounded-2xl overflow-hidden flex flex-col relative">
+        <div id="chat-header" class="p-4 border-b border-slate-700 bg-background-dark/50 flex justify-between items-center hidden">
+            <div>
+                <h3 id="current-chat-name" class="font-bold text-lg text-white">Select a chat</h3>
+            </div>
+        </div>
+        
+        <div id="inst-chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+            <div class="h-full flex items-center justify-center text-slate-500 flex-col gap-4">
+                <span class="material-symbols-outlined text-6xl opacity-20">chat</span>
+                <p>Select a conversation</p>
+            </div>
+        </div>
+
+        <div id="inst-chat-input" class="p-4 border-t border-slate-700 bg-background-dark/50 hidden">
+            <div class="flex gap-4">
+                <input type="text" id="inst-input-field" class="flex-1 bg-surface-dark border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary" placeholder="Type your reply...">
+                <button onclick="sendInstReply()" class="bg-primary text-background-dark px-6 py-3 rounded-xl font-bold hover:brightness-110">
+                    <span class="material-symbols-outlined">send</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    <script src="~/js/chat.js"></script>
+    <script>
+        let currentReceiverId = null;
+
+        document.addEventListener('chatMessageReceived', (e) => {
+            const data = e.detail;
+            if (currentReceiverId && (data.senderId === currentReceiverId || data.receiverId === currentReceiverId)) { // Logic needs care
+                appendInstMessage(data.message, 'other', data.time);
+            }
+        });
+
+        async function selectChat(targetId, name, sessionId, senderId) {
+            currentReceiverId = targetId;
+            
+            document.getElementById('chat-header').classList.remove('hidden');
+            document.getElementById('inst-chat-input').classList.remove('hidden');
+            document.getElementById('current-chat-name').textContent = name;
+            
+            const msgContainer = document.getElementById('inst-chat-messages');
+            msgContainer.innerHTML = '<div class="text-center py-10">Loading...</div>';
+
+            try {
+                const response = await fetch(`/Instructor/Chat/GetHistory?id=${targetId || ''}`); // Empty ID for Admin?
+                // If targetId is empty, it means Admin/Support (broadcast or specific group?)
+                // Actually Instructor -> Admin messages usually have ReceiverId = NULL (Group Admins) ??
+                // If so, history fetching needs to handle NULL receiver.
+                
+                const messages = await response.json();
+                
+                msgContainer.innerHTML = '';
+                messages.forEach(m => {
+                    const type = m.isSelf ? 'self' : 'other';
+                    appendInstMessage(m.content, type, m.time);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function sendInstReply() {
+            const input = document.getElementById('inst-input-field');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const myName = "@User.Identity.Name";
+            // Send
+            sendMessageToHub(currentReceiverId, msg, myName, null);
+            
+            appendInstMessage(msg, 'self', 'Now');
+            input.value = '';
+        }
+
+        function appendInstMessage(text, type, time) {
+             const container = document.getElementById('inst-chat-messages');
+             const div = document.createElement('div');
+             div.className = `flex flex-col ${type === 'self' ? 'items-end' : 'items-start'}`;
+             div.innerHTML = `
+                <div class="max-w-[70%] px-5 py-3 rounded-2xl text-sm ${type === 'self' ? 'bg-primary text-background-dark rounded-tr-none' : 'bg-slate-700 text-white rounded-tl-none'}">
+                    ${text}
+                </div>
+                <span class="text-[10px] text-slate-500 mt-1">${time}</span>
+             `;
+             container.appendChild(div);
+             container.scrollTop = container.scrollHeight;
+        }
+    </script>
+}

@@ -304,4 +304,41 @@ CREATE TABLE [Materials] (
     CONSTRAINT [PK_Materials] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_Materials_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id]) ON DELETE CASCADE
 );
+
+-- 17. CHAT & MESSAGING
+CREATE TABLE [ChatMessages] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [SenderId] nvarchar(36) NULL,
+    [ReceiverId] nvarchar(36) NULL,
+    [Content] nvarchar(max) NOT NULL,
+    [Timestamp] datetime2 NOT NULL,
+    [IsRead] bit NOT NULL,
+    [SessionId] nvarchar(max) NULL,
+    [SenderValidName] nvarchar(max) NULL,
+    CONSTRAINT [PK_ChatMessages] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_ChatMessages_Users_SenderId] FOREIGN KEY ([SenderId]) REFERENCES [Users] ([Id]),
+    CONSTRAINT [FK_ChatMessages_Users_ReceiverId] FOREIGN KEY ([ReceiverId]) REFERENCES [Users] ([Id])
+);
+
+-- 18. ASSIGNMENTS
+CREATE TABLE [Assignments] (
+    [Id] nvarchar(36) NOT NULL,
+    [Title] nvarchar(max) NOT NULL,
+    [Description] nvarchar(max) NULL,
+    [ClassId] nvarchar(36) NOT NULL,
+    [DueDate] datetime2 NOT NULL,
+    [AssignmentType] nvarchar(max) NOT NULL, -- Enum
+    [Status] nvarchar(max) NOT NULL, -- Enum
+    CONSTRAINT [PK_Assignments] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Assignments_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id]) ON DELETE CASCADE
+);
+
+-- 19. CLASS CATEGORIES
+CREATE TABLE [ClassCategories] (
+    [Id] nvarchar(36) NOT NULL, 
+    [Name] nvarchar(max) NOT NULL,
+    [Description] nvarchar(max) NULL,
+    [IsActive] bit NOT NULL DEFAULT 1,
+    CONSTRAINT [PK_ClassCategories] PRIMARY KEY ([Id])
+);
 ```

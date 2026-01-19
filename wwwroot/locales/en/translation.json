@@ -1,0 +1,28 @@
+{
+    "nav": {
+        "home": "Home",
+        "courses": "Courses",
+        "mentors": "Mentors",
+        "contact": "Contact",
+        "login": "Login",
+        "logout": "Logout",
+        "profile": "Profile",
+        "admin_dashboard": "Admin Dashboard",
+        "my_classroom": "My Classroom"
+    },
+    "hero": {
+        "title": "Master Technology Today",
+        "subtitle": "Unlock your potential with industry-leading IT certifications and expert-led mentorship.",
+        "explore_btn": "Explore Courses",
+        "view_mentors_btn": "View Mentors"
+    },
+    "common": {
+        "search": "Search",
+        "success": "Success!",
+        "error": "Error!",
+        "confirm_title": "Are you sure?",
+        "confirm_text": "You won't be able to revert this!",
+        "delete_btn": "Yes, delete it!",
+        "cancel_btn": "Cancel"
+    }
+}

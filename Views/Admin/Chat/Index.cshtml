@@ -1,0 +1,311 @@
+@model IEnumerable<Symphony.Portal.Web.Models.ChatMessage>
+@{
+    ViewData["Title"] = "Online Support";
+}
+
+<style>
+    .chat-container {
+        height: calc(100vh - 120px);
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+    
+    .chat-sidebar {
+        background-color: #f8f9fa;
+        border-right: 1px solid #eee;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .chat-list {
+        overflow-y: auto;
+        flex: 1;
+    }
+    
+    .chat-item {
+        padding: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .chat-item:hover, .chat-item.active {
+        background-color: #e9ecef;
+    }
+    
+    .chat-avatar {
+        width: 45px;
+        height: 45px;
+        background-color: #0d6efd;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .chat-info {
+        flex: 1;
+        min-width: 0; /* logic for truncate */
+    }
+
+    .chat-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .chat-preview {
+        font-size: 0.85rem;
+        color: #888;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .chat-time {
+        font-size: 0.75rem;
+        color: #aaa;
+        font-weight: normal;
+    }
+    
+    .chat-main {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: #fff;
+    }
+    
+    .chat-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .chat-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background-color: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .message-bubble {
+        max-width: 70%;
+        padding: 10px 16px;
+        border-radius: 18px;
+        position: relative;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .message-self {
+        align-self: flex-end;
+        background-color: #0d6efd;
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+
+    .message-other {
+        align-self: flex-start;
+        background-color: #e9ecef;
+        color: #333;
+        border-bottom-left-radius: 4px;
+    }
+    
+    .message-time {
+        font-size: 0.7rem;
+        margin-top: 4px;
+        opacity: 0.7;
+        text-align: right;
+    }
+    
+    .chat-input-area {
+        padding: 15px 20px;
+        background-color: #fff;
+        border-top: 1px solid #eee;
+    }
+
+    .btn-send {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+</style>
+
+<div class="row chat-container g-0">
+    <!-- Sidebar -->
+    <div class="col-md-4 col-lg-3 chat-sidebar">
+        <div class="p-3 border-bottom">
+            <h5 class="mb-0 fw-bold"><i class="fas fa-comments me-2 text-primary"></i>Messages</h5>
+        </div>
+        
+        <div class="chat-list" id="chat-list">
+            @foreach (var chat in Model)
+            {
+                var identifier = chat.SenderId ?? chat.SessionId;
+                var isSession = chat.SenderId == null;
+                var targetId = isSession ? $"Session_{chat.SessionId}" : chat.SenderId;
+                var initial = !string.IsNullOrEmpty(chat.SenderValidName) ? chat.SenderValidName[0].ToString().ToUpper() : "?";
+                
+                <div class="chat-item" onclick="selectChat(this, '@targetId', '@chat.SenderValidName', '@chat.SessionId', '@chat.SenderId')">
+                    <div class="chat-avatar gradient-bg">
+                        @initial
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">
+                            @chat.SenderValidName
+                            <span class="chat-time">@chat.Timestamp.ToString("HH:mm")</span>
+                        </div>
+                        <div class="chat-preview">@chat.Content</div>
+                    </div>
+                </div>
+            }
+            @if(!Model.Any()) {
+                <div class="text-center p-4 text-muted">
+                    <i class="fas fa-inbox fa-3x mb-3 opacity-25"></i>
+                    <p>No messages yet</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="col-md-8 col-lg-9 chat-main">
+        <!-- Header (Hidden initially) -->
+        <div id="chat-header" class="chat-header d-none">
+            <div class="chat-avatar" id="header-avatar" style="width: 40px; height: 40px; font-size: 1rem;">?</div>
+            <div>
+                <h6 class="mb-0 fw-bold" id="current-chat-name">Select a chat</h6>
+                <small class="text-muted" id="current-chat-status">Active now</small>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div id="admin-chat-messages" class="chat-messages">
+            <div class="d-flex flex-column align-items-center justify-content-center h-100 text-muted opacity-50">
+                <i class="fas fa-paper-plane fa-4x mb-3"></i>
+                <p>Select a conversation to start</p>
+            </div>
+        </div>
+
+        <!-- Input (Hidden initially) -->
+        <div id="admin-chat-input" class="chat-input-area d-none">
+            <div class="input-group">
+                <input type="text" id="admin-input-field" class="form-control rounded-pill border-0 bg-light py-2 px-4 me-2" placeholder="Type a message..." style="box-shadow: none;">
+                <button onclick="sendAdminReply()" class="btn btn-primary btn-send shadow-sm">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    <script src="~/js/chat.js"></script>
+    <script>
+        let currentReceiverId = null;
+        let currentSessionId = null; 
+
+        document.addEventListener('chatMessageReceived', (e) => {
+            const data = e.detail;
+            if (currentReceiverId && (data.senderId === currentReceiverId || "Session_" + data.sessionId === currentReceiverId)) {
+                appendAdminMessage(data.message, 'other', data.time);
+            }
+        });
+
+        async function selectChat(element, targetId, name, sessionId, senderId) {
+            // Highlight active item
+            document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            currentReceiverId = targetId;
+            currentSessionId = sessionId;
+            
+            // Update Header
+            document.getElementById('chat-header').classList.remove('d-none');
+            document.getElementById('chat-header').classList.add('d-flex');
+            document.getElementById('admin-chat-input').classList.remove('d-none');
+            document.getElementById('current-chat-name').textContent = name;
+            document.getElementById('header-avatar').textContent = name.charAt(0).toUpperCase();
+            
+            const msgContainer = document.getElementById('admin-chat-messages');
+            msgContainer.innerHTML = '<div class="d-flex justify-content-center align-items-center h-100"><div class="spinner-border text-primary" role="status"></div></div>';
+
+            try {
+                const lookupId = sessionId || senderId; 
+                const response = await fetch(`/Admin/Chat/GetHistory?id=${lookupId}`);
+                const messages = await response.json();
+                
+                msgContainer.innerHTML = '';
+                messages.forEach(m => {
+                    // Logic: If sender name matches current chat user name, it's 'other', else 'self' (Admin)
+                    const type = m.senderValidName === name ? 'other' : 'self'; 
+                    appendAdminMessage(m.content, type, m.time);
+                });
+            } catch (err) {
+                console.error(err);
+                msgContainer.innerHTML = '<p class="text-danger text-center">Error loading chat history</p>';
+            }
+        }
+
+        function sendAdminReply() {
+            const input = document.getElementById('admin-input-field');
+            const msg = input.value.trim();
+            if (!msg || !currentReceiverId) return;
+
+            const myName = "@User.Identity.Name";
+            sendMessageToHub(currentReceiverId, msg, myName, currentSessionId);
+            appendAdminMessage(msg, 'self', 'Now');
+            input.value = '';
+        }
+
+        // Send on Enter
+        document.getElementById('admin-input-field').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendAdminReply();
+            }
+        });
+
+        function appendAdminMessage(text, type, time) {
+             const container = document.getElementById('admin-chat-messages');
+             const div = document.createElement('div');
+             div.className = `message-bubble ${type === 'self' ? 'message-self' : 'message-other'}`;
+             div.innerHTML = `
+                ${text}
+                <div class="message-time text-white-50">${time}</div>
+             `;
+             // For time styling in 'message-other', we need dark text
+             if(type === 'other') {
+                 div.querySelector('.message-time').classList.replace('text-white-50', 'text-muted');
+             }
+
+             container.appendChild(div);
+             container.scrollTop = container.scrollHeight;
+        }
+    </script>
+}

@@ -42,6 +42,7 @@ namespace Symphony.Portal.Web.Data
         // Class Management
         public DbSet<ClassCategory> ClassCategories { get; set; }
         public DbSet<Assignment> Assignments { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

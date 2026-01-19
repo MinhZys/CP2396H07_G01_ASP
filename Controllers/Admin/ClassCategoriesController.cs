@@ -106,7 +106,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             // Check if any classes exist in this category
             if (await _context.Classes.AnyAsync(c => c.ClassCategoryId == id))
             {
-                TempData["Error"] = "Không thể xóa danh mục này vì vẫn còn Lớp học thuộc danh mục. Vui lòng xóa các lớp học trước.";
+                TempData["Error"] = "Cannot delete this category because there are existing classes under it. Please delete the classes first.";
                 return RedirectToAction(nameof(Index));
             }
 

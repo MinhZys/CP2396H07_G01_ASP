@@ -164,6 +164,45 @@ namespace CP2396H07_G01.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Symphony.Portal.Web.Models.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ReceiverId")
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("SenderId")
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("SenderValidName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SessionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("ChatMessages");
+                });
+
             modelBuilder.Entity("Symphony.Portal.Web.Models.Class", b =>
                 {
                     b.Property<string>("Id")
@@ -222,7 +261,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "1",
-                            CreatedAt = new DateTime(2026, 1, 17, 2, 46, 17, 900, DateTimeKind.Local).AddTicks(1555),
+                            CreatedAt = new DateTime(2026, 1, 20, 0, 6, 30, 853, DateTimeKind.Local).AddTicks(3121),
                             Description = "Standard classrooms",
                             IsActive = true,
                             Name = "Theory"
@@ -230,7 +269,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "2",
-                            CreatedAt = new DateTime(2026, 1, 17, 2, 46, 17, 900, DateTimeKind.Local).AddTicks(1570),
+                            CreatedAt = new DateTime(2026, 1, 20, 0, 6, 30, 853, DateTimeKind.Local).AddTicks(3191),
                             Description = "Computer labs",
                             IsActive = true,
                             Name = "Lab"
@@ -238,7 +277,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "3",
-                            CreatedAt = new DateTime(2026, 1, 17, 2, 46, 17, 900, DateTimeKind.Local).AddTicks(1571),
+                            CreatedAt = new DateTime(2026, 1, 20, 0, 6, 30, 853, DateTimeKind.Local).AddTicks(3192),
                             Description = "Virtual classes",
                             IsActive = true,
                             Name = "Online"
@@ -1098,6 +1137,21 @@ namespace CP2396H07_G01.Migrations
                     b.Navigation("Class");
 
                     b.Navigation("Instructor");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.ChatMessage", b =>
+                {
+                    b.HasOne("Symphony.Portal.Web.Models.User", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId");
+
+                    b.HasOne("Symphony.Portal.Web.Models.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId");
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Class", b =>

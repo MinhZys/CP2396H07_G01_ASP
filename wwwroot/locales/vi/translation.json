@@ -1,0 +1,28 @@
+{
+    "nav": {
+        "home": "Trang chủ",
+        "courses": "Khóa học",
+        "mentors": "Giảng viên",
+        "contact": "Liên hệ",
+        "login": "Đăng nhập",
+        "logout": "Đăng xuất",
+        "profile": "Hồ sơ cá nhân",
+        "admin_dashboard": "Trang quản trị",
+        "my_classroom": "Lớp học của tôi"
+    },
+    "hero": {
+        "title": "Chinh phục Công nghệ Hôm nay",
+        "subtitle": "Khai phá tiềm năng của bạn với các chứng chỉ CNTT hàng đầu và sự hướng dẫn từ chuyên gia.",
+        "explore_btn": "Khám phá Khóa học",
+        "view_mentors_btn": "Xem Giảng viên"
+    },
+    "common": {
+        "search": "Tìm kiếm",
+        "success": "Thành công!",
+        "error": "Lỗi!",
+        "confirm_title": "Bạn có chắc chắn không?",
+        "confirm_text": "Hành động này không thể hoàn tác!",
+        "delete_btn": "Vâng, xóa đi!",
+        "cancel_btn": "Hủy"
+    }
+}

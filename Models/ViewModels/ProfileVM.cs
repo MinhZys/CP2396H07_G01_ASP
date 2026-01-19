@@ -6,50 +6,50 @@ namespace Symphony.Portal.Web.Models.ViewModels
     {
         public string UserId { get; set; } = string.Empty;
         
-        [Display(Name = "Họ và tên")]
-        [Required(ErrorMessage = "Vui lòng nhập họ và tên")]
+        [Display(Name = "Full Name")]
+        [Required(ErrorMessage = "Please enter your full name")]
         public string FullName { get; set; } = string.Empty;
         
         [Display(Name = "Email")]
         public string Email { get; set; } = string.Empty;
 
-        [Display(Name = "Vai trò")]
+        [Display(Name = "Role")]
         public string Role { get; set; } = string.Empty;
 
         public bool IsInstructor { get; set; }
 
         // Common Profile Fields
-        [Display(Name = "Ngày sinh")]
+        [Display(Name = "Date of Birth")]
         [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
 
-        [Display(Name = "Giới tính")]
+        [Display(Name = "Gender")]
         public string Gender { get; set; } = string.Empty;
 
-        [Display(Name = "Số điện thoại")]
-        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
+        [Display(Name = "Phone Number")]
+        [Phone(ErrorMessage = "Invalid phone number")]
         public string PhoneNumber { get; set; } = string.Empty;
 
-        [Display(Name = "Địa chỉ")]
+        [Display(Name = "Address")]
         public string AddressLine { get; set; } = string.Empty;
 
-        [Display(Name = "Ảnh đại diện")]
+        [Display(Name = "Avatar")]
         public string AvatarUrl { get; set; } = string.Empty;
 
-        [Display(Name = "Tải ảnh lên")]
+        [Display(Name = "Upload New Avatar")]
         public IFormFile? AvatarImage { get; set; }
 
         // Instructor Specific
-        [Display(Name = "Số năm kinh nghiệm")]
+        [Display(Name = "Years of Experience")]
         public int YearsOfExperience { get; set; }
 
-        [Display(Name = "Chuyên môn")]
+        [Display(Name = "Specialization")]
         public string Specialization { get; set; } = string.Empty;
 
-        [Display(Name = "Giới thiệu bản thân")]
+        [Display(Name = "Bio")]
         public string Bio { get; set; } = string.Empty;
         
-        [Display(Name = "Chứng chỉ")]
+        [Display(Name = "Certifications")]
         public string Certifications { get; set; } = string.Empty;
 
         [Display(Name = "Github URL")]

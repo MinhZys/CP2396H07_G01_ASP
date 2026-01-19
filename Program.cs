@@ -17,8 +17,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromDays(1); // Login lasts for 1 day
+        options.SlidingExpiration = true; // Refresh expiration if user is active
     });
 
+builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews()
     .AddRazorOptions(options =>
     {
@@ -72,6 +75,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Areas route removed
+
+app.MapHub<Symphony.Portal.Web.Hubs.ChatHub>("/chatHub");
 
 app.MapControllerRoute(
     name: "areas",

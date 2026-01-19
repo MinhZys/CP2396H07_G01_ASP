@@ -1,0 +1,199 @@
+<!-- Chat Widget Floating Button -->
+<div id="chat-widget-container" class="fixed bottom-6 right-6 z-50">
+    <button id="chat-toggle-btn" class="bg-primary text-background-dark p-4 rounded-full shadow-lg hover:scale-105 transition-transform">
+        <span class="material-symbols-outlined text-2xl">chat</span>
+    </button>
+
+    <!-- Chat Box (Hidden by default) -->
+    <div id="chat-box" class="hidden absolute bottom-16 right-0 w-80 bg-surface-dark border border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col" style="height: 400px;">
+        <!-- Header -->
+        <div class="bg-primary/10 p-4 border-b border-slate-700 flex justify-between items-center">
+            <h3 class="font-bold text-white">Online Support</h3>
+            <button id="chat-close-btn" class="text-slate-400 hover:text-white">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar bg-background-dark/50">
+            <!-- Messages will start here -->
+            <div class="text-center text-xs text-slate-500 my-2">Start a conversation</div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-3 border-t border-slate-700 bg-surface-dark">
+            <!-- Guest Name Input (Only shown if guest and name not set) -->
+            <div id="guest-name-input" class="mb-2 hidden">
+                <input type="text" id="chat-guest-name" placeholder="Enter your name..." class="w-full bg-background-dark border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary">
+            </div>
+
+            <div class="flex gap-2">
+                <input type="text" id="chat-input" placeholder="Type a message..." class="flex-1 bg-background-dark border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary">
+                <button id="chat-send-btn" class="bg-primary text-background-dark p-2 rounded-lg hover:bg-primary/90">
+                    <span class="material-symbols-outlined">send</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SignalR Library (CDN) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+<script src="~/js/chat.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('chat-toggle-btn');
+        const closeBtn = document.getElementById('chat-close-btn');
+        const chatBox = document.getElementById('chat-box');
+        const sendBtn = document.getElementById('chat-send-btn');
+        const input = document.getElementById('chat-input');
+        const messagesDiv = document.getElementById('chat-messages');
+        const guestNameInput = document.getElementById('guest-name-input');
+        const guestNameField = document.getElementById('chat-guest-name');
+
+        let isGuest = @(User.Identity.IsAuthenticated ? "false" : "true");
+        let sessionId = getCookie("chat_session_id");
+        if (!sessionId) {
+            sessionId = crypto.randomUUID();
+            setCookie("chat_session_id", sessionId, 1);
+        }
+
+        // Wait for connections and Load History
+        if (sessionId) {
+            loadHistory(sessionId);
+        }
+
+        const waitForConn = setInterval(() => {
+            if (window.connection && window.connection.state === "Connected") {
+                clearInterval(waitForConn);
+                console.log("Widget: SignalR Ready");
+                if (isGuest && sessionId) {
+                    console.log("Joining Session: " + sessionId);
+                    joinChatGroup("Session_" + sessionId);
+                }
+            }
+        }, 500);
+
+        // Toggle Chat
+        toggleBtn.addEventListener('click', () => {
+            chatBox.classList.toggle('hidden');
+            if (isGuest && !getCookie("chat_guest_name")) {
+                guestNameInput.classList.remove('hidden');
+            } else {
+                guestNameInput.classList.add('hidden');
+            }
+        });
+
+        closeBtn.addEventListener('click', () => chatBox.classList.add('hidden'));
+
+        // Send Message
+        sendBtn.addEventListener('click', sendMessage);
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        async function loadHistory(sid) {
+             try {
+                const response = await fetch(`/Chat/GetHistory?sessionId=${sid}`);
+                if (!response.ok) return;
+                const messages = await response.json();
+                
+                // Clear initial placeholder if history exists
+                if(messages.length > 0) messagesDiv.innerHTML = '';
+                
+                const myId = "@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "")";
+
+                messages.forEach(m => {
+                    // Logic:
+                    // If I am guest (isGuest=true), Self if senderId is null.
+                    // If I am logged in user (isGuest=false), Self if senderId == myId.
+                    
+                    let isSelf = false;
+                    if (isGuest) {
+                        isSelf = (m.senderId === null); 
+                    } else {
+                        isSelf = (m.senderId === myId);
+                    }
+                    
+                    appendMessage(m.content, isSelf ? 'self' : 'other', m.time);
+                });
+            } catch (err) {
+                console.error("Error loading history", err);
+            }
+        }
+
+        function sendMessage() {
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            let senderName = "@(User.Identity.Name ?? "")";
+            
+            if (isGuest) {
+                let storedName = getCookie("chat_guest_name");
+                if (!storedName) {
+                    const nameVal = guestNameField.value.trim();
+                    if (!nameVal) {
+                        alert("Please enter your name to start chatting!");
+                        return;
+                    }
+                    setCookie("chat_guest_name", nameVal, 1);
+                    senderName = nameVal;
+                    guestNameInput.classList.add('hidden');
+                } else {
+                    senderName = storedName;
+                }
+            }
+
+            // Call SignalR
+            sendMessageToHub("", msg, senderName, sessionId); // Receiver empty = Broadcast to Admins
+            
+            // Append local message
+            appendMessage(msg, 'self', 'Now'); // Normally wait for ack, but optimistic is fine
+            input.value = '';
+        }
+
+        // Listen for new messages
+        document.addEventListener('chatMessageReceived', (e) => {
+            const data = e.detail;
+            if (data.senderId !== connection.connectionId) { 
+                 // Ensure we don't double append if we receive our own message via group (rare but possible depending on hub)
+                 // Also check if valid for us?
+                 appendMessage(data.message, 'other', data.time);
+            }
+        });
+
+        function appendMessage(text, type, time) {
+            const div = document.createElement('div');
+            div.className = `flex flex-col ${type === 'self' ? 'items-end' : 'items-start'}`;
+            div.innerHTML = `
+                <div class="max-w-[80%] px-3 py-2 rounded-xl text-sm ${type === 'self' ? 'bg-primary text-background-dark rounded-tr-none' : 'bg-slate-700 text-white rounded-tl-none'}">
+                    ${text}
+                </div>
+                <span class="text-[10px] text-slate-500 mt-1">${time}</span>
+            `;
+            messagesDiv.appendChild(div);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days*24*60*60*1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+        }
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+    });
+</script>
