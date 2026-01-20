@@ -1,15 +1,16 @@
 {
-    "nav": {
-        "home": "Trang chủ",
-        "courses": "Khóa học",
-        "mentors": "Giảng viên",
-        "contact": "Liên hệ",
-        "login": "Đăng nhập",
-        "logout": "Đăng xuất",
-        "profile": "Hồ sơ cá nhân",
-        "admin_dashboard": "Trang quản trị",
-        "my_classroom": "Lớp học của tôi"
-    },
+  "nav": {
+    "home": "Trang chủ",
+    "entranceExam": "Đăng ký kỳ thi đầu vào",
+    "courses": "Khóa học",
+    "mentors": "Giảng viên",
+    "contact": "Liên hệ",
+    "login": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "profile": "Hồ sơ cá nhân",
+    "admin_dashboard": "Trang quản trị",
+    "my_classroom": "Lớp học của tôi"
+  },
     "hero": {
         "title": "Chinh phục Công nghệ Hôm nay",
         "subtitle": "Khai phá tiềm năng của bạn với các chứng chỉ CNTT hàng đầu và sự hướng dẫn từ chuyên gia.",

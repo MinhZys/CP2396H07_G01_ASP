@@ -1,3 +1,5 @@
+@using Microsoft.AspNetCore.Mvc.Rendering
+
 @model Symphony.Portal.Web.Models.Guest
 @{
     ViewData["Title"] = "Guest Registration";
@@ -87,20 +89,21 @@
 
                 <!-- Exam Selection -->
                 <div>
-                    <label asp-for="SelectedEntranceExamId" class="block text-sm font-medium text-slate-300 mb-2">Chọn kỳ thi đầu vào</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="material-symbols-outlined text-slate-500">edit_note</span>
-                        </div>
-                        <select asp-for="SelectedEntranceExamId" asp-items="@(new SelectList(ViewBag.EntranceExams, "Id", "Title"))" class="block w-full pl-10 pr-10 py-3 bg-background-dark border border-slate-700 rounded-lg text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm appearance-none transition-colors">
-                            <option value="">-- Vui lòng chọn kỳ thi --</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                            <span class="material-symbols-outlined text-slate-500">expand_more</span>
-                        </div>
-                    </div>
-                    <p class="mt-2 text-xs text-slate-500">* Lệ phí thi sẽ được hiển thị ở bước thanh toán tiếp theo.</p>
+                    <label asp-for="SelectedEntranceExamId"
+                           class="block text-sm font-medium text-slate-300 mb-2">
+                        Chọn kỳ thi đầu vào
+                    </label>
+
+                    <select asp-for="SelectedEntranceExamId"
+                            asp-items="@(new SelectList(ViewBag.EntranceExams, "Id", "Title"))"
+                            class="block w-full pl-4 pr-4 py-3 bg-background-dark border border-slate-700 rounded-lg text-white">
+                        <option value="">-- Vui lòng chọn kỳ thi --</option>
+                    </select>
+
+                    <span asp-validation-for="SelectedEntranceExamId"
+                          class="text-red-500 text-xs mt-1 block"></span>
                 </div>
+
 
                 <!-- Submit Button -->
                 <div class="pt-6">

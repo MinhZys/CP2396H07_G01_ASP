@@ -69,6 +69,12 @@
                  <!-- DesktopNav Links -->
                 <div class="hidden md:flex items-center gap-6 text-sm font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 mr-4">
                     <a class="hover:text-primary transition-colors" asp-controller="Home" asp-action="Index" data-i18n="nav.home">Home</a>
+                    <a class="hover:text-primary transition-colors"
+                       asp-controller="Guests"
+                       asp-action="Register"
+                       data-i18n="nav.entranceExam">
+                        Entrance Exam
+                    </a>
                     <a class="hover:text-primary transition-colors" asp-controller="Courses" asp-action="Index" data-i18n="nav.courses">Courses</a>
                     <a class="hover:text-primary transition-colors" asp-controller="Mentors" asp-action="Index" data-i18n="nav.mentors">Mentors</a>
                     <a class="hover:text-primary transition-colors" asp-controller="Contact" asp-action="Index" data-i18n="nav.contact">Contact</a>

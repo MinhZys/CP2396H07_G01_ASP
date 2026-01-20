@@ -72,7 +72,10 @@ namespace Symphony.Portal.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmPayment(string id, string paymentMethod) // Simplified
         {
-            var guest = await _context.Guests.FindAsync(id);
+            var guest = await _context.Guests
+    .Include(g => g.SelectedEntranceExam)
+    .FirstOrDefaultAsync(g => g.Id == id);
+
             if (guest == null) return NotFound();
 
             if (guest.Status == GuestRegistrationStatus.PendingPayment)

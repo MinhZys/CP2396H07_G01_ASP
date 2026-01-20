@@ -1,15 +1,16 @@
 {
-    "nav": {
-        "home": "Home",
-        "courses": "Courses",
-        "mentors": "Mentors",
-        "contact": "Contact",
-        "login": "Login",
-        "logout": "Logout",
-        "profile": "Profile",
-        "admin_dashboard": "Admin Dashboard",
-        "my_classroom": "My Classroom"
-    },
+  "nav": {
+    "home": "Home",
+    "entranceExam": "Entrance Exam",
+    "courses": "Courses",
+    "mentors": "Mentors",
+    "contact": "Contact",
+    "login": "Login",
+    "logout": "Logout",
+    "profile": "Profile",
+    "admin_dashboard": "Admin Dashboard",
+    "my_classroom": "My Classroom"
+  },
     "hero": {
         "title": "Master Technology Today",
         "subtitle": "Unlock your potential with industry-leading IT certifications and expert-led mentorship.",

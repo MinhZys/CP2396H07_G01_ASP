@@ -1,0 +1,197 @@
+﻿@model IEnumerable<Symphony.Portal.Web.Models.Payment>
+@using Symphony.Portal.Web.Models.Enums
+
+@{
+    ViewData["Title"] = "Manage Payments";
+    string currentStatus = ViewBag.CurrentStatus as string;
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Payments</h6>
+        <div>
+            <a href="@Url.Action("Index", new { status = "Pending" })" class="btn btn-sm btn-secondary">Pending</a>
+            <a href="@Url.Action("Index", new { status = "Paid" })" class="btn btn-sm btn-success">Paid</a>
+            <a href="@Url.Action("Index", new { status = "Cancelled" })" class="btn btn-sm btn-outline-secondary">Cancelled</a>
+            <a href="@Url.Action("Index")" class="btn btn-sm btn-outline-dark">All</a>
+        </div>
+    </div>
+
+    <div class="card-body">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Payer</th>
+                        <th>Receipt</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th width="180">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @(item.PaymentDate == default
+                                                            ? "-"
+                                                            : item.PaymentDate.ToString("dd/MM/yyyy"))
+                                                                                                  </td>
+
+                            <td>
+                                @(item.Student != null ? item.Student.FullName :
+                                                            item.Guest != null ? item.Guest.FullName : "Guest")
+                            <br />
+                            <small class="text-muted">
+                                @(item.Student?.Email ?? item.Guest?.Email)
+                            </small>
+                        </td>
+
+                            <td class="fw-bold text-primary">
+                                @item.ReceiptNumber
+                            </td>
+
+                            <td class="fw-bold text-success">
+                                @item.Amount.ToString("N0") đ
+                            </td>
+
+                            <td>
+                                <span class="badge bg-info text-dark">
+                                    @item.PaymentMethod
+                                </span>
+                            </td>
+
+                            <td>
+                            @if (item.Status == PaymentStatus.Pending)
+                                {
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                }
+                                else if (item.Status == PaymentStatus.Paid)
+                                {
+                                    <span class="badge bg-success">Paid</span>
+                                }
+                                else if (item.Status == PaymentStatus.Cancelled)
+                                {
+                                    <span class="badge bg-secondary">Cancelled</span>
+                                }
+                                else if (item.Status == PaymentStatus.Failed)
+                                {
+                                    <span class="badge bg-danger">Failed</span>
+                                }
+                                else if (item.Status == PaymentStatus.Refunded)
+                                {
+                                    <span class="badge bg-info text-dark">Refunded</span>
+                                }
+                            </td>
+
+                            <td>
+                                @if (item.Status == PaymentStatus.Pending)
+                                {
+                                    <button type="button"
+                                            class="btn btn-success btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#confirmPaymentModal"
+                                            data-id="@item.Id"
+                                            data-name="@(item.Student?.FullName ?? item.Guest?.FullName)"
+                                            data-amount="@item.Amount.ToString("N0")"
+                                            data-method="@item.PaymentMethod">
+                                        Confirm
+                                    </button>
+
+                                    <form asp-action="Cancel" asp-route-id="@item.Id"
+                                          method="post" style="display:inline">
+                                        <button class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Cancel this payment?')">
+                                            Cancel
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-outline-info btn-sm">
+                                        View
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- CONFIRM PAYMENT MODAL -->
+<div class="modal fade" id="confirmPaymentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="MarkAsPaid" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Cash Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="paymentId" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Payer</label>
+                        <input type="text" class="form-control" id="payerName" readonly />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Amount</label>
+                        <input type="text" class="form-control" id="paymentAmount" readonly />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Method</label>
+                        <input type="text" class="form-control" id="paymentMethod" readonly />
+                    </div>
+
+                    <div class="alert alert-info">
+                        Sau khi xác nhận, thanh toán sẽ được đánh dấu là <strong>Paid</strong>
+                        và hồ sơ liên quan sẽ được xử lý.
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        Confirm Payment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var confirmModal = document.getElementById('confirmPaymentModal');
+
+        confirmModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+
+            document.getElementById('paymentId').value = button.getAttribute('data-id');
+            document.getElementById('payerName').value = button.getAttribute('data-name');
+            document.getElementById('paymentAmount').value = button.getAttribute('data-amount') + ' đ';
+            document.getElementById('paymentMethod').value = button.getAttribute('data-method');
+        });
+    </script>
+}

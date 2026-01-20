@@ -150,6 +150,12 @@
                         </li>
 
                         <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ManagePayments" ? "active" : "")" asp-area="Admin" asp-controller="ManagePayments" asp-action="Index">
+                                <i class="fa-solid fa-bag-shopping"></i> Manage Payments
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "active" : "")" asp-area="Admin" asp-controller="Classes" asp-action="Index">
                                 <i class="fas fa-users-class"></i> Classes
                             </a>

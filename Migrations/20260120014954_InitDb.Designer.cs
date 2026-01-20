@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Symphony.Portal.Web.Data;
 
@@ -11,9 +12,11 @@ using Symphony.Portal.Web.Data;
 namespace CP2396H07_G01.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260120014954_InitDb")]
+    partial class InitDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -261,7 +264,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "1",
-                            CreatedAt = new DateTime(2026, 1, 20, 10, 15, 6, 208, DateTimeKind.Local).AddTicks(623),
+                            CreatedAt = new DateTime(2026, 1, 20, 8, 49, 53, 183, DateTimeKind.Local).AddTicks(822),
                             Description = "Standard classrooms",
                             IsActive = true,
                             Name = "Theory"
@@ -269,7 +272,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "2",
-                            CreatedAt = new DateTime(2026, 1, 20, 10, 15, 6, 208, DateTimeKind.Local).AddTicks(641),
+                            CreatedAt = new DateTime(2026, 1, 20, 8, 49, 53, 183, DateTimeKind.Local).AddTicks(837),
                             Description = "Computer labs",
                             IsActive = true,
                             Name = "Lab"
@@ -277,7 +280,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "3",
-                            CreatedAt = new DateTime(2026, 1, 20, 10, 15, 6, 208, DateTimeKind.Local).AddTicks(644),
+                            CreatedAt = new DateTime(2026, 1, 20, 8, 49, 53, 183, DateTimeKind.Local).AddTicks(839),
                             Description = "Virtual classes",
                             IsActive = true,
                             Name = "Online"
@@ -586,8 +589,8 @@ namespace CP2396H07_G01.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("SelectedEntranceExamId")
                         .HasColumnType("nvarchar(36)");
@@ -806,9 +809,6 @@ namespace CP2396H07_G01.Migrations
                     b.Property<string>("ReceiptNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.Property<string>("StudentId")
                         .HasColumnType("nvarchar(36)");

@@ -1,4 +1,4 @@
-namespace Symphony.Portal.Web.Models.Enums
+﻿namespace Symphony.Portal.Web.Models.Enums
 {
     public enum PaymentMethod
     {

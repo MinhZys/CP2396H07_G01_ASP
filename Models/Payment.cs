@@ -22,6 +22,9 @@ namespace Symphony.Portal.Web.Models
 
         public PaymentMethod PaymentMethod { get; set; }
 
+        [Required]
+        public PaymentStatus Status { get; set; } = PaymentStatus.Pending;
+
         public DateTime PaymentDate { get; set; }
 
         public string ReceiptNumber { get; set; } = string.Empty;
