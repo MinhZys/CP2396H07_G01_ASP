@@ -20,10 +20,21 @@ namespace Symphony.Portal.Web.Controllers.Admin
             _context = context;
         }
 
-        // GET: Admin/Classes
         public async Task<IActionResult> Index()
         {
             var classes = await _context.Classes.Include(c => c.ClassCategory).ToListAsync();
+            
+            // Calculate Remaining Seats
+            var remainingSeats = new Dictionary<string, int>();
+            foreach (var cls in classes)
+            {
+                var approvedGuests = await _context.Guests.CountAsync(g => g.ClassId == cls.Id && g.Status == GuestRegistrationStatus.Approved);
+                var enrollments = await _context.Enrollments.CountAsync(e => e.ClassId == cls.Id);
+                var occupied = approvedGuests + enrollments;
+                remainingSeats[cls.Id] = cls.NumberOfSeats - occupied;
+            }
+            ViewBag.ClassRemainingSeats = remainingSeats;
+
             return View(classes);
         }
 

@@ -34,6 +34,7 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Exam Info</th>
+                        <th>Account Info</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -53,6 +54,19 @@
                                 <strong>@item.SelectedEntranceExam?.Title</strong>
                                 @if(!string.IsNullOrEmpty(item.ExamRoom)) {
                                     <br/><small class="text-info">Room: @item.ExamRoom</small>
+                                }
+                            </td>
+                            <td>
+                                @if (item.Status == GuestRegistrationStatus.Approved && item.User != null)
+                                {
+                                    <div>
+                                        <strong>Account:</strong> @item.User.Email<br/>
+                                        <strong>Pass:</strong> <span class="text-danger fw-bold">@item.User.Password</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">---</span>
                                 }
                             </td>
                             <td>
@@ -193,10 +207,13 @@
                 var selectedClass = classesData.find(c => c.id == selectedId);
                 if (selectedClass) {
                     var categoryName = selectedClass.classCategory ? selectedClass.classCategory.name : 'N/A';
+                    var remaining = selectedClass.remainingSeats;
+                    var seatClass = remaining > 0 ? "text-success" : "text-danger";
+                    
                     classDetailsDiv.innerHTML = `
                         <strong>Class Details:</strong><br/>
                         Category: ${categoryName}<br/>
-                        Seats: ${selectedClass.numberOfSeats}<br/>
+                        Seats: ${selectedClass.numberOfSeats} <span class="${seatClass} fw-bold">(Remaining: ${remaining})</span><br/>
                         Status: ${selectedClass.status === 0 ? 'Active' : 'Inactive'}
                     `;
                     classDetailsDiv.classList.remove('d-none');

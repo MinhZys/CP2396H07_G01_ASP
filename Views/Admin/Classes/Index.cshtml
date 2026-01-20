@@ -26,7 +26,20 @@
         <tr>
             <td>@item.ClassName</td>
             <td>@item.ClassCategory?.Name</td>
-            <td>@item.NumberOfSeats</td>
+            <td>
+                @item.NumberOfSeats
+                @{
+                    var remaining = 0;
+                    if (ViewBag.ClassRemainingSeats != null && ((Dictionary<string, int>)ViewBag.ClassRemainingSeats).ContainsKey(item.Id))
+                    {
+                        remaining = ((Dictionary<string, int>)ViewBag.ClassRemainingSeats)[item.Id];
+                    }
+                    
+                    var badgeClass = remaining > 0 ? "bg-success" : "bg-danger";
+                }
+                <br/>
+                <span class="badge @badgeClass">Remaining: @remaining</span>
+            </td>
             <td>
                 @if (item.Status == Symphony.Portal.Web.Models.Enums.ClassStatus.Active)
                 {

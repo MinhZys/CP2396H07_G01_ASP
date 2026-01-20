@@ -36,8 +36,23 @@ namespace Symphony.Portal.Web.Controllers.Admin
             ViewBag.CurrentStatus = status;
             var classes = await _context.Classes.Include(c => c.ClassCategory).ToListAsync();
             ViewBag.Classes = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(classes, "Id", "ClassName");
-            ViewBag.ClassesList = classes; // Pass full object for JS
-            return View(await query.Include(g => g.SelectedEntranceExam).OrderByDescending(g => g.CreatedAt).ToListAsync());
+            
+            // Calculate remaining seats for modal
+            var classesWithSeats = classes.Select(c => new 
+            {
+                c.Id,
+                c.ClassName,
+                c.NumberOfSeats,
+                Status = c.Status,
+                ClassCategory = new { Name = c.ClassCategory?.Name },
+                RemainingSeats = c.NumberOfSeats - (
+                    _context.Guests.Count(g => g.ClassId == c.Id && g.Status == GuestRegistrationStatus.Approved) + 
+                    _context.Enrollments.Count(e => e.ClassId == c.Id)
+                )
+            }).ToList();
+
+            ViewBag.ClassesList = classesWithSeats; // Pass projected object for JS
+            return View(await query.Include(g => g.SelectedEntranceExam).Include(g => g.User).OrderByDescending(g => g.CreatedAt).ToListAsync());
         }
 
         // POST: Admin/Guests/Approve/5
@@ -51,6 +66,27 @@ namespace Symphony.Portal.Web.Controllers.Admin
             if (guest.Status == GuestRegistrationStatus.Approved)
             {
                 return RedirectToAction(nameof(Index));
+            }
+
+            // Check Seat Availability if Class is selected
+            if (!string.IsNullOrEmpty(classId))
+            {
+                var targetClass = await _context.Classes.FindAsync(classId);
+                if (targetClass != null)
+                {
+                    // Count occupied seats
+                    var approvedGuestsCount = await _context.Guests.CountAsync(g => g.ClassId == classId && g.Status == GuestRegistrationStatus.Approved);
+                    var enrollmentsCount = await _context.Enrollments.CountAsync(e => e.ClassId == classId);
+                    
+                    // Simple sum for now. 
+                    var totalOccupied = approvedGuestsCount + enrollmentsCount;
+
+                    if (totalOccupied >= targetClass.NumberOfSeats)
+                    {
+                        TempData["Error"] = $"Lớp {targetClass.ClassName} đã đầy (Sĩ số: {targetClass.NumberOfSeats}, Đã nhận: {totalOccupied}). Vui lòng chọn lớp khác.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
 
             // Create User Account

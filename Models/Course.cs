@@ -15,6 +15,7 @@ namespace Symphony.Portal.Web.Models
         
         public string Description { get; set; } = string.Empty;
         
+        [Range(0.01, double.MaxValue, ErrorMessage = "Học phí phải lớn hơn 0")]
         public decimal TuitionFee { get; set; }
         
         public int DurationMonths { get; set; }
