@@ -1,0 +1,55 @@
+﻿@model Symphony.Portal.Web.Models.Payment
+
+@{
+    ViewData["Title"] = "Payment Details";
+}
+
+<h2>Payment Details</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Payment ID</th>
+        <td>@Model.Id</td>
+    </tr>
+
+    <tr>
+        <th>Student ID</th>
+        <td>@(Model.StudentId ?? "N/A")</td>
+    </tr>
+
+    <tr>
+        <th>Guest ID</th>
+        <td>@(Model.GuestId ?? "N/A")</td>
+    </tr>
+
+    <tr>
+        <th>Amount</th>
+        <td>@Model.Amount</td>
+    </tr>
+
+    <tr>
+        <th>Payment Method</th>
+        <td>@Model.PaymentMethod</td>
+    </tr>
+
+    <tr>
+        <th>Status</th>
+        <td>
+            <span class="badge bg-info">
+                @Model.Status
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Payment Date</th>
+        <td>@Model.PaymentDate.ToString("dd/MM/yyyy HH:mm")</td>
+    </tr>
+
+    <tr>
+        <th>Receipt Number</th>
+        <td>@Model.ReceiptNumber</td>
+    </tr>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary">Back</a>
