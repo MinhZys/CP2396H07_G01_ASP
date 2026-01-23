@@ -165,6 +165,11 @@
                                 <i class="fas fa-tasks"></i> Task Assignments
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AssignClassrooms" ? "active" : "")" asp-area="Admin" asp-controller="AssignClassrooms" asp-action="Index">
+                                <i class="fas fa-tasks"></i> AssignClassrooms
+                            </a>
+                        </li>
 
                         <h6 class="sidebar-heading">Admissions & Users</h6>
                         <li class="nav-item">

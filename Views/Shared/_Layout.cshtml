@@ -141,10 +141,22 @@
                                             My Exam Schedule
                                         </a>
                                     }
-                                     <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
-                                        <span class="material-symbols-outlined text-lg">school</span>
-                                        My Classroom
-                                    </a>
+                                    @if (User.IsInRole("Student"))
+                                    {
+                                        <a asp-controller="Student" asp-action="ViewClasses"
+                                           class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                            <span class="material-symbols-outlined text-lg">school</span>
+                                            My Classroom
+                                        </a>
+                                    }
+                                    else if (User.IsInRole("Instructor"))
+                                    {
+                                        <a asp-area="Instructor" asp-controller="Classes" asp-action="Index"
+                                           class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                            <span class="material-symbols-outlined text-lg">school</span>
+                                            My Classroom
+                                        </a>
+                                    }
                                 </div>
                                 <div class="p-2 border-t border-slate-200 dark:border-slate-700/50">
                                     <form asp-controller="Account" asp-action="Logout" method="post">

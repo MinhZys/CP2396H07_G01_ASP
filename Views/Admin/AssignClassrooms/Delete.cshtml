@@ -1,0 +1,30 @@
+﻿@model Symphony.Portal.Web.Models.ClassAssignment
+
+@{
+    ViewData["Title"] = "Delete Assignment";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card shadow">
+    <div class="card-header bg-danger text-white">
+        <h6 class="m-0">Confirm Unassign</h6>
+    </div>
+
+    <div class="card-body">
+        <p>Are you sure you want to unassign this student?</p>
+
+        <ul class="list-group mb-3">
+            <li class="list-group-item"><strong>Student:</strong> @Model.Student?.FullName</li>
+            <li class="list-group-item"><strong>Class:</strong> @Model.Class?.ClassName</li>
+            <li class="list-group-item"><strong>Assigned At:</strong> @Model.AssignedAt</li>
+        </ul>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <div class="d-flex justify-content-end gap-2">
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-danger">Unassign</button>
+            </div>
+        </form>
+    </div>
+</div>
