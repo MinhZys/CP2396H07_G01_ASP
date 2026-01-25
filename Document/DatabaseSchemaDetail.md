@@ -247,6 +247,7 @@ CREATE TABLE [Payments] (
     [PaymentMethod] nvarchar(max) NOT NULL, -- Enum
     [PaymentDate] datetime2 NOT NULL,
     [ReceiptNumber] nvarchar(max) NULL,
+    [Status] int NOT NULL,
     CONSTRAINT [PK_Payments] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_Payments_Users_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
 );
