@@ -8,5 +8,9 @@ namespace Symphony.Portal.Web.Controllers
         {
             return View();
         }
+        public IActionResult FAQ()
+        {
+            return View();
+        }
     }
 }
