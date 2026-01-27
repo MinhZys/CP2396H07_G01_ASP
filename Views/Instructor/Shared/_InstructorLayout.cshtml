@@ -8,179 +8,173 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --sidebar-width: 250px;
-            --header-height: 56px;
-        }
-        body {
-            padding-top: var(--header-height);
-        }
-        .sidebar {
-            width: var(--sidebar-width);
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 100;
-            padding-top: var(--header-height);
-            background-color: #f8f9fa;
-            border-right: 1px solid #dee2e6;
-            overflow-y: auto;
-        }
-        main {
-            margin-left: var(--sidebar-width);
-            padding: 2rem;
-            min-height: calc(100vh - var(--header-height));
-            background-color: #fdfdfd;
-        }
-        
-        /* Sidebar Links */
-        .sidebar .nav-link {
-            font-weight: 500;
-            color: #333;
-            padding: 0.75rem 1rem;
-            border-radius: 0.25rem;
-            margin: 0.2rem 0.5rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-        }
-        .sidebar .nav-link i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
-            color: #6c757d;
-        }
-        .sidebar .nav-link:hover {
-            color: #0d6efd;
-            background-color: rgba(13, 110, 253, 0.1);
-        }
-        .sidebar .nav-link:hover i {
-            color: #0d6efd;
-        }
-        .sidebar .nav-link.active {
-            color: #fff;
-            background-color: #0d6efd;
-        }
-        .sidebar .nav-link.active i {
-            color: #fff;
-        }
-        
-        .sidebar-heading {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-            color: #adb5bd;
-            padding: 0.5rem 1rem;
-            margin-top: 1rem;
-        }
-    </style>
 </head>
 <body>
-    <header class="navbar navbar-dark sticky-top bg-primary flex-md-nowrap p-0 shadow" style="height: var(--header-height); z-index: 1030;">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#" style="width: var(--sidebar-width);">
-            <i class="fas fa-chalkboard-teacher me-2"></i> Symphony Instructor
-        </a>
-        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+    <!-- Header -->
+    <header class="main-header">
+        <button class="mobile-menu-toggle" onclick="toggleMobileSidebar()">
+            <i class="fas fa-bars fa-lg"></i>
         </button>
-        <div class="navbar-nav w-100">
-             <!-- Spacer -->
+
+        <div class="brand-section">
+            <i class="fas fa-chalkboard-teacher brand-icon"></i>
+            <span class="brand-text">Symphony Instructor</span>
         </div>
-        <div class="navbar-nav">
-            <div class="nav-item text-nowrap d-flex align-items-center px-3">
-                 <span class="text-white-50 me-3 small">Welcome, Instructor</span>
-                 <a class="nav-link px-3" asp-area="" asp-controller="Home" asp-action="Index" target="_blank">
-                    <i class="fas fa-external-link-alt me-1"></i> Go to Site
-                </a>
-                <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="d-inline ms-2">
-                    <button type="submit" class="btn btn-outline-light btn-sm">Sign out</button>
-                </form>
+
+        <div class="header-actions">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span>Welcome, Instructor</span>
             </div>
+
+            <a class="header-btn" asp-area="" asp-controller="Home" asp-action="Index" target="_blank">
+                <i class="fas fa-external-link-alt me-1"></i>
+                <span class="d-none d-md-inline">Go to Site</span>
+            </a>
+
+            @* <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="d-inline"> *@
+            @*     <button type="submit" class="header-btn"> *@
+            @*         <i class="fas fa-sign-out-alt me-1"></i> *@
+            @*         <span class="d-none d-md-inline">Sign Out</span> *@
+            @*     </button> *@
+            @* </form> *@
         </div>
     </header>
 
-    <div class="container-fluid">
-        <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-                <div class="position-sticky pt-3">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")" asp-area="Instructor" asp-controller="Dashboard" asp-action="Index">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
-                            </a>
-                        </li>
-                        
-                        <h6 class="sidebar-heading">Teaching</h6>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "active" : "")" asp-area="Instructor" asp-controller="Classes" asp-action="Index">
-                                <i class="fas fa-chalkboard"></i> My Classes
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Lessons" ? "active" : "")" asp-area="Instructor" asp-controller="Lessons" asp-action="Index">
-                                <i class="fas fa-chalkboard-teacher"></i> Lessons
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Quizzes" ? "active" : "")" asp-area="Instructor" asp-controller="Quizzes" asp-action="Index">
-                                <i class="fas fa-question-circle"></i> Quizzes
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Grading" ? "active" : "")" asp-area="Instructor" asp-controller="Grading" asp-action="Index">
-                                <i class="fas fa-user-graduate"></i> Grading & Scores
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "TeachingSchedule" ? "active" : "")" asp-area="Instructor" asp-controller="Classes" asp-action="Index">
-                                <i class="far fa-calendar-alt"></i> Teaching Schedule
-                            </a>
-                        </li>
-                        
-                        <h6 class="sidebar-heading">Management</h6>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ExamSchedule" ? "active" : "")" asp-area="Instructor" asp-controller="ExamSchedule" asp-action="Index">
-                                <i class="fas fa-calendar-check"></i> Exam Schedule
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Materials" ? "active" : "")" asp-area="Instructor" asp-controller="Materials" asp-action="Index">
-                                <i class="fas fa-folder-open"></i> Learning Materials
-                            </a>
-                        </li>
-
-                        <h6 class="sidebar-heading">Account</h6>
-                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Profile">
-                                <i class="fas fa-user-circle"></i> My Profile
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-               @RenderBody()
-            </main>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-chevron-left"></i>
         </div>
-    </div>
 
+        <ul class="sidebar-nav nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
+                   asp-area="Instructor" asp-controller="Dashboard" asp-action="Index">
+                    <i class="fas fa-tachometer-alt nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
+
+            <h6 class="sidebar-heading">TEACHING</h6>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "active" : "")"
+                   asp-area="Instructor" asp-controller="Classes" asp-action="Index">
+                    <i class="fas fa-chalkboard nav-icon"></i>
+                    <span class="nav-text">My Classes</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Lessons" ? "active" : "")"
+                   asp-area="Instructor" asp-controller="Lessons" asp-action="Index">
+                    <i class="fas fa-book-open nav-icon"></i>
+                    <span class="nav-text">Lessons</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Grading" ? "active" : "")"
+                   asp-area="Instructor" asp-controller="Grading" asp-action="Index">
+                    <i class="fas fa-user-graduate nav-icon"></i>
+                    <span class="nav-text">Grading & Scores</span>
+                </a>
+            </li>
+
+            <h6 class="sidebar-heading">MANAGEMENT</h6>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ExamSchedule" ? "active" : "")"
+                   asp-area="Instructor" asp-controller="ExamSchedule" asp-action="Index">
+                    <i class="fas fa-calendar-check nav-icon"></i>
+                    <span class="nav-text">Exam Schedule</span>
+                </a>
+            </li>
+
+            <h6 class="sidebar-heading">ACCOUNT</h6>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "active" : "")"
+                   asp-area=""
+                   asp-controller="Profile"
+                   asp-action="Index">
+                    <i class="fas fa-user-circle nav-icon"></i>
+                    <span class="nav-text">My Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/js/system-notifications.js"></script>
+
     <script>
+        // Show notifications
         document.addEventListener("DOMContentLoaded", function () {
             SystemNotification.showMessages(
-                '@Html.Raw(TempData["Success"])', 
+                '@Html.Raw(TempData["Success"])',
                 '@Html.Raw(TempData["Error"])'
             );
             SystemNotification.setupDeleteConfirmations();
         });
+
+        // Toggle sidebar collapse
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+
+            const icon = sidebar.querySelector('.sidebar-toggle i');
+            icon.classList.toggle('fa-chevron-left');
+            icon.classList.toggle('fa-chevron-right');
+
+            // Save state to localStorage
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+
+        // Toggle mobile sidebar
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        // Close mobile sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(event.target) &&
+                !toggle.contains(event.target) &&
+                sidebar.classList.contains('mobile-open')) {
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+
+        // Restore sidebar state
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.getElementById('sidebar');
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+                const icon = sidebar.querySelector('.sidebar-toggle i');
+                icon.classList.remove('fa-chevron-left');
+                icon.classList.add('fa-chevron-right');
+            }
+        });
     </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

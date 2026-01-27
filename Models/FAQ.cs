@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
 namespace Symphony.Portal.Web.Models
 {
     public class FAQ
@@ -16,5 +17,12 @@ namespace Symphony.Portal.Web.Models
         public string Answer { get; set; } = string.Empty;
 
         public int DisplayOrder { get; set; }
+
+        // ADD: dùng cho CMS
+        public bool IsActive { get; set; } = true;
+
+        // ADD: metadata tối thiểu
+        [NotMapped]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

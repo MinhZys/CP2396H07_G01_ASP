@@ -1,87 +1,294 @@
 @{
-    ViewData["Title"] = "Contact Us";
+    ViewData["Title"] = "Contact";
+    Layout = "_Layout";
 }
 
 @section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
     <style>
-        .cyber-card {
-            border: 1px solid rgba(0, 200, 255, 0.1);
+        /* ================================
+                   MAP & ANIMATION
+                ================================= */
+        #campusMap {
+            height: 440px;
+            border-radius: 1rem;
+        }
+
+        .campus-tab {
+            position: relative;
+            padding-bottom: .75rem;
+            color: #64748b;
+            transition: color .2s ease;
+        }
+
+            .campus-tab.active {
+                color: #06b6d4;
+                font-weight: 600;
+            }
+
+                .campus-tab.active::after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    width: 100%;
+                    height: 2px;
+                    background: #06b6d4;
+                }
+
+        .fade-slide {
+            animation: fadeSlide .4s ease forwards;
+        }
+
+        @@keyframes fadeSlide {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        .input {
+            width: 100%;
+            padding: .75rem 1rem;
+            border-radius: .75rem;
+            background: #f1f5f9;
+        }
+
+        .dark .input {
             background: #1e2633;
         }
     </style>
 }
 
-<header class="py-12 border-b border-slate-200 dark:border-slate-800 bg-white/5 -mx-6 md:-mx-8 px-6 md:px-8 mb-8">
-    <div class="max-w-[1600px] mx-auto">
-        <h1 class="font-display text-4xl font-bold mb-2">Contact <span class="text-primary">Us</span></h1>
-        <p class="text-slate-400 max-w-2xl">Have questions? We're here to help you start your journey in IT.</p>
-    </div>
+<!-- ================================
+     SEO STRUCTURED DATA
+================================ -->
+<script type="application/ld+json">
+    {
+      "@@context": "https://schema.org",
+      "@@type": "EducationalOrganization",
+      "name": "IT Academy",
+      "address": {
+        "@@type": "PostalAddress",
+        "addressCountry": "Asia"
+      }
+    }
+</script>
+
+<!-- ================================
+     HERO
+================================ -->
+<header class="text-center py-20">
+    <h1 class="text-4xl md:text-5xl font-display font-bold mb-6">
+        Get in Touch
+    </h1>
+    <p class="max-w-2xl mx-auto text-slate-500">
+        Whether you’re seeking admissions information or planning a visit,
+        choose a campus below or send us a direct message.
+    </p>
 </header>
 
-<div class="max-w-4xl mx-auto">
-    <div class="cyber-card rounded-2xl p-8 md:p-12">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div>
-                <h2 class="font-display text-2xl font-bold mb-6">Get in touch</h2>
-                <div class="space-y-6">
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined text-primary">location_on</span>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg mb-1">Visit Us</h3>
-                            <p class="text-slate-400 text-sm leading-relaxed">
-                                123 Tech Street, Silicon Valley<br>
-                                Innovation District, CA 94000
-                            </p>
-                        </div>
-                    </div>
+<!-- ================================
+     CAMPUS SELECTOR
+================================ -->
+<nav class="flex justify-center gap-10 text-sm uppercase tracking-wider mb-10">
 
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined text-primary">mail</span>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg mb-1">Email Us</h3>
-                            <p class="text-slate-400 text-sm">
-                                hello@itacademy.com<br>
-                                support@itacademy.com
-                            </p>
-                        </div>
-                    </div>
+    <button class="campus-tab active" data-campus="hanoi">
+        Hanoi Campus
+    </button>
 
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined text-primary">call</span>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg mb-1">Call Us</h3>
-                            <p class="text-slate-400 text-sm">
-                                +1 (555) 123-4567<br>
-                                Mon-Fri from 8am to 5pm
-                            </p>
-                        </div>
-                    </div>
-                </div>
+    <button class="campus-tab" data-campus="hcm">
+        Ho Chi Minh Campus
+    </button>
+
+    <button class="campus-tab" data-campus="beijing">
+        China Campus
+    </button>
+
+    <button class="campus-tab" data-campus="tokyo">
+        Japan Campus
+    </button>
+
+</nav>
+
+
+<!-- ================================
+     MAP + INFO
+================================ -->
+<section class="max-w-6xl mx-auto grid lg:grid-cols-3 gap-8 px-4 mb-24">
+
+    <!-- INFO CARD -->
+    <aside id="campusInfo"
+           class="bg-white dark:bg-surface-dark rounded-2xl p-6 shadow fade-slide">
+
+        <!-- Campus Name -->
+        <h2 id="campusName"
+            class="text-xl font-bold mb-2">
+            Hanoi City Center
+        </h2>
+
+        <!-- Address -->
+        <p id="campusAddress"
+           class="text-sm text-slate-500 mb-4">
+            Hoan Kiem District, Hanoi, Vietnam
+        </p>
+
+        <!-- Meta Info -->
+        <ul class="text-sm space-y-2 mb-6 text-slate-600 dark:text-slate-400">
+            <li id="campusPhone">📞 +84 24 1234 5678</li>
+            <li id="campusHours">🕘 Mon–Fri · 08:30–17:30</li>
+        </ul>
+
+        <!-- Direction -->
+        <a id="campusDirection"
+           href="https://www.google.com/maps?q=21.027764,105.834160"
+           target="_blank"
+           rel="noopener"
+           class="inline-flex items-center justify-center gap-2
+                  bg-primary text-background-dark
+                  px-5 py-2 rounded-lg font-bold text-sm hover:opacity-90">
+            <span class="material-symbols-outlined text-base">
+                navigation
+            </span>
+            Directions
+        </a>
+    </aside>
+
+    <!-- MAP -->
+    <div class="lg:col-span-2">
+        <div id="campusMap"></div>
+    </div>
+
+</section>
+
+<!-- ================================
+     CONTACT FORM
+================================ -->
+<section class="max-w-3xl mx-auto px-4 mb-32">
+    <div class="bg-white dark:bg-surface-dark rounded-2xl p-10 shadow">
+
+        <h2 class="text-2xl font-bold text-center mb-3">
+            Send us a Message
+        </h2>
+
+        <p class="text-center text-slate-500 mb-8">
+            Have a question? Our team will respond within 24 hours.
+        </p>
+
+        <form class="space-y-5" method="post">
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <input class="input" name="FullName" placeholder="Full Name" required />
+                <input class="input" name="Email" type="email" placeholder="Email Address" required />
             </div>
 
-            <form class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Your Name</label>
-                    <input type="text" class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="John Doe">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Email Address</label>
-                    <input type="email" class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="john@example.com">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Message</label>
-                    <textarea rows="4" class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="How can we help you?"></textarea>
-                </div>
-                <button type="button" class="w-full bg-primary text-background-dark font-bold py-3 rounded-lg hover:brightness-110 transition-all">
-                    Send Message
-                </button>
-            </form>
-        </div>
+            <select class="input" name="Campus">
+                <option>North Campus</option>
+                <option>City Center</option>
+                <option>West End</option>
+                <option>Innovation Hub</option>
+            </select>
+
+            <textarea class="input" rows="4"
+                      name="Message"
+                      placeholder="How can we help you today?"
+                      required></textarea>
+
+            <button type="submit"
+                    class="w-full bg-primary text-background-dark
+                           py-3 rounded-xl font-bold tracking-wide">
+                Send Message →
+            </button>
+        </form>
     </div>
-</div>
+</section>
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        /* ================================
+           CAMPUS DATA (READY FOR DB)
+        ================================= */
+        const campuses = {
+            hanoi: {
+                name: "Hanoi City Center",
+                lat: 21.027764,
+                lng: 105.834160,
+                address: "Hoan Kiem District, Hanoi, Vietnam",
+                phone: "+84 24 1234 5678",
+                hours: "Mon–Fri · 08:30–17:30"
+            },
+            hcm: {
+                name: "Ho Chi Minh City Center",
+                lat: 10.823099,
+                lng: 106.629664,
+                address: "District 1, Ho Chi Minh City, Vietnam",
+                phone: "+84 28 1234 5678",
+                hours: "Mon–Fri · 08:30–17:30"
+            },
+            beijing: {
+                name: "Beijing City Center",
+                lat: 39.904202,
+                lng: 116.407394,
+                address: "Dongcheng District, Beijing, China",
+                phone: "+86 10 1234 5678",
+                hours: "Mon–Fri · 09:00–18:00"
+            },
+            tokyo: {
+                name: "Tokyo City Center",
+                lat: 35.689487,
+                lng: 139.691711,
+                address: "Chiyoda City, Tokyo, Japan",
+                phone: "+81 3 1234 5678",
+                hours: "Mon–Fri · 09:00–18:00"
+            }
+        };
+
+
+
+        const map = L.map('campusMap', {
+            scrollWheelZoom: false
+        }).setView([25, 105], 4);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        const markers = {};
+        Object.keys(campuses).forEach(key => {
+            const c = campuses[key];
+            markers[key] = L.marker([c.lat, c.lng]).addTo(map);
+        });
+
+        document.querySelectorAll('.campus-tab').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const key = btn.dataset.campus;
+                const c = campuses[key];
+
+                map.flyTo([c.lat, c.lng], 13, { duration: 1.2 });
+
+                document.getElementById("campusName").innerText = c.name;
+                document.getElementById("campusAddress").innerText = c.address;
+                document.getElementById("campusDirection").href =
+                    `https://www.google.com/maps?q=${c.lat},${c.lng}`;
+
+                document.querySelectorAll('.campus-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                document.getElementById("campusInfo").classList.remove("fade-slide");
+                void document.getElementById("campusInfo").offsetWidth;
+                document.getElementById("campusInfo").classList.add("fade-slide");
+            });
+        });
+    </script>
+}
