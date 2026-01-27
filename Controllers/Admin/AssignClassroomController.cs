@@ -179,36 +179,54 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // =========================
-        // ASSIGN BY SCORE (VIEW)
+        // ASSIGN BY SCORE (VIEW) - UPDATED LEVEL A, B, C
         // =========================
-        public async Task<IActionResult> AssignByScore(decimal? minScore)
+        public async Task<IActionResult> AssignByScore(string level)
         {
-            ViewBag.MinScore = minScore;
+            ViewBag.Level = level; // Lưu level đã chọn để hiển thị lại ở View
 
-            // lấy danh sách học sinh đã được xếp lớp
+            // Lấy danh sách học sinh đã được xếp lớp để loại trừ
             var assignedIds = await _context.ClassAssignments
                 .Select(a => a.StudentId)
                 .ToListAsync();
 
-            if (minScore == null)
+            if (string.IsNullOrEmpty(level))
             {
                 ViewBag.Students = new List<ExamResult>();
             }
             else
             {
-                double min = Convert.ToDouble(minScore.Value);
+                // Logic lọc điểm theo Level
+                // Level A: 70 - 100
+                // Level B: 40 - dưới 70
+                // Level C: Dưới 40
 
-                var students = await _context.ExamResults
+                var query = _context.ExamResults
                     .Include(e => e.Student)
                         .ThenInclude(s => s.Role)
                     .Where(e =>
-                        e.Score >= min &&
-                        e.IsPassed &&
                         e.Student != null &&
                         e.Student.Role != null &&
                         e.Student.Role.Name == "Student" &&
                         !assignedIds.Contains(e.StudentId)
-                    )
+                        // Lưu ý: Nếu Level C là rớt, bạn có thể cần bỏ check e.IsPassed tùy nghiệp vụ
+                        && e.IsPassed
+                    );
+
+                if (level == "A")
+                {
+                    query = query.Where(e => e.Score >= 70);
+                }
+                else if (level == "B")
+                {
+                    query = query.Where(e => e.Score >= 40 && e.Score < 70);
+                }
+                else if (level == "C")
+                {
+                    query = query.Where(e => e.Score < 40);
+                }
+
+                var students = await query
                     .OrderByDescending(e => e.Score)
                     .ToListAsync();
 
@@ -223,36 +241,50 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // =========================
-        // ASSIGN BY SCORE (CONFIRM)
+        // ASSIGN BY SCORE (CONFIRM) - UPDATED
         // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AssignByScoreConfirm(decimal minScore, string classId)
+        public async Task<IActionResult> AssignByScoreConfirm(string level, string classId)
         {
             var classObj = await _context.Classes.FindAsync(classId);
             if (classObj == null || classObj.NumberOfSeats <= 0)
             {
                 TempData["Error"] = "Invalid or full class.";
-                return RedirectToAction(nameof(AssignByScore), new { minScore });
+                return RedirectToAction(nameof(AssignByScore), new { level });
             }
 
-            double min = Convert.ToDouble(minScore);
-
+            // Lấy lại danh sách ID đã xếp lớp
             var assignedIds = await _context.ClassAssignments
                 .Select(a => a.StudentId)
                 .ToListAsync();
 
-            var candidates = await _context.ExamResults
+            // Tái tạo logic query giống hệt bên trên để lấy danh sách cần add
+            var query = _context.ExamResults
                 .Include(e => e.Student)
                     .ThenInclude(s => s.Role)
                 .Where(e =>
-                    e.Score >= min &&
-                    e.IsPassed &&
                     e.Student != null &&
                     e.Student.Role != null &&
                     e.Student.Role.Name == "Student" &&
                     !assignedIds.Contains(e.StudentId)
-                )
+                    && e.IsPassed
+                );
+
+            if (level == "A")
+            {
+                query = query.Where(e => e.Score >= 70);
+            }
+            else if (level == "B")
+            {
+                query = query.Where(e => e.Score >= 40 && e.Score < 70);
+            }
+            else if (level == "C")
+            {
+                query = query.Where(e => e.Score < 40);
+            }
+
+            var candidates = await query
                 .OrderByDescending(e => e.Score)
                 .ToListAsync();
 
@@ -278,8 +310,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             _context.Classes.Update(classObj);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] =
-                $"Assigned {assignedCount} students to class '{classObj.ClassName}'.";
+            TempData["Success"] = $"Assigned {assignedCount} students (Level {level}) to class '{classObj.ClassName}'.";
 
             return RedirectToAction(nameof(Index));
         }

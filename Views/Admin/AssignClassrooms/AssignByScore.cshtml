@@ -1,12 +1,12 @@
 ﻿@using Symphony.Portal.Web.Models
 @{
-    ViewData["Title"] = "Assign By Score";
+    ViewData["Title"] = "Assign By Score Level";
     var students = ViewBag.Students as List<ExamResult>;
     var classes = ViewBag.Classes as List<Class>;
-    decimal? minScore = ViewBag.MinScore;
+    string currentLevel = ViewBag.Level as string; // Lấy level hiện tại
 }
 
-<h2>Assign Students By Score</h2>
+<h2>Assign Students By Level</h2>
 
 @if (TempData["Error"] != null)
 {
@@ -18,19 +18,16 @@
     <div class="alert alert-success">@TempData["Success"]</div>
 }
 
-<!-- ========================= -->
-<!-- FILTER FORM -->
-<!-- ========================= -->
 <form asp-action="AssignByScore" method="get" class="mb-4">
     <div class="row">
         <div class="col-md-4">
-            <label class="form-label">Minimum Score</label>
-            <input type="number"
-                   step="0.1"
-                   name="minScore"
-                   value="@(minScore?.ToString() ?? "")"
-                   class="form-control"
-                   placeholder="Enter minimum score" />
+            <label class="form-label">Select Level</label>
+            <select name="level" class="form-select">
+                <option value="">-- Select Level --</option>
+                <!option value="A" @(currentLevel == "A" ? "selected" : "")>Level A (Score 70 - 100)</!option>
+                <!option value="B" @(currentLevel == "B" ? "selected" : "")>Level B (Score 40 - 69)</!option>
+                <!option value="C" @(currentLevel == "C" ? "selected" : "")>Level C (Score < 40)</!option>
+            </select>
         </div>
         <div class="col-md-3 align-self-end">
             <button type="submit" class="btn btn-primary">
@@ -45,14 +42,11 @@
     <form asp-action="AssignByScoreConfirm" method="post">
         @Html.AntiForgeryToken()
 
-        <input type="hidden" name="minScore" value="@minScore" />
+        <input type="hidden" name="level" value="@currentLevel" />
 
-        <!-- ========================= -->
-        <!-- CLASS SELECTION -->
-        <!-- ========================= -->
         <div class="row mb-3">
             <div class="col-md-6">
-                <label class="form-label">Select Class</label>
+                <label class="form-label">Select Class for Level @currentLevel</label>
                 <select name="classId" class="form-select" required>
                     <option value="">-- Select Class --</option>
                     @foreach (var c in classes)
@@ -65,21 +59,18 @@
             </div>
             <div class="col-md-3 align-self-end">
                 <button type="submit" class="btn btn-success">
-                    Assign All
+                    Assign All Level @currentLevel
                 </button>
             </div>
         </div>
 
-        <!-- ========================= -->
-        <!-- STUDENT TABLE -->
-        <!-- ========================= -->
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
                 <tr>
                     <th>#</th>
                     <th>Student Name</th>
                     <th>Score</th>
-                    <th>Exam</th>
+                    <th>Level</th>
                 </tr>
             </thead>
             <tbody>
@@ -93,18 +84,32 @@
                         <td>@index</td>
                         <td>@s.Student?.FullName</td>
                         <td>@s.Score</td>
-                        <td>@s.EntranceExamId</td>
-                    </tr>
+                        <td>
+                            @if (s.Score >= 70)
+                            {
+                                <span class="badge bg-success">A</span>
+                            }
+                            else if (s.Score >= 40)
+                            {
 
+                                <span class="badge bg-warning text-dark">B</span>
+                            }
+                            else
+                            {
+
+                                <span class="badge bg-danger">C</span>
+                            }
+                        </td>
+                    </tr>
                     index++;
                 }
             </tbody>
         </table>
     </form>
 }
-else if (minScore != null)
+else if (!string.IsNullOrEmpty(currentLevel))
 {
     <div class="alert alert-warning">
-        No students found with score ≥ @minScore
+        No students found in Level @currentLevel.
     </div>
 }

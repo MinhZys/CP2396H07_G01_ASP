@@ -30,7 +30,12 @@ else
                 <p class="text-xs text-slate-500 mt-2">
                     Assigned at: @item.AssignedAt.ToString("dd/MM/yyyy")
                 </p>
+                <button class="bg-white/5 border border-white/10 dark:bg-surface-dark px-8 py-4 rounded-lg font-bold font-display hover:bg-white/10 transition-all"
+                        onclick="location.href='@Url.Action("Index", "Lessons", new { area = "Student" })'">
+                    <span data-i18n="View Lessons">View Lessons</span>
+                </button>
             </div>
+
         }
     </div>
 }
