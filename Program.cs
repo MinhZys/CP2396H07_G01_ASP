@@ -22,6 +22,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddTransient<Symphony.Portal.Web.Services.EmailService>();
+builder.Services.AddScoped<Symphony.Portal.Web.Services.INotificationService, Symphony.Portal.Web.Services.NotificationService>();
 
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews()

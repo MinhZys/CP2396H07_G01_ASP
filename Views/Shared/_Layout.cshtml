@@ -93,6 +93,14 @@
                         </div>
                     </div>
 
+                    <!-- Notification Bell -->
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="mr-2">
+                             @await Component.InvokeAsync("NotificationBell")
+                        </div>
+                    }
+
                     <button class="p-2 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
                         <span class="material-symbols-outlined">search</span>
                     </button>
