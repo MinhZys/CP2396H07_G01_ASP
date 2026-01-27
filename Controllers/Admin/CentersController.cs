@@ -15,10 +15,12 @@ namespace Symphony.Portal.Web.Controllers.Admin
     public class CentersController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly Symphony.Portal.Web.Services.INotificationService _notificationService;
 
-        public CentersController(AppDbContext context)
+        public CentersController(AppDbContext context, Symphony.Portal.Web.Services.INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         public async Task<IActionResult> Index()
@@ -40,6 +42,11 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 if (string.IsNullOrEmpty(center.Id)) center.Id = Guid.NewGuid().ToString();
                 _context.Add(center);
                 await _context.SaveChangesAsync();
+                
+                // DEMO: Notify Student One (Id: "3") that a new center was added.
+                // In real app, you would loop through relevant users.
+                await _notificationService.CreateNotificationAsync("3", "New Center Added", $"A new center '{center.Name}' has been added.");
+
                 TempData["Success"] = "Center created successfully.";
                 return RedirectToAction(nameof(Index));
             }

@@ -247,6 +247,7 @@ CREATE TABLE [Payments] (
     [PaymentMethod] nvarchar(max) NOT NULL, -- Enum
     [PaymentDate] datetime2 NOT NULL,
     [ReceiptNumber] nvarchar(max) NULL,
+    [Status] int NOT NULL,
     CONSTRAINT [PK_Payments] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_Payments_Users_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
 );
@@ -368,6 +369,17 @@ CREATE TABLE [Guests] (
     CONSTRAINT [FK_Guests_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]),
     CONSTRAINT [FK_Guests_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id])
 );
+
+ CREATE TABLE [Notifications] (
+        [Id] int NOT NULL IDENTITY,
+        [Title] nvarchar(max) NOT NULL,
+        [Message] nvarchar(max) NOT NULL,
+        [IsRead] bit NOT NULL,
+        [CreatedAt] datetime2 NOT NULL,
+        [UserId] nvarchar(36) NOT NULL,
+        CONSTRAINT [PK_Notifications] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Notifications_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
+    );
 ```
 
 
@@ -647,3 +659,4 @@ Table Guests {
     Description nvarchar
     ClassId nvarchar [ref: > Classes.Id]
 }
+

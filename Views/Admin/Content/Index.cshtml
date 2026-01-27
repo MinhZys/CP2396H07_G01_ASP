@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Manage Content";
+}
+
+@section Styles {
+    <style>
+        .cyber-card {
+            border: 1px solid rgba(0, 200, 255, 0.1);
+            background: #1e2633;
+        }
+
+        .content-card:hover {
+            transform: translateY(-2px);
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
+}
+
+<header class="py-10 border-b border-slate-200 dark:border-slate-800 bg-white/5 -mx-6 md:-mx-8 px-6 md:px-8 mb-10">
+    <div class="max-w-[1600px] mx-auto">
+        <h1 class="font-display text-4xl font-bold mb-2">
+            Manage <span class="text-primary">Content</span>
+        </h1>
+        <p class="text-slate-400 max-w-2xl">
+            Update and manage all static content displayed on the public website.
+        </p>
+    </div>
+</header>
+
+<div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+
+    <!-- ABOUT US -->
+    <div class="cyber-card content-card rounded-2xl p-8">
+        <h2 class="font-display text-xl font-bold mb-3">About Us</h2>
+        <p class="text-slate-400 text-sm mb-6">
+            Edit institution overview, mission, vision, and descriptive content.
+        </p>
+        <a asp-area="Admin"
+           asp-controller="CMS"
+           asp-action="ManagePages"
+           class="inline-block bg-primary text-background-dark font-bold px-5 py-2 rounded-lg">
+            Manage
+        </a>
+    </div>
+
+    <!-- FAQ -->
+    <div class="cyber-card content-card rounded-2xl p-8">
+        <h2 class="font-display text-xl font-bold mb-3">FAQs</h2>
+        <p class="text-slate-400 text-sm mb-6">
+            Add, update, or remove frequently asked questions.
+        </p>
+        <a asp-area="Admin"
+           asp-controller="CMS"
+           asp-action="ManageFAQs"
+           class="inline-block bg-primary text-background-dark font-bold px-5 py-2 rounded-lg">
+            Manage
+        </a>
+    </div>
+
+    <!-- CONTACT INFO -->
+    <div class="cyber-card content-card rounded-2xl p-8">
+        <h2 class="font-display text-xl font-bold mb-3">Contact Information</h2>
+        <p class="text-slate-400 text-sm mb-6">
+            Update addresses, phone numbers, and email contact details.
+        </p>
+        <a asp-area="Admin"
+           asp-controller="CMS"
+           asp-action="EditPage"
+           asp-route-page="contact"
+           class="inline-block bg-primary text-background-dark font-bold px-5 py-2 rounded-lg">
+            Manage
+        </a>
+    </div>
+
+</div>

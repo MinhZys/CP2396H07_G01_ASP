@@ -8,7 +8,8 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>    
+
     <!-- SweetAlert2 -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -78,6 +79,8 @@
                     <a class="hover:text-primary transition-colors" asp-controller="Courses" asp-action="Index" data-i18n="nav.courses">Courses</a>
                     <a class="hover:text-primary transition-colors" asp-controller="Mentors" asp-action="Index" data-i18n="nav.mentors">Mentors</a>
                     <a class="hover:text-primary transition-colors" asp-controller="Contact" asp-action="Index" data-i18n="nav.contact">Contact</a>
+                    <a class="hover:text-primary transition-colors" asp-controller="About" asp-action="Index" data-i18n="nav.about">About</a>
+                    
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -92,6 +95,14 @@
                             <button onclick="changeLanguage('vi')" class="block w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 last:rounded-b-lg">Tiếng Việt</button>
                         </div>
                     </div>
+
+                    <!-- Notification Bell -->
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="mr-2">
+                             @await Component.InvokeAsync("NotificationBell")
+                        </div>
+                    }
 
                     <button class="p-2 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
                         <span class="material-symbols-outlined">search</span>
@@ -213,7 +224,8 @@
             <div>
                 <h5 class="font-bold mb-4 uppercase text-xs tracking-widest text-primary">Support</h5>
                 <ul class="space-y-3 text-sm text-slate-500">
-                    <li><a class="hover:text-primary transition-colors" href="#">FAQ</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="FAQ">FAQ</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="About">ABOUT</a></li>
                     <li><a class="hover:text-primary transition-colors" asp-controller="Contact" asp-action="Index">Contact Us</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>

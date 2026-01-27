@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Symphony.Portal.Web.Data;
 
@@ -11,9 +12,11 @@ using Symphony.Portal.Web.Data;
 namespace CP2396H07_G01.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260122081517_AddNotificationTable")]
+    partial class AddNotificationTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -234,32 +237,6 @@ namespace CP2396H07_G01.Migrations
                     b.ToTable("Classes");
                 });
 
-            modelBuilder.Entity("Symphony.Portal.Web.Models.ClassAssignment", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(36)
-                        .HasColumnType("nvarchar(36)");
-
-                    b.Property<DateTime>("AssignedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ClassId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(36)");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(36)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClassId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("ClassAssignments");
-                });
-
             modelBuilder.Entity("Symphony.Portal.Web.Models.ClassCategory", b =>
                 {
                     b.Property<string>("Id")
@@ -287,7 +264,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "1",
-                            CreatedAt = new DateTime(2026, 1, 27, 17, 32, 42, 303, DateTimeKind.Local).AddTicks(2037),
+                            CreatedAt = new DateTime(2026, 1, 22, 15, 15, 16, 483, DateTimeKind.Local).AddTicks(9678),
                             Description = "Standard classrooms",
                             IsActive = true,
                             Name = "Theory"
@@ -295,7 +272,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "2",
-                            CreatedAt = new DateTime(2026, 1, 27, 17, 32, 42, 303, DateTimeKind.Local).AddTicks(2050),
+                            CreatedAt = new DateTime(2026, 1, 22, 15, 15, 16, 483, DateTimeKind.Local).AddTicks(9695),
                             Description = "Computer labs",
                             IsActive = true,
                             Name = "Lab"
@@ -303,7 +280,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "3",
-                            CreatedAt = new DateTime(2026, 1, 27, 17, 32, 42, 303, DateTimeKind.Local).AddTicks(2052),
+                            CreatedAt = new DateTime(2026, 1, 22, 15, 15, 16, 483, DateTimeKind.Local).AddTicks(9696),
                             Description = "Virtual classes",
                             IsActive = true,
                             Name = "Online"
@@ -1225,25 +1202,6 @@ namespace CP2396H07_G01.Migrations
                         .IsRequired();
 
                     b.Navigation("ClassCategory");
-                });
-
-            modelBuilder.Entity("Symphony.Portal.Web.Models.ClassAssignment", b =>
-                {
-                    b.HasOne("Symphony.Portal.Web.Models.Class", "Class")
-                        .WithMany()
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Symphony.Portal.Web.Models.User", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Class");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Course", b =>

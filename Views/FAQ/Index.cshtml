@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Frequently Asked Questions";
+}
+
+@section Styles {
+    <style>
+        .cyber-card {
+            border: 1px solid rgba(0, 200, 255, 0.1);
+            background: #1e2633;
+        }
+
+        details summary {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<header class="py-12 border-b border-slate-200 dark:border-slate-800 bg-white/5 -mx-6 md:-mx-8 px-6 md:px-8 mb-8">
+    <div class="max-w-[1600px] mx-auto">
+        <h1 class="font-display text-4xl font-bold mb-2">
+            Frequently Asked <span class="text-primary">Questions</span>
+        </h1>
+        <p class="text-slate-400 max-w-2xl">
+            Find answers to the most common questions about our courses, entrance exams, and facilities.
+        </p>
+    </div>
+</header>
+
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- FAQ ITEM -->
+    <div class="cyber-card rounded-xl p-6">
+        <details>
+            <summary class="font-bold text-lg flex justify-between items-center">
+                When will the entrance examinations be conducted?
+                <span class="material-symbols-outlined text-primary">expand_more</span>
+            </summary>
+            <p class="text-slate-400 mt-4 leading-relaxed">
+                Entrance examinations are conducted once every six months.
+                Applicants are advised to regularly check the website for the
+                latest announcements regarding exam dates and fees.
+            </p>
+        </details>
+    </div>
+
+    <div class="cyber-card rounded-xl p-6">
+        <details>
+            <summary class="font-bold text-lg flex justify-between items-center">
+                Is there any fee for the entrance examination?
+                <span class="material-symbols-outlined text-primary">expand_more</span>
+            </summary>
+            <p class="text-slate-400 mt-4 leading-relaxed">
+                Yes, there is a fee for the entrance examination.
+                The exact amount will be displayed on the application form
+                at the time of registration.
+            </p>
+        </details>
+    </div>
+
+    <div class="cyber-card rounded-xl p-6">
+        <details>
+            <summary class="font-bold text-lg flex justify-between items-center">
+                Can I use the lab facilities after class hours?
+                <span class="material-symbols-outlined text-primary">expand_more</span>
+            </summary>
+            <p class="text-slate-400 mt-4 leading-relaxed">
+                Yes, students can use the lab facilities after class hours
+                during the course period at no additional cost.
+                After course completion, extra lab sessions are available
+                with additional charges.
+            </p>
+        </details>
+    </div>
+
+    <div class="cyber-card rounded-xl p-6">
+        <details>
+            <summary class="font-bold text-lg flex justify-between items-center">
+                How can I apply for the entrance exam?
+                <span class="material-symbols-outlined text-primary">expand_more</span>
+            </summary>
+            <p class="text-slate-400 mt-4 leading-relaxed">
+                Once the entrance exam is announced, applicants must visit
+                one of our centers to complete the application process.
+                Course preference and payment details are required during registration.
+            </p>
+        </details>
+    </div>
+
+    <div class="cyber-card rounded-xl p-6">
+        <details>
+            <summary class="font-bold text-lg flex justify-between items-center">
+                How can I make the payment?
+                <span class="material-symbols-outlined text-primary">expand_more</span>
+            </summary>
+            <p class="text-slate-400 mt-4 leading-relaxed">
+                Payments can be made via cash, cheque, or demand draft.
+                A receipt number must be entered in the application form
+                once the payment is completed.
+            </p>
+        </details>
+    </div>
+
+</div>
