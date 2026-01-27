@@ -17,10 +17,25 @@ namespace Symphony.Portal.Web.Controllers.Admin
             _context = context;
         }
 
-        // GET: Admin/ClassCategories
-        public async Task<IActionResult> Index()
+        // GET: Admin/ClassCategories (with Search)
+        public async Task<IActionResult> Index(string? searchString)
         {
-            return View(await _context.ClassCategories.ToListAsync());
+            var categories = from c in _context.ClassCategories
+                             select c;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                categories = categories.Where(c =>
+                    c.Name.Contains(searchString) ||
+                    (c.Description != null && c.Description.Contains(searchString))
+                );
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            return View(await categories
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync());
         }
 
         // GET: Admin/ClassCategories/Create
@@ -36,22 +51,36 @@ namespace Symphony.Portal.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
+                bool exists = await _context.ClassCategories
+                    .AnyAsync(c => c.Name == classCategory.Name);
+
+                if (exists)
+                {
+                    ModelState.AddModelError("Name", "Category name already exists.");
+                    return View(classCategory);
+                }
+
                 classCategory.Id = Guid.NewGuid().ToString();
-                _context.Add(classCategory);
+                classCategory.CreatedAt = DateTime.Now;
+
+                _context.ClassCategories.Add(classCategory);
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Class Category created successfully.";
+
+                TempData["Success"] = "Class category created successfully.";
                 return RedirectToAction(nameof(Index));
             }
+
             return View(classCategory);
         }
 
         // GET: Admin/ClassCategories/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null) return NotFound();
+            if (string.IsNullOrEmpty(id)) return NotFound();
 
             var classCategory = await _context.ClassCategories.FindAsync(id);
             if (classCategory == null) return NotFound();
+
             return View(classCategory);
         }
 
@@ -64,29 +93,39 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
             if (ModelState.IsValid)
             {
-                try
+                bool exists = await _context.ClassCategories
+                    .AnyAsync(c => c.Name == classCategory.Name && c.Id != id);
+
+                if (exists)
                 {
-                    _context.Update(classCategory);
-                    await _context.SaveChangesAsync();
+                    ModelState.AddModelError("Name", "Category name already exists.");
+                    return View(classCategory);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClassCategoryExists(classCategory.Id)) return NotFound();
-                    else throw;
-                }
-                TempData["Success"] = "Class Category updated successfully.";
+
+                var existing = await _context.ClassCategories.FindAsync(id);
+                if (existing == null) return NotFound();
+
+                existing.Name = classCategory.Name;
+                existing.Description = classCategory.Description;
+                existing.IsActive = classCategory.IsActive;
+
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Class category updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
+
             return View(classCategory);
         }
 
         // GET: Admin/ClassCategories/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
-            if (id == null) return NotFound();
+            if (string.IsNullOrEmpty(id)) return NotFound();
 
             var classCategory = await _context.ClassCategories
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (classCategory == null) return NotFound();
 
             return View(classCategory);
@@ -100,19 +139,24 @@ namespace Symphony.Portal.Web.Controllers.Admin
             var classCategory = await _context.ClassCategories.FindAsync(id);
             if (classCategory == null)
             {
-                 return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
             }
 
             // Check if any classes exist in this category
-            if (await _context.Classes.AnyAsync(c => c.ClassCategoryId == id))
+            bool hasClasses = await _context.Classes
+                .AnyAsync(c => c.ClassCategoryId == id);
+
+            if (hasClasses)
             {
-                TempData["Error"] = "Cannot delete this category because there are existing classes under it. Please delete the classes first.";
+                TempData["Error"] =
+                    "Cannot delete this category because there are still classes assigned to it. Please delete the classes first.";
                 return RedirectToAction(nameof(Index));
             }
 
             _context.ClassCategories.Remove(classCategory);
             await _context.SaveChangesAsync();
-            TempData["Success"] = "Class Category deleted successfully.";
+
+            TempData["Success"] = "Class category deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 

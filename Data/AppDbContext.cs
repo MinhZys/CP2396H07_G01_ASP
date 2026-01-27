@@ -12,6 +12,7 @@ namespace Symphony.Portal.Web.Data
 
         public DbSet<Center> Centers { get; set; }
         public DbSet<Class> Classes { get; set; }
+        public DbSet<ClassAssignment> ClassAssignments { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseSubject> CourseSubjects { get; set; }
         public DbSet<CourseInstructor> CourseInstructors { get; set; }
