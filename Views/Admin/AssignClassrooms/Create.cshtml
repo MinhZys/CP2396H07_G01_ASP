@@ -1,6 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Manual Assign";
     Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+
+    var preselectedClassId = ViewBag.PreselectedClassId as string;
 }
 
 <div class="card shadow">
@@ -27,7 +29,7 @@
                     <option value="">-- Select Class --</option>
                     @foreach (var c in ViewBag.Classes)
                     {
-                        <option value="@c.Id">
+                        <option value="@c.Id" selected="@(c.Id == preselectedClassId)">
                             @c.ClassName (Seats left: @c.NumberOfSeats)
                         </option>
                     }

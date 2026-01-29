@@ -1,66 +1,110 @@
-@model IEnumerable<Symphony.Portal.Web.Models.Class>
+﻿@model IEnumerable<Symphony.Portal.Web.Models.Class>
+@using System.Collections.Generic
 
 @{
     ViewData["Title"] = "Manage Classes";
+
+    var remainingSeatsDict = ViewBag.ClassRemainingSeats as Dictionary<string, int>;
+    var assignedCountsDict = ViewBag.ClassAssignedCounts as Dictionary<string, int>;
 }
 
 <h2>Manage Classes</h2>
 
-<p>
+<div class="d-flex gap-2 mb-3">
     <a asp-action="Create" class="btn btn-primary">Create New Class</a>
-</p>
+
+    @* ✅ Assign Classrooms shortcuts (go to AssignClassroomsController) *@
+    <a asp-area="Admin" asp-controller="AssignClassrooms" asp-action="Index"
+       class="btn btn-outline-primary">
+        Assign Classrooms
+    </a>
+
+    <a asp-area="Admin" asp-controller="AssignClassrooms" asp-action="Create"
+       class="btn btn-outline-success">
+        Manual Assign
+    </a>
+
+    <a asp-area="Admin" asp-controller="AssignClassrooms" asp-action="AssignByScore"
+       class="btn btn-outline-warning">
+        Assign By Score
+    </a>
+</div>
 
 <table class="table">
     <thead>
         <tr>
-        <tr>
             <th>Class Name</th>
             <th>Category</th>
             <th>Seats</th>
+            <th>Assigned Students</th>
             <th>Status</th>
-            <th>Actions</th>
+            <th style="width:260px;">Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>@item.ClassName</td>
-            <td>@item.ClassCategory?.Name</td>
-            <td>
-                @item.NumberOfSeats
-                @{
-                    var remaining = 0;
-                    if (ViewBag.ClassRemainingSeats != null && ((Dictionary<string, int>)ViewBag.ClassRemainingSeats).ContainsKey(item.Id))
+        @foreach (var item in Model)
+        {
+            var remaining = 0;
+            if (remainingSeatsDict != null && remainingSeatsDict.ContainsKey(item.Id))
+            {
+                remaining = remainingSeatsDict[item.Id];
+            }
+
+            var assigned = 0;
+            if (assignedCountsDict != null && assignedCountsDict.ContainsKey(item.Id))
+            {
+                assigned = assignedCountsDict[item.Id];
+            }
+
+            var badgeClass = remaining > 0 ? "bg-success" : "bg-danger";
+            var assignedBadge = assigned > 0 ? "bg-info" : "bg-secondary";
+
+            <tr>
+                <td>@item.ClassName</td>
+                <td>@item.ClassCategory?.Name</td>
+                <td>
+                    @item.NumberOfSeats
+                    <br />
+                    <span class="badge @badgeClass">Remaining: @remaining</span>
+                </td>
+                <td>
+                    <span class="badge @assignedBadge">Assigned: @assigned</span>
+                    <div class="mt-1">
+                        @* ✅ View assignments filtered by this class *@
+                        <a asp-area="Admin" asp-controller="AssignClassrooms" asp-action="Index"
+                           asp-route-classId="@item.Id"
+                           class="btn btn-sm btn-outline-primary">
+                            View
+                        </a>
+
+                        @* ✅ Manual assign with preselected class *@
+                        <a asp-area="Admin" asp-controller="AssignClassrooms" asp-action="Create"
+                           asp-route-classId="@item.Id"
+                           class="btn btn-sm btn-outline-success">
+                            Assign
+                        </a>
+                    </div>
+                </td>
+                <td>
+                    @if (item.Status == Symphony.Portal.Web.Models.Enums.ClassStatus.Active)
                     {
-                        remaining = ((Dictionary<string, int>)ViewBag.ClassRemainingSeats)[item.Id];
+                        <span class="badge bg-success">Active</span>
                     }
-                    
-                    var badgeClass = remaining > 0 ? "bg-success" : "bg-danger";
-                }
-                <br/>
-                <span class="badge @badgeClass">Remaining: @remaining</span>
-            </td>
-            <td>
-                @if (item.Status == Symphony.Portal.Web.Models.Enums.ClassStatus.Active)
-                {
-                    <span class="badge bg-success">Active</span>
-                }
-                else
-                {
-                    <span class="badge bg-secondary">Inactive</span>
-                }
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" class="d-inline form-delete">
-                    <button type="button" class="btn btn-link p-0 text-danger border-0 btn-delete" style="text-decoration: none;">Delete</button>
-                </form>
-            </td>
-        </tr>
-}
+                    else
+                    {
+                        <span class="badge bg-secondary">Inactive</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" class="d-inline form-delete">
+                        <button type="button" class="btn btn-link p-0 text-danger border-0 btn-delete" style="text-decoration: none;">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
     </tbody>
-</table>
 </table>
 
 @section Scripts {

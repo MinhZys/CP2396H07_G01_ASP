@@ -22,9 +22,11 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
         public async Task<IActionResult> Index()
         {
-            var classes = await _context.Classes.Include(c => c.ClassCategory).ToListAsync();
-            
-            // Calculate Remaining Seats
+            var classes = await _context.Classes
+                .Include(c => c.ClassCategory)
+                .ToListAsync();
+
+            // Remaining seats (your current logic)
             var remainingSeats = new Dictionary<string, int>();
             foreach (var cls in classes)
             {
@@ -35,8 +37,17 @@ namespace Symphony.Portal.Web.Controllers.Admin
             }
             ViewBag.ClassRemainingSeats = remainingSeats;
 
+            // ✅ NEW: assigned student count per class (ClassAssignment)
+            var assignedCounts = await _context.ClassAssignments
+                .GroupBy(a => a.ClassId)
+                .Select(g => new { ClassId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.ClassId, x => x.Count);
+
+            ViewBag.ClassAssignedCounts = assignedCounts;
+
             return View(classes);
         }
+
 
         public async Task<IActionResult> Details(string? id)
         {
