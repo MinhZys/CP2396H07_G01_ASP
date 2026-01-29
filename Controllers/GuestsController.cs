@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
@@ -70,45 +70,85 @@ namespace Symphony.Portal.Web.Controllers
         // POST: Guests/ConfirmPayment
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmPayment(string id, string paymentMethod) // Simplified
+        public async Task<IActionResult> ConfirmPayment(string id, string paymentMethod)
         {
             var guest = await _context.Guests
-    .Include(g => g.SelectedEntranceExam)
-    .FirstOrDefaultAsync(g => g.Id == id);
+                .Include(g => g.SelectedEntranceExam)
+                .FirstOrDefaultAsync(g => g.Id == id);
 
-            if (guest == null) return NotFound();
+            if (guest == null)
+                return NotFound();
 
-            if (guest.Status == GuestRegistrationStatus.PendingPayment)
+            if (guest.Status != GuestRegistrationStatus.PendingPayment)
+                return BadRequest("Invalid guest status");
+
+            // Parse payment method
+            var method = Enum.TryParse<PaymentMethod>(paymentMethod, true, out var pm)
+                ? pm
+                : PaymentMethod.Online;
+
+            // ===== LẤY PHÍ THI =====
+            decimal amount = guest.SelectedEntranceExam?.Fee ?? 0;
+
+            if (guest.SelectedEntranceExam == null)
             {
-                guest.Status = GuestRegistrationStatus.PaidPendingApproval;
-                
-                // Create Payment Record
-                var payment = new Payment
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    GuestId = guest.Id,
-                    Amount = guest.SelectedEntranceExam?.Fee ?? 0, // Fallback need handling
-                    PaymentMethod = Enum.TryParse<PaymentMethod>(paymentMethod, out var pm) ? pm : PaymentMethod.Online,
-                    PaymentDate = DateTime.Now,
-                    ReceiptNumber = "RCP" + DateTime.Now.Ticks.ToString()
-                };
-                
-                // Fetch Fee if null (lazy loading might not work here on tracked entity without include)
-                if (guest.SelectedEntranceExam == null)
-                {
-                     // Re-fetch to get fee if needed, or assume front-end passed it. 
-                     // Ideally logic:
-                     var exam = await _context.EntranceExams.FindAsync(guest.SelectedEntranceExamId);
-                     if (exam != null) payment.Amount = exam.Fee;
-                }
+                var exam = await _context.EntranceExams
+                    .FindAsync(guest.SelectedEntranceExamId);
 
-                _context.Payments.Add(payment);
-                _context.Update(guest);
-                await _context.SaveChangesAsync();
+                if (exam == null)
+                    return BadRequest("Entrance exam not found");
+
+                amount = exam.Fee;
             }
 
-            return View("PaymentSuccess");
+            // ===== TẠO PAYMENT (CHUNG CHO CẢ 2) =====
+            var payment = new Payment
+            {
+                Id = Guid.NewGuid().ToString(),
+                GuestId = guest.Id,
+                Amount = amount,
+                PaymentMethod = method,
+                PaymentDate = DateTime.Now,
+                ReceiptNumber = "RCP" + DateTime.Now.Ticks,
+                Status = method == PaymentMethod.Cash
+                            ? PaymentStatus.Paid
+                            : PaymentStatus.Pending
+            };
+
+            _context.Payments.Add(payment);
+
+            // ==================================================
+            // =============== RẼ NHÁNH TẠI ĐÂY =================
+            // ==================================================
+
+            if (method == PaymentMethod.Cash)
+            {
+                // 👉 LOGIC CŨ – GIỮ NGUYÊN
+                guest.Status = GuestRegistrationStatus.PaidPendingApproval;
+
+                _context.Update(guest);
+                await _context.SaveChangesAsync();
+
+                return View("PaymentSuccess");
+            }
+            else if (method == PaymentMethod.Online)
+            {
+                // 👉 KHÔNG update guest status vội
+                // 👉 ĐỢI VNPay callback
+
+                await _context.SaveChangesAsync();
+
+                // Redirect sang trang VNPay riêng
+                return RedirectToAction(
+                    "Create",
+                    "VNPay",
+                    new { paymentId = payment.Id }
+                );
+            }
+
+            return BadRequest("Unsupported payment method");
         }
+
 
         // GET: Guests/Dashboard
         [Authorize(Roles = "Guest")]

@@ -7,6 +7,7 @@ namespace Symphony.Portal.Web.Models.Enums
         PaidPendingApproval,
         Approved,
         Rejected,
-        Cancelled
+        Cancelled,
+        Registered
     }
 }

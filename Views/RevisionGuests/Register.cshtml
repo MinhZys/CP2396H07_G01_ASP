@@ -1,0 +1,73 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@using Symphony.Portal.Web.Models
+@using Symphony.Portal.Web.Models.Enums
+@model RevisionRegisterVM
+
+@{
+    ViewData["Title"] = "Đăng ký lớp ôn thi";
+}
+
+<div class="min-h-screen bg-background-light dark:bg-background-dark py-12 px-4">
+    <div class="max-w-2xl mx-auto bg-surface-dark border border-slate-800 rounded-2xl p-8 shadow-2xl">
+
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold text-white">Đăng ký lớp ôn thi</h2>
+            <p class="text-slate-400 mt-2">Chọn gói ôn và điền thông tin cá nhân</p>
+        </div>
+
+        <form asp-action="Register" method="post" class="space-y-6">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="bg-red-500/10 border border-red-500/40 rounded-lg p-3 text-red-500 text-sm">
+            </div>
+
+            <!-- GÓI ÔN -->
+            <div>
+                <label class="text-slate-300 mb-2 block">Gói ôn thi</label>
+                <select asp-for="RevisionPackageId"
+                        asp-items="@(new SelectList(ViewBag.RevisionPackages, "Id", "Title"))"
+                        class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-white">
+                    <option value="">-- Chọn gói ôn --</option>
+                </select>
+                <span asp-validation-for="RevisionPackageId" class="text-red-500 text-xs"></span>
+            </div>
+
+            <!-- FULL NAME -->
+            <div>
+                <label asp-for="FullName" class="text-slate-300 mb-2 block">Họ và tên</label>
+                <input asp-for="FullName"
+                       class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-white"
+                       placeholder="Nguyễn Văn A" />
+                <span asp-validation-for="FullName" class="text-red-500 text-xs"></span>
+            </div>
+
+            <!-- EMAIL + PHONE -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label asp-for="Email" class="text-slate-300 mb-2 block">Email</label>
+                    <input asp-for="Email"
+                           class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-white" />
+                    <span asp-validation-for="Email" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div>
+                    <label asp-for="PhoneNumber" class="text-slate-300 mb-2 block">Số điện thoại</label>
+                    <input asp-for="PhoneNumber"
+                           class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-white" />
+                    <span asp-validation-for="PhoneNumber" class="text-red-500 text-xs"></span>
+                </div>
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-primary text-background-dark font-bold py-3 rounded-lg hover:opacity-90">
+                Đăng ký & Thanh toán
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

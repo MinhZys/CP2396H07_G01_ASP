@@ -1,0 +1,78 @@
+﻿@model Symphony.Portal.Web.Models.CourseRegisterPageVm
+
+@{
+    Layout = "_Layout";
+}
+
+<section class="max-w-[900px] mx-auto px-6 py-10">
+    <div class="bg-surface-dark border border-slate-800 rounded-xl p-8">
+        <h1 class="font-display text-3xl font-bold mb-2">Xác nhận đăng ký</h1>
+        <p class="text-slate-400 mb-8">Nhập thông tin học viên và xác nhận thông tin khóa học.</p>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-10">
+            <div class="bg-[#0b0f16] border border-slate-800 rounded-xl p-6">
+                <p class="text-xs font-bold uppercase text-slate-500 mb-2">Khóa học</p>
+                <h2 class="text-xl font-bold text-white mb-2">@Model.Course.Title</h2>
+                <p class="text-slate-400 text-sm">Học phí</p>
+                <p class="text-2xl font-bold text-primary">@Model.Course.TuitionFee.ToString("N0")đ</p>
+            </div>
+
+            <div class="bg-[#0b0f16] border border-slate-800 rounded-xl p-6">
+                <p class="text-xs font-bold uppercase text-slate-500 mb-2">Bước tiếp theo</p>
+                <p class="text-slate-300 text-sm">Sau khi xác nhận, bạn sẽ chọn phương thức thanh toán (Cash / VNPay).</p>
+            </div>
+        </div>
+
+        <form asp-controller="CourseRegistration" asp-action="Confirm" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="courseId" value="@Model.Course.Id" />
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-slate-300 text-sm mb-2">Họ và tên</label>
+                    <input asp-for="Guest.FullName" class="w-full bg-background-dark border border-slate-700 rounded-lg p-3 text-white" />
+                    <span asp-validation-for="Guest.FullName" class="text-red-400 text-sm"></span>
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 text-sm mb-2">Email</label>
+                    <input asp-for="Guest.Email" class="w-full bg-background-dark border border-slate-700 rounded-lg p-3 text-white" />
+                    <span asp-validation-for="Guest.Email" class="text-red-400 text-sm"></span>
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 text-sm mb-2">Số điện thoại</label>
+                    <input asp-for="Guest.PhoneNumber" class="w-full bg-background-dark border border-slate-700 rounded-lg p-3 text-white" />
+                    <span asp-validation-for="Guest.PhoneNumber" class="text-red-400 text-sm"></span>
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 text-sm mb-2">Ngày sinh</label>
+                    <input asp-for="Guest.Dob" type="date" class="w-full bg-background-dark border border-slate-700 rounded-lg p-3 text-white" />
+                    <span asp-validation-for="Guest.Dob" class="text-red-400 text-sm"></span>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-slate-300 text-sm mb-2">Địa chỉ</label>
+                <input asp-for="Guest.Address" class="w-full bg-background-dark border border-slate-700 rounded-lg p-3 text-white" />
+                <span asp-validation-for="Guest.Address" class="text-red-400 text-sm"></span>
+            </div>
+
+            <div class="flex gap-3 pt-4">
+                <a asp-controller="Courses" asp-action="Detail" asp-route-id="@Model.Course.Id"
+                   class="px-6 py-3 rounded-lg border border-slate-700 text-slate-300 font-bold hover:text-white hover:border-slate-500 transition">
+                    Quay lại
+                </a>
+                <button type="submit"
+                        class="px-6 py-3 rounded-lg bg-primary text-background-dark font-bold hover:opacity-90 transition">
+                    Xác nhận & Tiếp tục
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
