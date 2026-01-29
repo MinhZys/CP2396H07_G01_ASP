@@ -76,7 +76,12 @@
                        data-i18n="nav.entranceExam">
                         Entrance Exam
                     </a>
-                    <a class="hover:text-primary transition-colors" asp-controller="Courses" asp-action="Index" data-i18n="nav.courses">Courses</a>
+                    <a class="hover:text-primary transition-colors"
+                       asp-controller="RevisionGuests"
+                       asp-action="Register">
+                        Revision Courses
+                    </a>
+
                     <a class="hover:text-primary transition-colors" asp-controller="Mentors" asp-action="Index" data-i18n="nav.mentors">Mentors</a>
                     <a class="hover:text-primary transition-colors" asp-controller="Contact" asp-action="Index" data-i18n="nav.contact">Contact</a>
                     <a class="hover:text-primary transition-colors" asp-controller="About" asp-action="Index" data-i18n="nav.about">About</a>

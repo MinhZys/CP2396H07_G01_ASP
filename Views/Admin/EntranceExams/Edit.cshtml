@@ -43,18 +43,14 @@
                             </div>
                         </div>
 
-                        <div class="row g-4 mb-4">
-                            <div class="col-md-6">
-                                <label asp-for="Fee" class="form-label fw-bold text-slate-700"></label>
-                                <input asp-for="Fee" class="form-control rounded-pill px-3 py-2" type="number" />
-                                <span asp-validation-for="Fee" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="MaxCandidates" class="form-label fw-bold text-slate-700"></label>
-                                <input asp-for="MaxCandidates" class="form-control rounded-pill px-3 py-2" />
-                                <span asp-validation-for="MaxCandidates" class="text-danger small"></span>
-                            </div>
-                        </div>
+            <div class="mb-3">
+                <label asp-for="Fee" class="form-label">Fee ($)</label>
+                <select asp-for="Fee" class="form-select">
+                    <option value="100000">100000 (Early Bird)</option>
+                    <option value="1500">1500 (Standard)</option>
+                </select>
+                <span asp-validation-for="Fee" class="text-danger"></span>
+            </div>
 
                         <div class="mb-4">
                             <label asp-for="Status" class="form-label fw-bold text-slate-700"></label>

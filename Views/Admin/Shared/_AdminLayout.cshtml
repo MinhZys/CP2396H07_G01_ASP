@@ -183,10 +183,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ExamResults" ? "active" : "")" asp-area="Admin" asp-controller="ExamResults" asp-action="Index">
-                                <i class="fas fa-poll"></i> Exam Results
+                            <a class="nav-link"
+                               asp-area="Admin"
+                               asp-controller="RevisionPackages"
+                               asp-action="Index">
+                                <i class="fas fa-book"></i> Revision Packages
                             </a>
                         </li>
+
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "StudentRegistration" ? "active" : "")" asp-area="Admin" asp-controller="StudentRegistration" asp-action="Index">
                                 <i class="fas fa-user-plus"></i> Registrations

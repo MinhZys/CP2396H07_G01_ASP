@@ -28,5 +28,7 @@ namespace Symphony.Portal.Web.Models
         public DateTime PaymentDate { get; set; }
 
         public string ReceiptNumber { get; set; } = string.Empty;
+        public PaymentPurpose Purpose { get; set; }
+
     }
 }

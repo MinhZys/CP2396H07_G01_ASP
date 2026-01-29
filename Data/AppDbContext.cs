@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
 
+
 namespace Symphony.Portal.Web.Data
 {
     public class AppDbContext : DbContext
@@ -53,6 +54,7 @@ namespace Symphony.Portal.Web.Data
         public DbSet<ExamPaperQuestion> ExamPaperQuestions { get; set; }
         public DbSet<StudentExamSession> StudentExamSessions { get; set; }
         public DbSet<StudentAnswer> StudentAnswers { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

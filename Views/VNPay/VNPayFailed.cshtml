@@ -1,0 +1,18 @@
+﻿@model Symphony.Portal.Web.Models.VNPayTransaction
+@{
+    ViewData["Title"] = "Thanh toán thất bại";
+}
+
+<div class="container py-5 text-center">
+    <div class="alert alert-danger shadow-lg rounded-3 p-5">
+        <h2 class="mb-3">❌ Thanh toán thất bại</h2>
+        <p>Mã lỗi VNPay: <strong>@Model.VnpResponseCode</strong></p>
+
+        <hr />
+
+        <a href="/Guests/Payment/@Model.Payment.GuestId"
+           class="btn btn-warning mt-3">
+            Thử thanh toán lại
+        </a>
+    </div>
+</div>
