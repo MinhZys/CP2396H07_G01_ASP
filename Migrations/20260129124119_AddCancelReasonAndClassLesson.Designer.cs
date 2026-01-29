@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Symphony.Portal.Web.Data;
 
@@ -11,9 +12,11 @@ using Symphony.Portal.Web.Data;
 namespace CP2396H07_G01.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260129124119_AddCancelReasonAndClassLesson")]
+    partial class AddCancelReasonAndClassLesson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -960,9 +963,6 @@ namespace CP2396H07_G01.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("CourseId")
-                        .HasColumnType("nvarchar(36)");
-
                     b.Property<string>("GuestId")
                         .HasColumnType("nvarchar(36)");
 
@@ -972,9 +972,6 @@ namespace CP2396H07_G01.Migrations
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Purpose")
-                        .HasColumnType("int");
 
                     b.Property<string>("ReceiptNumber")
                         .IsRequired()
@@ -987,8 +984,6 @@ namespace CP2396H07_G01.Migrations
                         .HasColumnType("nvarchar(36)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
 
                     b.HasIndex("GuestId");
 
@@ -1127,78 +1122,6 @@ namespace CP2396H07_G01.Migrations
                     b.HasIndex("QuizId");
 
                     b.ToTable("QuizQuestions");
-                });
-
-            modelBuilder.Entity("Symphony.Portal.Web.Models.RevisionPackage", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CurrentStudents")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Fee")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("MaxStudents")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RevisionPackages");
-                });
-
-            modelBuilder.Entity("Symphony.Portal.Web.Models.RevisionRegistration", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ClassId")
-                        .HasColumnType("nvarchar(36)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RevisionPackageId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClassId");
-
-                    b.HasIndex("RevisionPackageId");
-
-                    b.ToTable("RevisionRegistrations");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Role", b =>
@@ -1511,52 +1434,6 @@ namespace CP2396H07_G01.Migrations
                             Password = "123",
                             RoleId = "3"
                         });
-                });
-
-            modelBuilder.Entity("Symphony.Portal.Web.Models.VNPayTransaction", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PaymentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(36)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<long>("VnpAmount")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("VnpBankCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VnpCreateDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VnpOrderInfo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VnpPayDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VnpResponseCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VnpTransactionNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VnpTxnRef")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PaymentId");
-
-                    b.ToTable("VNPayTransactions");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Assignment", b =>
@@ -1904,10 +1781,6 @@ namespace CP2396H07_G01.Migrations
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Payment", b =>
                 {
-                    b.HasOne("Symphony.Portal.Web.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId");
-
                     b.HasOne("Symphony.Portal.Web.Models.Guest", "Guest")
                         .WithMany()
                         .HasForeignKey("GuestId");
@@ -1915,8 +1788,6 @@ namespace CP2396H07_G01.Migrations
                     b.HasOne("Symphony.Portal.Web.Models.User", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId");
-
-                    b.Navigation("Course");
 
                     b.Navigation("Guest");
 
@@ -1963,21 +1834,50 @@ namespace CP2396H07_G01.Migrations
                     b.Navigation("Quiz");
                 });
 
-            modelBuilder.Entity("Symphony.Portal.Web.Models.RevisionRegistration", b =>
+            modelBuilder.Entity("Symphony.Portal.Web.Models.StudentAnswer", b =>
                 {
-                    b.HasOne("Symphony.Portal.Web.Models.Class", "Class")
-                        .WithMany("RevisionRegistrations")
-                        .HasForeignKey("ClassId");
-
-                    b.HasOne("Symphony.Portal.Web.Models.RevisionPackage", "RevisionPackage")
-                        .WithMany("Registrations")
-                        .HasForeignKey("RevisionPackageId")
+                    b.HasOne("Symphony.Portal.Web.Models.Question", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Class");
+                    b.HasOne("Symphony.Portal.Web.Models.StudentExamSession", "Session")
+                        .WithMany("Answers")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("RevisionPackage");
+                    b.Navigation("Question");
+
+                    b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.StudentExamSession", b =>
+                {
+                    b.HasOne("Symphony.Portal.Web.Models.EntranceExam", "EntranceExam")
+                        .WithMany()
+                        .HasForeignKey("EntranceExamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Symphony.Portal.Web.Models.ExamPaper", "ExamPaper")
+                        .WithMany()
+                        .HasForeignKey("ExamPaperId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Symphony.Portal.Web.Models.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EntranceExam");
+
+                    b.Navigation("ExamPaper");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.StudentProfile", b =>
@@ -2021,17 +1921,6 @@ namespace CP2396H07_G01.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Symphony.Portal.Web.Models.VNPayTransaction", b =>
-                {
-                    b.HasOne("Symphony.Portal.Web.Models.Payment", "Payment")
-                        .WithMany()
-                        .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Payment");
-                });
-
             modelBuilder.Entity("Symphony.Portal.Web.Models.Category", b =>
                 {
                     b.Navigation("Courses");
@@ -2040,11 +1929,6 @@ namespace CP2396H07_G01.Migrations
             modelBuilder.Entity("Symphony.Portal.Web.Models.Certificate", b =>
                 {
                     b.Navigation("Courses");
-                });
-
-            modelBuilder.Entity("Symphony.Portal.Web.Models.Class", b =>
-                {
-                    b.Navigation("RevisionRegistrations");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Course", b =>
@@ -2076,11 +1960,6 @@ namespace CP2396H07_G01.Migrations
                     b.Navigation("Questions");
                 });
 
-            modelBuilder.Entity("Symphony.Portal.Web.Models.RevisionPackage", b =>
-                {
-                    b.Navigation("Registrations");
-                });
-
             modelBuilder.Entity("Symphony.Portal.Web.Models.Role", b =>
                 {
                     b.Navigation("Users");
@@ -2100,7 +1979,7 @@ namespace CP2396H07_G01.Migrations
                 {
                     b.Navigation("CourseSubjects");
                 });
-  #pragma warning restore 612, 618
+#pragma warning restore 612, 618
         }
     }
 }

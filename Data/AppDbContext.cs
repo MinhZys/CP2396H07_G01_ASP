@@ -10,7 +10,7 @@ namespace Symphony.Portal.Web.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
-
+        public DbSet<ClassLesson> ClassLessons { get; set; }
         public DbSet<Center> Centers { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<ClassAssignment> ClassAssignments { get; set; }
@@ -59,6 +59,10 @@ namespace Symphony.Portal.Web.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            // Composite Key for ClassLesson
+            modelBuilder.Entity<ClassLesson>()
+                .HasIndex(x => new { x.ClassId, x.LessonId })
+                .IsUnique();
 
             // Configure Enums as Strings
             modelBuilder.Entity<Guest>()

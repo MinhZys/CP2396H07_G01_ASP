@@ -21,22 +21,28 @@ namespace Symphony.Portal.Web.Controllers.Admin
         // =========================
         // INDEX (LIST)
         // =========================
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? classId)
         {
-            var data = await _context.ClassAssignments
-                .Include(a => a.Student)
-                    .ThenInclude(u => u.Role)
-                .Include(a => a.Class)
-                    .ThenInclude(c => c.ClassCategory)
-                .ToListAsync();
+            var query = _context.ClassAssignments
+                .Include(a => a.Student).ThenInclude(u => u.Role)
+                .Include(a => a.Class).ThenInclude(c => c.ClassCategory)
+                .AsQueryable();
 
+            if (!string.IsNullOrEmpty(classId))
+            {
+                query = query.Where(x => x.ClassId == classId);
+                ViewBag.FilterClassId = classId;
+            }
+
+            var data = await query.ToListAsync();
             return View(data);
         }
+
 
         // =========================
         // CREATE (MANUAL ASSIGN)
         // =========================
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(string? classId)
         {
             ViewBag.Students = await _context.Users
                 .Include(u => u.Role)
@@ -47,8 +53,10 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 .Where(c => c.NumberOfSeats > 0 && c.Status == ClassStatus.Active)
                 .ToListAsync();
 
+            ViewBag.PreselectedClassId = classId; // ✅
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

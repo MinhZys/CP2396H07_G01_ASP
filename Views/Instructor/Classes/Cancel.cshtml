@@ -1,0 +1,30 @@
+﻿@model Symphony.Portal.Web.Models.Assignment
+@using Symphony.Portal.Web.Models.Enums
+
+@{
+    ViewData["Title"] = "Cancel Assignment";
+}
+
+<h3>Cancel: @Model.Class?.ClassName</h3>
+
+@if (Model.Status == AssignmentStatus.Cancelled && !string.IsNullOrWhiteSpace(Model.CancellationReason))
+{
+    <div class="alert alert-warning">
+        <strong>Already cancelled.</strong><br />
+        Reason: @Model.CancellationReason
+    </div>
+}
+
+<form asp-action="Cancel" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <div class="mb-3">
+        <label class="form-label">Cancellation Reason</label>
+        <textarea name="cancellationReason" class="form-control" rows="4" required>@Model.CancellationReason</textarea>
+        @Html.ValidationSummary(false, "", new { @class = "text-danger mt-2" })
+    </div>
+
+    <button type="submit" class="btn btn-danger">Submit</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
