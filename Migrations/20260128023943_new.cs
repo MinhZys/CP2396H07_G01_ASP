@@ -11,12 +11,12 @@ namespace CP2396H07_G01.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "IsActive",
-                table: "FAQs",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
+            // migrationBuilder.AddColumn<bool>(
+            //     name: "IsActive",
+            //     table: "FAQs",
+            //     type: "bit",
+            //     nullable: false,
+            //     defaultValue: false);
 
             migrationBuilder.UpdateData(
                 table: "ClassCategories",
@@ -43,9 +43,9 @@ namespace CP2396H07_G01.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "IsActive",
-                table: "FAQs");
+            // migrationBuilder.DropColumn(
+            //     name: "IsActive",
+            //     table: "FAQs");
 
             migrationBuilder.UpdateData(
                 table: "ClassCategories",

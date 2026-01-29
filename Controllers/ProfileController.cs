@@ -153,7 +153,10 @@ namespace Symphony.Portal.Web.Controllers
                 profile.Gender = model.Gender;
                 profile.PhoneNumber = model.PhoneNumber;
                 profile.AddressLine = model.AddressLine;
-                profile.AvatarUrl = model.AvatarUrl;
+                if (!string.IsNullOrEmpty(model.AvatarUrl))
+                {
+                    profile.AvatarUrl = model.AvatarUrl;
+                }
                 profile.YearsOfExperience = model.YearsOfExperience;
                 profile.Specialization = model.Specialization;
                 profile.Bio = model.Bio;
@@ -172,7 +175,10 @@ namespace Symphony.Portal.Web.Controllers
                 profile.Gender = model.Gender;
                 profile.PhoneNumber = model.PhoneNumber;
                 profile.AddressLine = model.AddressLine;
-                profile.AvatarUrl = model.AvatarUrl;
+                if (!string.IsNullOrEmpty(model.AvatarUrl))
+                {
+                    profile.AvatarUrl = model.AvatarUrl;
+                }
 
                 _context.StudentProfiles.Update(profile);
             }

@@ -5,7 +5,7 @@ using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
 
-namespace Symphony.Portal.Web.Controllers.Admin
+namespace CP2396H07_G01.Controllers.Admin
 {
     [Area("Admin")]
     [Authorize(Roles = "Admin")]

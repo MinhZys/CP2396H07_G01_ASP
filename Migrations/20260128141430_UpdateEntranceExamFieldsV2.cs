@@ -12,13 +12,6 @@ namespace CP2396H07_G01.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
-                name: "IsActive",
-                table: "FAQs",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
-
-            migrationBuilder.AddColumn<bool>(
                 name: "IsRegistrationOpen",
                 table: "EntranceExams",
                 type: "bit",
@@ -306,10 +299,6 @@ namespace CP2396H07_G01.Migrations
 
             migrationBuilder.DropTable(
                 name: "ExamPapers");
-
-            migrationBuilder.DropColumn(
-                name: "IsActive",
-                table: "FAQs");
 
             migrationBuilder.DropColumn(
                 name: "IsRegistrationOpen",

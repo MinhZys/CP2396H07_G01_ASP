@@ -54,6 +54,13 @@ namespace Symphony.Portal.Web.Data
         public DbSet<ExamPaperQuestion> ExamPaperQuestions { get; set; }
         public DbSet<StudentExamSession> StudentExamSessions { get; set; }
         public DbSet<StudentAnswer> StudentAnswers { get; set; }
+        
+        // Payment & VNPay
+        public DbSet<VNPayTransaction> VNPayTransactions { get; set; }
+
+        // Revision System
+        public DbSet<RevisionPackage> RevisionPackages { get; set; }
+        public DbSet<RevisionRegistration> RevisionRegistrations { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -179,6 +186,18 @@ namespace Symphony.Portal.Web.Data
                 new ClassCategory { Id = "2", Name = "Lab", Description = "Computer labs", IsActive = true },
                 new ClassCategory { Id = "3", Name = "Online", Description = "Virtual classes", IsActive = true }
             );
+
+            // One-to-one relationship for ExamDetail
+            modelBuilder.Entity<StudentRegistration>()
+                .HasOne(s => s.ExamDetail)
+                .WithOne(e => e.StudentRegistration)
+                .HasForeignKey<ExamDetail>(e => e.RegistrationId);
+
+            // One-to-many relationship for StudentExamSession
+            modelBuilder.Entity<StudentExamSession>()
+                .HasMany(s => s.Answers)
+                .WithOne(a => a.Session)
+                .HasForeignKey(a => a.SessionId);
         }
     }
 }

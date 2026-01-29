@@ -112,7 +112,8 @@ namespace Symphony.Portal.Web.Controllers
                 ReceiptNumber = "RCP" + DateTime.Now.Ticks,
                 Status = method == PaymentMethod.Cash
                             ? PaymentStatus.Paid
-                            : PaymentStatus.Pending
+                            : PaymentStatus.Pending,
+                Purpose = PaymentPurpose.EntranceExam
             };
 
             _context.Payments.Add(payment);
