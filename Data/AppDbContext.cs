@@ -46,6 +46,14 @@ namespace Symphony.Portal.Web.Data
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<Notification> Notifications { get; set; }
 
+        // Entrance Exam System
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<QuestionOption> QuestionOptions { get; set; }
+        public DbSet<ExamPaper> ExamPapers { get; set; }
+        public DbSet<ExamPaperQuestion> ExamPaperQuestions { get; set; }
+        public DbSet<StudentExamSession> StudentExamSessions { get; set; }
+        public DbSet<StudentAnswer> StudentAnswers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -85,6 +93,19 @@ namespace Symphony.Portal.Web.Data
 
             modelBuilder.Entity<Payment>()
                 .Property(e => e.PaymentMethod)
+                .HasConversion<string>();
+
+            // Exam System Enums
+            modelBuilder.Entity<EntranceExam>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Question>()
+                .Property(e => e.Type)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<StudentExamSession>()
+                .Property(e => e.Status)
                 .HasConversion<string>();
 
              // Composite Key for CourseSubject

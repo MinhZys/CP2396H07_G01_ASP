@@ -140,6 +140,15 @@
                                             <span class="material-symbols-outlined text-lg">dashboard</span>
                                             Admin Dashboard
                                         </a>
+                                        <div class="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 border-t dark:border-slate-700/50 pt-2">Examination</div>
+                                         <a asp-area="Admin" asp-controller="EntranceExams" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                            <span class="material-symbols-outlined text-lg">event_available</span>
+                                            Manage Exams
+                                        </a>
+                                         <a asp-area="Admin" asp-controller="ExamPapers" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                            <span class="material-symbols-outlined text-lg">description</span>
+                                            Exam Papers
+                                        </a>
                                     }
                                     <a asp-controller="Profile" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
                                         <span class="material-symbols-outlined text-lg">person</span>
@@ -159,6 +168,11 @@
                                             <span class="material-symbols-outlined text-lg">school</span>
                                             My Classroom
                                         </a>
+                                        <a asp-controller="ExamResult" asp-action="MyExams"
+                                           class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                            <span class="material-symbols-outlined text-lg">history_edu</span>
+                                            My Exam Results
+                                        </a>
                                     }
                                     else if (User.IsInRole("Instructor"))
                                     {
@@ -166,6 +180,10 @@
                                            class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
                                             <span class="material-symbols-outlined text-lg">school</span>
                                             My Classroom
+                                        </a>
+                                        <a asp-area="Instructor" asp-controller="Grading" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                            <span class="material-symbols-outlined text-lg">grade</span>
+                                            Grading Queue
                                         </a>
                                     }
                                 </div>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Symphony.Portal.Web.Data;
 
@@ -11,9 +12,11 @@ using Symphony.Portal.Web.Data;
 namespace CP2396H07_G01.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260128141430_UpdateEntranceExamFieldsV2")]
+    partial class UpdateEntranceExamFieldsV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -287,7 +290,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "1",
-                            CreatedAt = new DateTime(2026, 1, 29, 0, 32, 7, 542, DateTimeKind.Local).AddTicks(9413),
+                            CreatedAt = new DateTime(2026, 1, 28, 21, 14, 29, 200, DateTimeKind.Local).AddTicks(7563),
                             Description = "Standard classrooms",
                             IsActive = true,
                             Name = "Theory"
@@ -295,7 +298,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "2",
-                            CreatedAt = new DateTime(2026, 1, 29, 0, 32, 7, 542, DateTimeKind.Local).AddTicks(9427),
+                            CreatedAt = new DateTime(2026, 1, 28, 21, 14, 29, 200, DateTimeKind.Local).AddTicks(7607),
                             Description = "Computer labs",
                             IsActive = true,
                             Name = "Lab"
@@ -303,7 +306,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "3",
-                            CreatedAt = new DateTime(2026, 1, 29, 0, 32, 7, 542, DateTimeKind.Local).AddTicks(9428),
+                            CreatedAt = new DateTime(2026, 1, 28, 21, 14, 29, 200, DateTimeKind.Local).AddTicks(7608),
                             Description = "Virtual classes",
                             IsActive = true,
                             Name = "Online"
@@ -476,9 +479,6 @@ namespace CP2396H07_G01.Migrations
                     b.Property<DateTime>("ExamDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ExamPaperId")
-                        .HasColumnType("nvarchar(36)");
-
                     b.Property<decimal>("Fee")
                         .HasColumnType("decimal(18,2)");
 
@@ -504,8 +504,6 @@ namespace CP2396H07_G01.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ExamPaperId");
 
                     b.ToTable("EntranceExams");
                 });
@@ -1569,15 +1567,6 @@ namespace CP2396H07_G01.Migrations
                     b.Navigation("Course");
 
                     b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("Symphony.Portal.Web.Models.EntranceExam", b =>
-                {
-                    b.HasOne("Symphony.Portal.Web.Models.ExamPaper", "ExamPaper")
-                        .WithMany()
-                        .HasForeignKey("ExamPaperId");
-
-                    b.Navigation("ExamPaper");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.ExamDetail", b =>

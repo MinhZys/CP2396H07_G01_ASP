@@ -1,0 +1,67 @@
+@model IEnumerable<Symphony.Portal.Web.Models.ExamResult>
+
+@{
+    ViewData["Title"] = "Exam Results";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Exam Results</h1>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Filter by Entrance Exam</label>
+                <select name="examId" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Exams</option>
+                    @foreach (var exam in ViewBag.EntranceExams)
+                    {
+                        <!option value="@exam.Id" @(ViewBag.SelectedExamId == exam.Id ? "selected" : "")>@exam.Title</!option>
+                    }
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Student</th>
+                <th>Entrance Exam</th>
+                <th>Date</th>
+                <th>Score</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="fw-bold">@item.Student?.FullName</div>
+                        <small class="text-muted">@item.Student?.Email</small>
+                    </td>
+                    <td>@item.EntranceExam?.Title</td>
+                    <td>@item.ExamDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <span class="fw-bold">@item.Score</span>
+                    </td>
+                    <td>
+                        @if (item.IsPassed)
+                        {
+                            <span class="badge bg-success">PASSED</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">FAILED</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
