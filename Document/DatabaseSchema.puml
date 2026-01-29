@@ -1,0 +1,513 @@
+@startuml SymphonyPortalERD
+
+' Visual Refinements
+hide circle
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam shadowing false
+
+skinparam class {
+    BackgroundColor White
+    ArrowColor #2688d2
+    BorderColor #2688d2
+}
+
+entity "Roles" as Roles {
+    Id : nvarchar(36) <<PK>>
+    --
+    Name : nvarchar(max)
+    Description : nvarchar(max)
+}
+
+entity "Users" as Users {
+    Id : nvarchar(36) <<PK>>
+    --
+    FullName : nvarchar(max)
+    Email : nvarchar(max)
+    Password : nvarchar(max)
+    IsActive : bit
+    RoleId : nvarchar(36) <<FK>>
+}
+
+entity "StudentProfiles" as StudentProfiles {
+    Id : nvarchar(36) <<PK>>
+    --
+    UserId : nvarchar(36) <<FK>>
+    FullName : nvarchar(max)
+    DateOfBirth : datetime2
+    Gender : nvarchar(max)
+    PhoneNumber : nvarchar(max)
+    AddressLine : nvarchar(max)
+    AvatarUrl : nvarchar(max)
+}
+
+entity "InstructorProfiles" as InstructorProfiles {
+    Id : nvarchar(36) <<PK>>
+    --
+    UserId : nvarchar(36) <<FK>>
+    FullName : nvarchar(max)
+    DateOfBirth : datetime2
+    Gender : nvarchar(max)
+    PhoneNumber : nvarchar(max)
+    AddressLine : nvarchar(max)
+    AvatarUrl : nvarchar(max)
+    YearsOfExperience : int
+    Specialization : nvarchar(max)
+    Bio : nvarchar(max)
+    Certifications : nvarchar(max)
+    GithubUrl : nvarchar(max)
+}
+
+entity "Categories" as Categories {
+    Id : nvarchar(36) <<PK>>
+    --
+    Name : nvarchar(100)
+    Description : nvarchar(500)
+}
+
+entity "Certificates" as Certificates {
+    Id : nvarchar(36) <<PK>>
+    --
+    Name : nvarchar(100)
+    Description : nvarchar(500)
+    IsActive : bit
+}
+
+entity "Courses" as Courses {
+    Id : nvarchar(36) <<PK>>
+    --
+    Title : nvarchar(max)
+    Description : nvarchar(max)
+    TuitionFee : decimal(18,2)
+    DurationMonths : int
+    CertificateId : nvarchar(36) <<FK>>
+    IsActive : bit
+    Image : nvarchar(max)
+    Level : int
+    CategoryId : nvarchar(36) <<FK>>
+}
+
+entity "Subjects" as Subjects {
+    Id : nvarchar(450) <<PK>>
+    --
+    Name : nvarchar(max)
+    StudyTime : int
+    Description : nvarchar(max)
+    LearningRoadmap : nvarchar(max)
+    Image : nvarchar(max)
+}
+
+entity "CourseSubjects" as CourseSubjects {
+    CourseId : nvarchar(36) <<PK, FK>>
+    SubjectId : nvarchar(450) <<PK, FK>>
+}
+
+entity "CourseInstructors" as CourseInstructors {
+    CourseId : nvarchar(36) <<PK, FK>>
+    InstructorId : nvarchar(36) <<PK, FK>>
+}
+
+entity "ClassCategories" as ClassCategories {
+    Id : nvarchar(36) <<PK>>
+    --
+    Name : nvarchar(max)
+    Description : nvarchar(max)
+    IsActive : bit
+    CreatedAt : datetime2
+}
+
+entity "Classes" as Classes {
+    Id : nvarchar(36) <<PK>>
+    --
+    ClassName : nvarchar(max)
+    ClassCategoryId : nvarchar(36) <<FK>>
+    NumberOfSeats : int
+    Status : int
+    CreatedAt : datetime2
+}
+
+entity "Enrollments" as Enrollments {
+    Id : nvarchar(36) <<PK>>
+    --
+    ClassId : nvarchar(36) <<FK>>
+    StudentId : nvarchar(36) <<FK>>
+    CourseId : nvarchar(36) <<FK>>
+    EnrolledDate : datetime2
+    IsApproved : bit
+    IsPaid : bit
+    IsCompleted : bit
+    PaymentReference : nvarchar(max)
+}
+
+entity "Lessons" as Lessons {
+    Id : nvarchar(36) <<PK>>
+    --
+    Title : nvarchar(max)
+    Description : nvarchar(max)
+    ContentLink : nvarchar(max)
+    Image : nvarchar(max)
+    DurationMinutes : int
+    CourseId : nvarchar(36) <<FK>>
+    SubjectId : nvarchar(450) <<FK>>
+}
+
+entity "ClassLessons" as ClassLessons {
+    Id : nvarchar(36) <<PK>>
+    --
+    ClassId : nvarchar(36) <<FK>>
+    LessonId : nvarchar(36) <<FK>>
+    AssignedAt : datetime2
+}
+
+entity "Quizzes" as Quizzes {
+    Id : nvarchar(36) <<PK>>
+    --
+    Name : nvarchar(max)
+    Description : nvarchar(max)
+    PassScore : int
+    DateCreated : datetime2
+    LessonId : nvarchar(36) <<FK>>
+}
+
+entity "QuizQuestions" as QuizQuestions {
+    Id : nvarchar(36) <<PK>>
+    --
+    QuestionText : nvarchar(max)
+    OptionA : nvarchar(max)
+    OptionB : nvarchar(max)
+    OptionC : nvarchar(max)
+    OptionD : nvarchar(max)
+    CorrectOption : nvarchar(max)
+    Points : int
+    QuizId : nvarchar(36) <<FK>>
+}
+
+entity "ExamPapers" as ExamPapers {
+    Id : nvarchar(36) <<PK>>
+    --
+    Title : nvarchar(max)
+    Duration : int
+    SubjectId : nvarchar(450) <<FK>>
+    CreatedAt : datetime2
+}
+
+entity "Questions" as Questions {
+    Id : nvarchar(36) <<PK>>
+    --
+    Content : nvarchar(max)
+    Type : int
+    SubjectId : nvarchar(450) <<FK>>
+    Difficulty : nvarchar(max)
+    Score : float
+    CreatedAt : datetime2
+}
+
+entity "QuestionOptions" as QuestionOptions {
+    Id : nvarchar(36) <<PK>>
+    --
+    QuestionId : nvarchar(36) <<FK>>
+    Content : nvarchar(max)
+    IsCorrect : bit
+}
+
+entity "ExamPaperQuestions" as ExamPaperQuestions {
+    Id : int <<PK, Identity>>
+    --
+    ExamPaperId : nvarchar(36) <<FK>>
+    QuestionId : nvarchar(36) <<FK>>
+    Order : int
+}
+
+entity "EntranceExams" as EntranceExams {
+    Id : nvarchar(36) <<PK>>
+    --
+    Title : nvarchar(max)
+    ExamDate : datetime2
+    Fee : decimal(18,2)
+    MaxCandidates : int
+    Status : int
+    IsRegistrationOpen : bit
+    IsActive : bit
+    Subjects : nvarchar(max)
+    ExamPaperId : nvarchar(36) <<FK>>
+}
+
+entity "StudentRegistrations" as StudentRegistrations {
+    Id : nvarchar(36) <<PK>>
+    --
+    FullName : nvarchar(100)
+    Email : nvarchar(max)
+    Gender : int
+    DateOfBirth : datetime2
+    Phone : nvarchar(max)
+    CourseId : nvarchar(36) <<FK>>
+    CenterId : nvarchar(36) <<FK>>
+    HasExtraPractice : bit
+    RegisteredAt : datetime2
+    Status : int
+}
+
+entity "ExamDetails" as ExamDetails {
+    Id : nvarchar(36) <<PK>>
+    --
+    RegistrationId : nvarchar(36) <<FK>>
+    ExamTime : datetime2
+    ExamRoom : nvarchar(max)
+    ExamDescription : nvarchar(max)
+}
+
+entity "StudentExamSessions" as StudentExamSessions {
+    Id : nvarchar(36) <<PK>>
+    --
+    EntranceExamId : nvarchar(36) <<FK>>
+    StudentId : nvarchar(36) <<FK>>
+    ExamPaperId : nvarchar(36) <<FK>>
+    StartTime : datetime2
+    EndTime : datetime2
+    TotalScore : float
+    GradeLevel : nvarchar(max)
+    Status : int
+}
+
+entity "StudentAnswers" as StudentAnswers {
+    Id : int <<PK, Identity>>
+    --
+    SessionId : nvarchar(36) <<FK>>
+    QuestionId : nvarchar(36) <<FK>>
+    SelectedOptionId : nvarchar(max)
+    EssayContent : nvarchar(max)
+    EarnedScore : float
+    IsGraded : bit
+    ExaminerNote : nvarchar(max)
+}
+
+entity "ExamResults" as ExamResults {
+    Id : nvarchar(36) <<PK>>
+    --
+    StudentId : nvarchar(36) <<FK>>
+    EntranceExamId : nvarchar(36) <<FK>>
+    Score : float
+    IsPassed : bit
+    ExamDate : datetime2
+}
+
+entity "Payments" as Payments {
+    Id : nvarchar(36) <<PK>>
+    --
+    StudentId : nvarchar(36) <<FK>>
+    GuestId : nvarchar(36) <<FK>>
+    Amount : decimal(18,2)
+    PaymentMethod : int
+    PaymentDate : datetime2
+    ReceiptNumber : nvarchar(max)
+    Status : int
+    Purpose : int
+}
+
+entity "VNPayTransactions" as VNPayTransactions {
+    Id : nvarchar(450) <<PK>>
+    --
+    PaymentId : nvarchar(36) <<FK>>
+    VnpTxnRef : nvarchar(max)
+    VnpAmount : bigint
+    VnpOrderInfo : nvarchar(max)
+    VnpCreateDate : nvarchar(max)
+    VnpResponseCode : nvarchar(max)
+    VnpTransactionNo : nvarchar(max)
+    VnpBankCode : nvarchar(max)
+    VnpPayDate : nvarchar(max)
+    Status : int
+}
+
+entity "Centers" as Centers {
+    Id : nvarchar(36) <<PK>>
+    --
+    Name : nvarchar(max)
+    Address : nvarchar(max)
+    Phone : nvarchar(max)
+}
+
+entity "PageContents" as PageContents {
+    Id : nvarchar(36) <<PK>>
+    --
+    Slug : nvarchar(50)
+    Title : nvarchar(max)
+    Content : nvarchar(max)
+    LastUpdated : datetime2
+    SubjectId : nvarchar(450) <<FK>>
+    CenterId : nvarchar(36) <<FK>>
+}
+
+entity "FAQs" as FAQs {
+    Id : nvarchar(36) <<PK>>
+    --
+    Question : nvarchar(max)
+    Answer : nvarchar(max)
+    DisplayOrder : int
+    IsActive : bit
+}
+
+entity "CourseReviews" as CourseReviews {
+    Id : nvarchar(36) <<PK>>
+    --
+    CourseId : nvarchar(36) <<FK>>
+    StudentId : nvarchar(36) <<FK>>
+    Rating : int
+    ReviewText : nvarchar(max)
+    ReviewDate : datetime2
+    IsApproved : bit
+}
+
+entity "Materials" as Materials {
+    Id : nvarchar(36) <<PK>>
+    --
+    Title : nvarchar(max)
+    Description : nvarchar(max)
+    FilePath : nvarchar(max)
+    FileType : nvarchar(max)
+    UploadDate : datetime2
+    ClassId : nvarchar(36) <<FK>>
+}
+
+entity "ChatMessages" as ChatMessages {
+    Id : int <<PK, Identity>>
+    --
+    SenderId : nvarchar(36) <<FK>>
+    ReceiverId : nvarchar(36) <<FK>>
+    Content : nvarchar(max)
+    Timestamp : datetime2
+    IsRead : bit
+    SessionId : nvarchar(max)
+    SenderValidName : nvarchar(max)
+}
+
+entity "Notifications" as Notifications {
+    Id : int <<PK, Identity>>
+    --
+    Title : nvarchar(max)
+    Message : nvarchar(max)
+    IsRead : bit
+    CreatedAt : datetime2
+    UserId : nvarchar(36) <<FK>>
+}
+
+entity "Assignments" as Assignments {
+    Id : nvarchar(36) <<PK>>
+    --
+    Title : nvarchar(max)
+    ClassId : nvarchar(36) <<FK>>
+    InstructorId : nvarchar(36) <<FK>>
+    AssignmentType : int
+    Status : int
+    Note : nvarchar(max)
+    CancellationReason : nvarchar(max)
+    CreatedAt : datetime2
+}
+
+entity "ClassAssignments" as ClassAssignments {
+    Id : nvarchar(36) <<PK>>
+    --
+    StudentId : nvarchar(36) <<FK>>
+    ClassId : nvarchar(36) <<FK>>
+    AssignedAt : datetime2
+}
+
+entity "Guests" as Guests {
+    Id : nvarchar(36) <<PK>>
+    --
+    FullName : nvarchar(100)
+    Email : nvarchar(100)
+    PhoneNumber : nvarchar(15)
+    Dob : datetime2
+    Address : nvarchar(255)
+    SelectedEntranceExamId : nvarchar(36) <<FK>>
+    Status : int
+    CreatedAt : datetime2
+    UserId : nvarchar(36) <<FK>>
+    ExamRoom : nvarchar(max)
+    Description : nvarchar(max)
+    ClassId : nvarchar(36) <<FK>>
+}
+
+entity "RevisionPackages" as RevisionPackages {
+    Id : nvarchar(36) <<PK>>
+    --
+    Title : nvarchar(max)
+    Description : nvarchar(max)
+    Fee : decimal(18,2)
+    MaxStudents : int
+    CurrentStudents : int
+    Status : int
+    CreatedAt : datetime2
+}
+
+entity "RevisionRegistrations" as RevisionRegistrations {
+    Id : nvarchar(36) <<PK>>
+    --
+    FullName : nvarchar(max)
+    Email : nvarchar(max)
+    PhoneNumber : nvarchar(max)
+    RevisionPackageId : nvarchar(36) <<FK>>
+    ClassId : nvarchar(36) <<FK>>
+    Status : int
+    CreatedAt : datetime2
+}
+
+' Relationships
+Users }-- Roles
+StudentProfiles }-- Users
+InstructorProfiles }-- Users
+Courses }-- Categories
+Courses }-- Certificates
+CourseSubjects }-- Courses
+CourseSubjects }-- Subjects
+CourseInstructors }-- Courses
+CourseInstructors }-- Users
+Classes }-- ClassCategories
+Enrollments }-- Classes
+Enrollments }-- Users
+Enrollments }-- Courses
+Lessons }-- Courses
+Lessons }-- Subjects
+ClassLessons }-- Classes
+ClassLessons }-- Lessons
+Quizzes }-- Lessons
+QuizQuestions }-- Quizzes
+ExamPapers }-- Subjects
+Questions }-- Subjects
+QuestionOptions }-- Questions
+ExamPaperQuestions }-- ExamPapers
+ExamPaperQuestions }-- Questions
+EntranceExams }-- ExamPapers
+StudentRegistrations }-- Courses
+StudentRegistrations }-- Centers
+ExamDetails ||-- StudentRegistrations
+StudentExamSessions }-- EntranceExams
+StudentExamSessions }-- Users
+StudentExamSessions }-- ExamPapers
+StudentAnswers }-- StudentExamSessions
+StudentAnswers }-- Questions
+ExamResults }-- Users
+ExamResults }-- EntranceExams
+Payments }-- Users
+Payments }-- Guests
+VNPayTransactions ||-- Payments
+PageContents }-- Subjects
+PageContents }-- Centers
+CourseReviews }-- Courses
+CourseReviews }-- Users
+Materials }-- Classes
+ChatMessages }-- Users : Sender
+ChatMessages }-- Users : Receiver
+Notifications }-- Users
+Assignments }-- Classes
+Assignments }-- Users : Instructor
+ClassAssignments }-- Classes
+ClassAssignments }-- Users : Student
+Guests }-- EntranceExams
+Guests }-- Users
+Guests }-- Classes
+RevisionRegistrations }-- RevisionPackages
+RevisionRegistrations }-- Classes
+
+@enduml
