@@ -20,7 +20,7 @@ namespace Symphony.Portal.Web.Controllers
         public async Task<IActionResult> Register()
         {
             ViewBag.EntranceExams = await _context.EntranceExams
-                .Where(e => e.IsActive && e.ExamDate > DateTime.Now)
+                .Where(e => e.IsActive && e.IsRegistrationOpen && e.ExamDate > DateTime.Now)
                 .ToListAsync();
             return View();
         }
@@ -42,7 +42,7 @@ namespace Symphony.Portal.Web.Controllers
             }
             
             ViewBag.EntranceExams = await _context.EntranceExams
-                .Where(e => e.IsActive && e.ExamDate > DateTime.Now)
+                .Where(e => e.IsActive && e.IsRegistrationOpen && e.ExamDate > DateTime.Now)
                 .ToListAsync();
             return View(guest);
         }
@@ -163,12 +163,20 @@ namespace Symphony.Portal.Web.Controllers
 
             var guest = await _context.Guests
                 .Include(g => g.SelectedEntranceExam)
-                .Include(g => g.Class) // Include Class Info
-                .FirstOrDefaultAsync(g => g.UserId == user.Id || g.Email == user.Email); // Fallback to Email match if Link missing
+                .Include(g => g.Class)
+                .FirstOrDefaultAsync(g => g.UserId == user.Id || g.Email == user.Email);
 
             if (guest == null)
             {
                 return View("NoGuestRecord");
+            }
+            
+            // Auto-fix link if missing
+            if (guest.UserId == null && guest.Email == user.Email)
+            {
+                guest.UserId = user.Id;
+                _context.Update(guest);
+                await _context.SaveChangesAsync();
             }
 
             // Get Exam Results

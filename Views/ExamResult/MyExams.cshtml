@@ -1,0 +1,71 @@
+@model IEnumerable<Symphony.Portal.Web.Models.StudentExamSession>
+
+@{
+    ViewData["Title"] = "Kết quả thi của tôi";
+}
+
+<div class="container py-4">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <h1><i class="fas fa-graduation-cap text-success"></i> Kết quả thi của tôi</h1>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info shadow-sm">
+            <i class="fas fa-info-circle"></i> Bạn chưa tham gia kỳ thi nào.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow border-0 overflow-hidden">
+                        <div class="p-1 @(item.GradeLevel == "Level A" ? "bg-success" : (item.GradeLevel == "Level B" ? "bg-info" : "bg-warning"))"></div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="card-title fw-bold mb-1">@item.EntranceExam?.Title</h5>
+                                    <span class="badge bg-light text-dark border">@item.ExamPaper?.Title</span>
+                                </div>
+                                <div class="text-end">
+                                    <div class="h4 mb-0 text-primary">@item.TotalScore.ToString("0.##")</div>
+                                    <small class="text-muted d-block">Điểm thi</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-6 border-end">
+                                    <div class="small text-muted mb-1">Ngày thi</div>
+                                    <div class="fw-bold">@item.StartTime?.ToString("dd/MM/yyyy")</div>
+                                </div>
+                                <div class="col-6 ps-3">
+                                    <div class="small text-muted mb-1">Xếp loại</div>
+                                    <div class="fw-bold">
+                                        @if (!string.IsNullOrEmpty(item.GradeLevel))
+                                        {
+                                            <span class="badge @(item.GradeLevel == "Level A" ? "bg-success" : (item.GradeLevel == "Level B" ? "bg-info" : "bg-danger"))">
+                                                @item.GradeLevel
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Chưa xếp loại</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid mt-3">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary shadow-sm">
+                                    Xem chi tiết & Phản hồi
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

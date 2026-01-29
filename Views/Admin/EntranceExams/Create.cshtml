@@ -1,27 +1,46 @@
 @model Symphony.Portal.Web.Models.EntranceExam
 
 @{
-    ViewData["Title"] = "Create Exam";
+    ViewData["Title"] = "Tạo kỳ thi tuyển sinh mới";
 }
 
-<h2>Create Admission Exam</h2>
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            <div class="mb-3">
-                <label asp-for="Title" class="form-label">Exam Title</label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white p-4 border-0">
+                    <h4 class="mb-0 fw-bold">Tạo kỳ thi tuyển sinh mới</h4>
+                </div>
+                <div class="card-body p-4 p-lg-5">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="Title" class="form-label fw-bold text-slate-700"></label>
+                            <input asp-for="Title" class="form-control rounded-pill px-3 py-2" placeholder="VD: Kỳ thi tuyển sinh mùa thu 2024" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
 
-            <div class="mb-3">
-                <label asp-for="ExamDate" class="form-label">Exam Date</label>
-                <input asp-for="ExamDate" class="form-control" type="date" />
-                <span asp-validation-for="ExamDate" class="text-danger"></span>
-            </div>
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="ExamDate" class="form-label fw-bold text-slate-700"></label>
+                                <input asp-for="ExamDate" class="form-control rounded-pill px-3 py-2" />
+                                <span asp-validation-for="ExamDate" class="text-danger small"></span>
+                            </div>
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="Subjects" class="form-label fw-bold text-slate-700"></label>
+                                <input asp-for="Subjects" class="form-control rounded-pill px-3 py-2" placeholder="VD: Toán, Văn, Anh" />
+                                <span asp-validation-for="Subjects" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ExamPaperId" class="form-label fw-bold text-slate-700"></label>
+                                <select asp-for="ExamPaperId" class="form-select rounded-pill px-3 py-2" asp-items="@(new SelectList(ViewBag.ExamPapers, "Id", "Title"))">
+                                    <option value="">-- Chọn đề thi áp dụng --</option>
+                                </select>
+                                <span asp-validation-for="ExamPaperId" class="text-danger small"></span>
+                            </div>
+                        </div>
 
             <div class="mb-3">
                 <label asp-for="Fee" class="form-label">Fee ($)</label>
@@ -32,15 +51,38 @@
                 <span asp-validation-for="Fee" class="text-danger"></span>
             </div>
 
-            <div class="mb-3 form-check">
-                <input class="form-check-input" asp-for="IsActive" />
-                <label class="form-check-label" asp-for="IsActive">Is Active</label>
-            </div>
+                        <div class="mb-4">
+                            <label asp-for="Status" class="form-label fw-bold text-slate-700"></label>
+                            <select asp-for="Status" class="form-select rounded-pill px-3 py-2" asp-items="Html.GetEnumSelectList<Symphony.Portal.Web.Models.Enums.ExamStatus>()"></select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
 
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                        <div class="bg-light rounded-4 p-4 mb-4">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" asp-for="IsRegistrationOpen">
+                                <label class="form-check-label fw-bold text-slate-700" asp-for="IsRegistrationOpen"></label>
+                                <div class="form-text">Cho phép thí sinh đăng ký tham gia kỳ thi này.</div>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="IsActive">
+                                <label class="form-check-label fw-bold text-slate-700" asp-for="IsActive"></label>
+                                <div class="form-text">Hiển thị kỳ thi này trên hệ thống.</div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 pt-3 border-top">
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">
+                                <i class="fas fa-save me-2"></i> Lưu kỳ thi
+                            </button>
+                            <a asp-action="Index" class="btn btn-light rounded-pill px-4 fw-bold text-slate-600">Hủy bỏ</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

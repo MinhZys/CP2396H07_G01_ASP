@@ -1,0 +1,19 @@
+@model int
+
+<li class="nav-item dropdown">
+    <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-bell-fill" style="font-size: 1.2rem; position: relative;">
+            @if (Model > 0)
+            {
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                    @Model
+                    <span class="visually-hidden">unread messages</span>
+                </span>
+            }
+        </i>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+        <li><h6 class="dropdown-header">Thông báo</h6></li>
+        <li><a class="dropdown-item" href="/Notifications">Xem tất cả thông báo</a></li>
+    </ul>
+</li>

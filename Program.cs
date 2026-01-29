@@ -21,6 +21,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true; // Refresh expiration if user is active
     });
 
+builder.Services.AddTransient<Symphony.Portal.Web.Services.EmailService>();
+builder.Services.AddScoped<Symphony.Portal.Web.Services.INotificationService, Symphony.Portal.Web.Services.NotificationService>();
+
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews()
     .AddRazorOptions(options =>

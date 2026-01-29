@@ -128,9 +128,11 @@ CREATE TABLE [Classes] (
     [IsOnline] bit NOT NULL,
     [Room] nvarchar(max) NULL,
     [OfflineFee] decimal(18,2) NOT NULL,
+    [ClassCategoryId] nvarchar(36) NOT NULL,
     CONSTRAINT [PK_Classes] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_Classes_Courses_CourseId] FOREIGN KEY ([CourseId]) REFERENCES [Courses] ([Id]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Classes_Users_InstructorId] FOREIGN KEY ([InstructorId]) REFERENCES [Users] ([Id])
+    CONSTRAINT [FK_Classes_Users_InstructorId] FOREIGN KEY ([InstructorId]) REFERENCES [Users] ([Id]),
+    CONSTRAINT [FK_Classes_ClassCategories_ClassCategoryId] FOREIGN KEY ([ClassCategoryId]) REFERENCES [ClassCategories] ([Id])
 );
 
 -- 10. ENROLLMENTS
@@ -245,6 +247,7 @@ CREATE TABLE [Payments] (
     [PaymentMethod] nvarchar(max) NOT NULL, -- Enum
     [PaymentDate] datetime2 NOT NULL,
     [ReceiptNumber] nvarchar(max) NULL,
+    [Status] int NOT NULL,
     CONSTRAINT [PK_Payments] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_Payments_Users_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
 );
@@ -341,4 +344,319 @@ CREATE TABLE [ClassCategories] (
     [IsActive] bit NOT NULL DEFAULT 1,
     CONSTRAINT [PK_ClassCategories] PRIMARY KEY ([Id])
 );
+
+-- 20. GUESTS
+CREATE TABLE [Guests] (
+    [Id] nvarchar(36) NOT NULL,
+    [FullName] nvarchar(100) NOT NULL,
+    [Email] nvarchar(100) NOT NULL, 
+    [Password] nvarchar(max) NOT NULL, -- Added
+    [PhoneNumber] nvarchar(15) NOT NULL, 
+    [Password] nvarchar(max) NOT NULL, -- Added
+    [PhoneNumber] nvarchar(15) NOT NULL, 
+    [PhoneNumber] nvarchar(15) NOT NULL,
+    [Dob] datetime2 NOT NULL,
+    [Address] nvarchar(255) NULL,
+    [SelectedEntranceExamId] nvarchar(36) NULL,
+    [Status] nvarchar(max) NOT NULL, -- Enum
+    [CreatedAt] datetime2 NOT NULL,
+    [UserId] nvarchar(36) NULL,
+    [ExamRoom] nvarchar(max) NULL,
+    [Description] nvarchar(max) NULL,
+    [ClassId] nvarchar(36) NULL,
+    CONSTRAINT [PK_Guests] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Guests_EntranceExams_SelectedEntranceExamId] FOREIGN KEY ([SelectedEntranceExamId]) REFERENCES [EntranceExams] ([Id]),
+    CONSTRAINT [FK_Guests_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]),
+    CONSTRAINT [FK_Guests_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id])
+);
+
+ CREATE TABLE [Notifications] (
+        [Id] int NOT NULL IDENTITY,
+        [Title] nvarchar(max) NOT NULL,
+        [Message] nvarchar(max) NOT NULL,
+        [IsRead] bit NOT NULL,
+        [CreatedAt] datetime2 NOT NULL,
+        [UserId] nvarchar(36) NOT NULL,
+        CONSTRAINT [PK_Notifications] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Notifications_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
+    );
 ```
+
+
+Table Roles {
+    Id nvarchar [pk]
+    Name nvarchar
+    Description nvarchar
+}
+
+Table Users {
+    Id nvarchar [pk]
+    FullName nvarchar
+    Email nvarchar
+    Password nvarchar
+    IsActive bit
+    RoleId nvarchar [ref: > Roles.Id]
+}
+
+Table StudentProfiles {
+    Id nvarchar [pk]
+    UserId nvarchar [ref: > Users.Id]
+    FullName nvarchar
+    DateOfBirth datetime
+    Gender nvarchar
+    PhoneNumber nvarchar
+    AddressLine nvarchar
+    AvatarUrl nvarchar
+}
+
+Table InstructorProfiles {
+    Id nvarchar [pk]
+    UserId nvarchar [ref: > Users.Id]
+    FullName nvarchar
+    DateOfBirth datetime
+    Gender nvarchar
+    PhoneNumber nvarchar
+    AddressLine nvarchar
+    AvatarUrl nvarchar
+    YearsOfExperience int
+    Specialization nvarchar
+    Bio nvarchar
+    Certifications nvarchar
+    GithubUrl nvarchar
+}
+
+Table Categories {
+    Id nvarchar [pk]
+    Name nvarchar(100)
+    Description nvarchar(500)
+}
+
+Table Certificates {
+    Id nvarchar [pk]
+    Name nvarchar(100)
+    Description nvarchar(500)
+    IsActive bit
+}
+
+Table Courses {
+    Id nvarchar [pk]
+    Title nvarchar
+    Description nvarchar
+    TuitionFee decimal
+    DurationMonths int
+    CertificateId nvarchar [ref: > Certificates.Id]
+    IsActive bit
+    Image nvarchar
+    Level nvarchar
+    CategoryId nvarchar [ref: > Categories.Id]
+}
+
+Table Subjects {
+    Id nvarchar [pk]
+    Name nvarchar
+    StudyTime int
+    Description nvarchar
+    LearningRoadmap nvarchar
+    Image nvarchar
+}
+
+Table CourseSubjects {
+    CourseId nvarchar [ref: > Courses.Id]
+    SubjectId nvarchar [ref: > Subjects.Id]
+   
+}
+
+Table CourseInstructors {
+    CourseId nvarchar [ref: > Courses.Id]
+    InstructorId nvarchar [ref: > Users.Id]
+}
+
+Table Classes {
+    Id nvarchar [pk]
+    Name nvarchar
+    CourseId nvarchar [ref: > Courses.Id]
+    InstructorId nvarchar [ref: > Users.Id]
+    StartDate datetime
+    EndDate datetime
+    IsOnline bit
+    Room nvarchar
+    OfflineFee decimal
+    ClassCategoryId nvarchar [ref: > ClassCategories.Id]
+}
+
+Table Enrollments {
+    Id nvarchar [pk]
+    ClassId nvarchar [ref: > Classes.Id]
+    StudentId nvarchar [ref: > Users.Id]
+    EnrolledDate datetime
+    IsApproved bit
+    IsPaid bit
+    PaymentReference nvarchar
+}
+
+Table Lessons {
+    Id nvarchar [pk]
+    Title nvarchar
+    Description nvarchar
+    ContentLink nvarchar
+    Image nvarchar
+    DurationMinutes int
+    CourseId nvarchar [ref: > Courses.Id]
+    SubjectId nvarchar [ref: > Subjects.Id]
+}
+
+Table Quizzes {
+    Id nvarchar [pk]
+    Name nvarchar
+    Description nvarchar
+    PassScore int
+    DateCreated datetime
+    LessonId nvarchar [ref: > Lessons.Id]
+}
+
+Table QuizQuestions {
+    Id nvarchar [pk]
+    QuestionText nvarchar
+    OptionA nvarchar
+    OptionB nvarchar
+    OptionC nvarchar
+    OptionD nvarchar
+    CorrectOption nvarchar
+    Points int
+    QuizId nvarchar [ref: > Quizzes.Id]
+}
+
+Table EntranceExams {
+    Id nvarchar [pk]
+    Title nvarchar
+    ExamDate datetime
+    Fee decimal
+    IsActive bit
+}
+
+Table StudentRegistrations {
+    Id nvarchar [pk]
+    FullName nvarchar(100)
+    Email nvarchar
+    Gender nvarchar
+    DateOfBirth datetime
+    Phone nvarchar
+    CourseId nvarchar [ref: > Courses.Id]
+    CenterId nvarchar [ref: > Centers.Id]
+    HasExtraPractice bit
+    RegisteredAt datetime
+    Status nvarchar
+}
+
+Table ExamDetails {
+    Id nvarchar [pk]
+    RegistrationId nvarchar [ref: > StudentRegistrations.Id]
+    ExamTime datetime
+    ExamRoom nvarchar
+    ExamDescription nvarchar
+}
+
+Table ExamResults {
+    Id nvarchar [pk]
+    StudentId nvarchar [ref: > Users.Id]
+    EntranceExamId nvarchar [ref: > EntranceExams.Id]
+    Score float
+    IsPassed bit
+    ExamDate datetime
+}
+
+Table Payments {
+    Id nvarchar [pk]
+    StudentId nvarchar [ref: > Users.Id]
+    Amount decimal
+    PaymentMethod nvarchar
+    PaymentDate datetime
+    ReceiptNumber nvarchar
+}
+
+Table Centers {
+    Id nvarchar [pk]
+    Name nvarchar
+    Address nvarchar
+    Phone nvarchar
+}
+
+Table PageContents {
+    Id nvarchar [pk]
+    Slug nvarchar(50)
+    Title nvarchar
+    Content nvarchar
+    LastUpdated datetime
+    SubjectId nvarchar [ref: > Subjects.Id]
+    CenterId nvarchar [ref: > Centers.Id]
+}
+
+Table FAQs {
+    Id nvarchar [pk]
+    Question nvarchar
+    Answer nvarchar
+    DisplayOrder int
+}
+
+Table CourseReviews {
+    Id nvarchar [pk]
+    CourseId nvarchar [ref: > Courses.Id]
+    StudentId nvarchar [ref: > Users.Id]
+    Rating int
+    ReviewText nvarchar
+    ReviewDate datetime
+    IsApproved bit
+}
+
+Table Materials {
+    Id nvarchar [pk]
+    Title nvarchar
+    Description nvarchar
+    FilePath nvarchar
+    FileType nvarchar
+    UploadDate datetime
+    ClassId nvarchar [ref: > Classes.Id]
+}
+
+Table ChatMessages {
+    Id int [pk]
+    SenderId nvarchar [ref: > Users.Id]
+    ReceiverId nvarchar [ref: > Users.Id]
+    Content nvarchar
+    Timestamp datetime
+    IsRead bit
+    SessionId nvarchar
+    SenderValidName nvarchar
+}
+
+Table Assignments {
+    Id nvarchar [pk]
+    Title nvarchar
+    Description nvarchar
+    ClassId nvarchar [ref: > Classes.Id]
+    DueDate datetime
+    AssignmentType nvarchar
+    Status nvarchar
+}
+
+Table ClassCategories {
+    Id nvarchar [pk]
+    Name nvarchar
+    Description nvarchar
+    IsActive bit
+}
+
+Table Guests {
+    Id nvarchar [pk]
+    FullName nvarchar(100)
+    Email nvarchar(100)
+    PhoneNumber nvarchar(15)
+    Dob datetime
+    Address nvarchar(255)
+    SelectedEntranceExamId nvarchar [ref: > EntranceExams.Id]
+    UserId nvarchar [ref: > Users.Id]
+    ExamRoom nvarchar
+    Description nvarchar
+    ClassId nvarchar [ref: > Classes.Id]
+}
+

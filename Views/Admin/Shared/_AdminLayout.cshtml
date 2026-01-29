@@ -161,8 +161,18 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ExamPapers" ? "active" : "")" asp-area="Admin" asp-controller="ExamPapers" asp-action="Index">
+                                <i class="fas fa-tasks"></i> Manage Exam Paper
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Assignments" ? "active" : "")" asp-area="Admin" asp-controller="Assignments" asp-action="Index">
                                 <i class="fas fa-tasks"></i> Task Assignments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AssignClassrooms" ? "active" : "")" asp-area="Admin" asp-controller="AssignClassrooms" asp-action="Index">
+                                <i class="fas fa-tasks"></i> AssignClassrooms
                             </a>
                         </li>
 

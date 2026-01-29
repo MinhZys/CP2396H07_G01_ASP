@@ -1,0 +1,115 @@
+﻿@using Symphony.Portal.Web.Models
+@{
+    ViewData["Title"] = "Assign By Score Level";
+    var students = ViewBag.Students as List<ExamResult>;
+    var classes = ViewBag.Classes as List<Class>;
+    string currentLevel = ViewBag.Level as string; // Lấy level hiện tại
+}
+
+<h2>Assign Students By Level</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form asp-action="AssignByScore" method="get" class="mb-4">
+    <div class="row">
+        <div class="col-md-4">
+            <label class="form-label">Select Level</label>
+            <select name="level" class="form-select">
+                <option value="">-- Select Level --</option>
+                <!option value="A" @(currentLevel == "A" ? "selected" : "")>Level A (Score 70 - 100)</!option>
+                <!option value="B" @(currentLevel == "B" ? "selected" : "")>Level B (Score 40 - 69)</!option>
+                <!option value="C" @(currentLevel == "C" ? "selected" : "")>Level C (Score < 40)</!option>
+            </select>
+        </div>
+        <div class="col-md-3 align-self-end">
+            <button type="submit" class="btn btn-primary">
+                Filter Students
+            </button>
+        </div>
+    </div>
+</form>
+
+@if (students != null && students.Any())
+{
+    <form asp-action="AssignByScoreConfirm" method="post">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" name="level" value="@currentLevel" />
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Select Class for Level @currentLevel</label>
+                <select name="classId" class="form-select" required>
+                    <option value="">-- Select Class --</option>
+                    @foreach (var c in classes)
+                    {
+                        <option value="@c.Id">
+                            @c.ClassName (@c.NumberOfSeats seats left)
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 align-self-end">
+                <button type="submit" class="btn btn-success">
+                    Assign All Level @currentLevel
+                </button>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Student Name</th>
+                    <th>Score</th>
+                    <th>Level</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int index = 1;
+                }
+
+                @foreach (var s in students)
+                {
+                    <tr>
+                        <td>@index</td>
+                        <td>@s.Student?.FullName</td>
+                        <td>@s.Score</td>
+                        <td>
+                            @if (s.Score >= 70)
+                            {
+                                <span class="badge bg-success">A</span>
+                            }
+                            else if (s.Score >= 40)
+                            {
+
+                                <span class="badge bg-warning text-dark">B</span>
+                            }
+                            else
+                            {
+
+                                <span class="badge bg-danger">C</span>
+                            }
+                        </td>
+                    </tr>
+                    index++;
+                }
+            </tbody>
+        </table>
+    </form>
+}
+else if (!string.IsNullOrEmpty(currentLevel))
+{
+    <div class="alert alert-warning">
+        No students found in Level @currentLevel.
+    </div>
+}

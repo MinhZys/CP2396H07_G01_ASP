@@ -87,54 +87,60 @@
                                             <span class="material-symbols-outlined">location_on</span>
                                         </div>
                                         <div>
-                                            <p class="text-xs text-slate-500 font-bold uppercase">Location</p>
-                                            <p class="text-slate-900 dark:text-white font-medium">@(Model.ExamRoom ?? "Center Office")</p>
-                                            <p class="text-slate-500 text-sm">@(Model.ExamRoom != null ? "Assigned Room" : "Check email for room details")</p>
+                                            <p class="text-xs text-slate-500 font-bold uppercase">Location/Link</p>
+                                            <p class="text-slate-900 dark:text-white font-medium">@(Model.ExamRoom ?? "Online Exam")</p>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                @if(!string.IsNullOrEmpty(Model.ClassId) || !string.IsNullOrEmpty(Model.Description))
-                                {
-                                    <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700/50">
-                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                            @if(!string.IsNullOrEmpty(Model.ClassId))
-                                            {
-                                                <div>
-                                                    <p class="text-xs text-slate-500 font-bold uppercase mb-1">Assigned Class</p>
-                                                    <a href="#" class="inline-flex items-center gap-2 text-primary font-bold hover:underline">
-                                                        <span class="material-symbols-outlined text-lg">school</span>
-                                                        @(Model.Class?.ClassName ?? Model.ClassId)
-                                                    </a>
-                                                </div>
-                                            }
-                                            @if(!string.IsNullOrEmpty(Model.Description))
-                                            {
-                                                <div class="sm:col-span-2">
-                                                    <p class="text-xs text-slate-500 font-bold uppercase mb-1">Notes from Admin</p>
-                                                    <p class="text-slate-700 dark:text-slate-300 text-sm bg-slate-50 dark:bg-black/20 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
-                                                        @Model.Description
-                                                    </p>
-                                                </div>
-                                            }
-                                         </div>
-                                    </div>
-                                }
+                                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700/50">
+                                    @{
+                                        var now = DateTime.Now;
+                                        var examStart = Model.SelectedEntranceExam.ExamDate;
+                                        // Assume default duration 60 mins if paper not linked, or fetch from paper later (using navigation property if included)
+                                        // Since we don't have Duration directly on EntranceExam (it's on ExamPaper), we will rely on just Start Time for now or simple logic
+                                        var isTime = now >= examStart && now < examStart.AddHours(2); 
+                                        var isCompleted = now > examStart.AddHours(2);
+                                        var isUpcoming = now < examStart;
+                                    }
 
-                                <div class="mt-6 flex gap-3">
-                                    @if(Model.SelectedEntranceExam.ExamDate > DateTime.Now)
-                                    {
-                                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-500 text-sm font-bold">
-                                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                                            Upcoming
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            @if (isUpcoming)
+                                            {
+                                                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-500 text-sm font-bold">
+                                                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                                                    Upcoming
+                                                </span>
+                                            }
+                                            else if (isTime)
+                                            {
+                                                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-500 text-sm font-bold">
+                                                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                                    In Progress
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                 <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-500/10 text-slate-500 text-sm font-bold">
+                                                    Event Ended
+                                                </span>
+                                            }
                                         </div>
-                                    }
-                                    else
-                                    {
-                                         <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-500/10 text-slate-500 text-sm font-bold">
-                                            Completed
-                                        </div>
-                                    }
+
+                                        @if (isTime)
+                                        {
+                                            <a asp-controller="EntranceExam" asp-action="TakeExam" asp-route-id="@Model.SelectedEntranceExam.Id" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+                                                <i class="fas fa-play-circle me-2"></i> Vào Thi Ngay
+                                            </a>
+                                        }
+                                        else if (isUpcoming)
+                                        {
+                                             <button disabled class="btn btn-secondary rounded-pill px-4 opacity-50 cursor-not-allowed">
+                                                <i class="fas fa-clock me-2"></i> Chưa đến giờ
+                                            </button>
+                                        }
+                                    </div>
                                 </div>
                            </div>
                         </div>

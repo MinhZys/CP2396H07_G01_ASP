@@ -12,10 +12,12 @@ namespace Symphony.Portal.Web.Controllers.Admin
     public class GuestsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly Symphony.Portal.Web.Services.EmailService _emailService;
 
-        public GuestsController(AppDbContext context)
+        public GuestsController(AppDbContext context, Symphony.Portal.Web.Services.EmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         // GET: Admin/Guests
@@ -36,8 +38,28 @@ namespace Symphony.Portal.Web.Controllers.Admin
             ViewBag.CurrentStatus = status;
             var classes = await _context.Classes.Include(c => c.ClassCategory).ToListAsync();
             ViewBag.Classes = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(classes, "Id", "ClassName");
-            ViewBag.ClassesList = classes; // Pass full object for JS
-            return View(await query.Include(g => g.SelectedEntranceExam).OrderByDescending(g => g.CreatedAt).ToListAsync());
+            
+            // Calculate remaining seats for modal
+            var classesWithSeats = classes.Select(c => new 
+            {
+                c.Id,
+                c.ClassName,
+                c.NumberOfSeats,
+                Status = c.Status,
+                ClassCategory = new { Name = c.ClassCategory?.Name },
+                RemainingSeats = c.NumberOfSeats - (
+                    _context.Guests.Count(g => g.ClassId == c.Id && g.Status == GuestRegistrationStatus.Approved) + 
+                    _context.Enrollments.Count(e => e.ClassId == c.Id)
+                )
+            }).ToList();
+
+            ViewBag.ClassesList = classesWithSeats; // Pass projected object for JS
+            return View(await query
+                .Include(g => g.SelectedEntranceExam)
+                .Include(g => g.User)
+                .Include(g => g.Class) // Include Class for display
+                .OrderByDescending(g => g.CreatedAt)
+                .ToListAsync());
         }
 
         // POST: Admin/Guests/Approve/5
@@ -53,6 +75,29 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 return RedirectToAction(nameof(Index));
             }
 
+            // Check Seat Availability if Class is selected
+            string className = "N/A";
+            if (!string.IsNullOrEmpty(classId))
+            {
+                var targetClass = await _context.Classes.FindAsync(classId);
+                if (targetClass != null)
+                {
+                    className = targetClass.ClassName; // Capture name for email
+                    // Count occupied seats
+                    var approvedGuestsCount = await _context.Guests.CountAsync(g => g.ClassId == classId && g.Status == GuestRegistrationStatus.Approved);
+                    var enrollmentsCount = await _context.Enrollments.CountAsync(e => e.ClassId == classId);
+                    
+                    // Simple sum for now. 
+                    var totalOccupied = approvedGuestsCount + enrollmentsCount;
+
+                    if (totalOccupied >= targetClass.NumberOfSeats)
+                    {
+                        TempData["Error"] = $"Lớp {targetClass.ClassName} đã đầy (Sĩ số: {targetClass.NumberOfSeats}, Đã nhận: {totalOccupied}). Vui lòng chọn lớp khác.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+
             // Create User Account
             // Check if email exists
             if (await _context.Users.AnyAsync(u => u.Email == guest.Email))
@@ -61,7 +106,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 return RedirectToAction(nameof(Index));
             }
 
-            var password = GenerateRandomPassword();
+            var password = GenerateSecurePassword();
             var newUser = new User
             {
                 Id = Guid.NewGuid().ToString(),
@@ -69,7 +114,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 Email = guest.Email,
                 // In production, Hash this password!
                 Password = password, 
-                RoleId = "4", // Guest Role ID from Seed
+                RoleId = "4", // Guest Role ID
                 IsActive = true
             };
 
@@ -94,8 +139,38 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
             await _context.SaveChangesAsync();
 
-            // Mock Email Sending
-            TempData["Success"] = $"Guest Approved. User created. Password: {password}";
+            // Send Email
+            try
+            {
+                string emailBody = $@"Dear {guest.FullName},
+
+                Registration Approved!
+                Here are your details:
+                Exam Room: {examRoom}
+                {(string.IsNullOrEmpty(examTime) ? "" : $"Time: {examTime}")}
+                {(string.IsNullOrEmpty(classId) ? "" : $"Assigned Class: {className}")}
+
+                Notes:
+                {description}
+
+                Login Details:
+                Email: {guest.Email}
+                Password: {password}
+
+                Please change your password after login.
+
+                Regards,
+                Symphony Portal";
+
+                await _emailService.SendEmailAsync(guest.Email, "Registration Approved - Symphony Portal", emailBody);
+                TempData["Success"] = $"Guest Approved. User created. Email Sent.";
+            }
+            catch (Exception ex)
+            {
+                // Log the error to the console so the user can see it
+                Console.WriteLine($"[Email Error] Failed to send email: {ex.ToString()}");
+                TempData["Success"] = $"Guest Approved. User created. BUT Email failed: {ex.Message}";
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -139,9 +214,16 @@ namespace Symphony.Portal.Web.Controllers.Admin
             return RedirectToAction(nameof(Index));
         }
 
-        private string GenerateRandomPassword()
+        private string GenerateSecurePassword(int length = 10)
         {
-            return "Pass" + new Random().Next(1000, 9999);
+            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            var res = new System.Text.StringBuilder();
+            var rnd = new Random();
+            while (0 < length--)
+            {
+                res.Append(valid[rnd.Next(valid.Length)]);
+            }
+            return res.ToString();
         }
     }
 }

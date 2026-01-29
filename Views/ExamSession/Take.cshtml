@@ -1,0 +1,131 @@
+@model Symphony.Portal.Web.Models.StudentExamSession
+
+@{
+    ViewData["Title"] = "Đang làm bài thi";
+    Layout = "_Layout"; // Or a minimal layout for exams
+}
+
+<div class="container py-4">
+    @{ int qNum = 1; }
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="card shadow-lg border-0 mb-4">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+                    <h4 class="mb-0">@Model.ExamPaper?.Title</h4>
+                    <div id="timer" class="h4 mb-0 text-primary">--:--</div>
+                </div>
+                <div class="card-body p-4">
+                    <form id="examForm" asp-action="Submit" method="post">
+                        <input type="hidden" name="sessionId" value="@Model.Id" />
+                        
+                        @foreach (var epq in Model.ExamPaper!.ExamPaperQuestions.OrderBy(x => x.Order))
+                        {
+                            var q = epq.Question;
+                            <div class="question-block mb-5" id="q-@q.Id">
+                                <h5 class="fw-bold mb-3">Câu @(qNum++): @q.Content</h5>
+                                
+                                @if (q.Type == Symphony.Portal.Web.Models.Enums.QuestionType.MultipleChoice)
+                                {
+                                    <div class="options-list ps-3">
+                                        @foreach (var opt in q.Options)
+                                        {
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="answers[@q.Id]" id="opt-@opt.Id" value="@opt.Id">
+                                                <label class="form-check-label" for="opt-@opt.Id">
+                                                    @opt.Content
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="ps-3">
+                                        <textarea name="answers[@q.Id]" class="form-control" rows="5" placeholder="Nhập câu trả lời của bạn tại đây..."></textarea>
+                                    </div>
+                                }
+                                <hr class="mt-4 opacity-25" />
+                            </div>
+                        }
+
+                        <div class="text-center mt-5">
+                            <button type="button" class="btn btn-primary btn-lg px-5 shadow" onclick="confirmSubmit()">Nộp bài thi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="sticky-top" style="top: 100px;">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h6 class="text-uppercase text-muted fw-bold mb-3">Danh sách câu hỏi</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            @for (int i = 1; i < qNum; i++)
+                            {
+                                <div class="q-nav-dot border rounded d-flex align-items-center justify-content-center" 
+                                     style="width: 35px; height: 35px; cursor: pointer;" 
+                                     id="nav-@i" onclick="scrollToQuestion(@i)">@i</div>
+                            }
+                        </div>
+                        <div class="mt-4 small">
+                            <div class="d-flex align-items-center mb-1">
+                                <div class="bg-primary rounded-circle me-2" style="width: 12px; height: 12px;"></div>
+                                <span>Đã chọn</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="border rounded-circle me-2" style="width: 12px; height: 12px;"></div>
+                                <span>Chưa chọn</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Timer Logic
+        let durationInSeconds = @(Model.ExamPaper.Duration * 60);
+        const timerElement = document.getElementById('timer');
+        
+        function updateTimer() {
+            const minutes = Math.floor(durationInSeconds / 60);
+            const seconds = durationInSeconds % 60;
+            timerElement.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (durationInSeconds <= 0) {
+                alert("Hết thời gian làm bài! Hệ thống sẽ tự động nộp bài.");
+                document.getElementById('examForm').submit();
+            } else {
+                durationInSeconds--;
+                setTimeout(updateTimer, 1000);
+            }
+        }
+        
+        updateTimer();
+
+        function confirmSubmit() {
+            if (confirm("Bạn có chắc chắn muốn nộp bài không?")) {
+                document.getElementById('examForm').submit();
+            }
+        }
+
+        // Highlight navigation
+        document.querySelectorAll('input, textarea').forEach(el => {
+            el.addEventListener('change', function() {
+                const qBlock = this.closest('.question-block');
+                const qIndex = Array.from(document.querySelectorAll('.question-block')).indexOf(qBlock) + 1;
+                document.getElementById('nav-' + qIndex).classList.add('bg-primary', 'text-white', 'border-primary');
+            });
+        });
+
+        function scrollToQuestion(index) {
+            const el = document.querySelectorAll('.question-block')[index - 1];
+            window.scrollTo({ top: el.offsetTop - 120, behavior: 'smooth' });
+        }
+    </script>
+}

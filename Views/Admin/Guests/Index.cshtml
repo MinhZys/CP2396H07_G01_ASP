@@ -34,6 +34,7 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Exam Info</th>
+                        <th>Account Info</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -44,15 +45,28 @@
                             <td>@item.CreatedAt.ToShortDateString()</td>
                             <td>
                                 @item.FullName
-                                @if(!string.IsNullOrEmpty(item.ClassId)) {
-                                    <br/><small class="text-muted">Class: @item.ClassId</small>
-                                }
                             </td>
                             <td>@item.Email</td>
                             <td>
                                 <strong>@item.SelectedEntranceExam?.Title</strong>
-                                @if(!string.IsNullOrEmpty(item.ExamRoom)) {
-                                    <br/><small class="text-info">Room: @item.ExamRoom</small>
+                                @{
+                                    var roomDisplay = item.ExamRoom ?? item.Class?.ClassName;
+                                }
+                                @if(!string.IsNullOrEmpty(roomDisplay)) {
+                                    <br/><small class="text-info">Room: @roomDisplay</small>
+                                }
+                            </td>
+                            <td>
+                                @if (item.Status == GuestRegistrationStatus.Approved && item.User != null)
+                                {
+                                    <div>
+                                        <strong>Account:</strong> @item.User.Email<br/>
+                                        <strong>Pass:</strong> <span class="text-danger fw-bold">@item.User.Password</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">---</span>
                                 }
                             </td>
                             <td>
@@ -120,10 +134,9 @@
             <hr/>
             <h6 class="text-primary">Assign Details</h6>
             
-            <div class="mb-3">
-                <label for="examRoom" class="form-label">Exam Room / Study Room</label>
-                <input type="text" class="form-control" name="examRoom" id="examRoom" placeholder="e.g. Room 101" required>
-            </div>
+            <h6 class="text-primary">Assign Details</h6>
+            
+            <!-- Exam Room input removed as per request, will use Class Name -->
 
             <div class="mb-3">
                 <label for="classId" class="form-label">Assign to Class (Optional)</label>
@@ -193,10 +206,13 @@
                 var selectedClass = classesData.find(c => c.id == selectedId);
                 if (selectedClass) {
                     var categoryName = selectedClass.classCategory ? selectedClass.classCategory.name : 'N/A';
+                    var remaining = selectedClass.remainingSeats;
+                    var seatClass = remaining > 0 ? "text-success" : "text-danger";
+                    
                     classDetailsDiv.innerHTML = `
                         <strong>Class Details:</strong><br/>
                         Category: ${categoryName}<br/>
-                        Seats: ${selectedClass.numberOfSeats}<br/>
+                        Seats: ${selectedClass.numberOfSeats} <span class="${seatClass} fw-bold">(Remaining: ${remaining})</span><br/>
                         Status: ${selectedClass.status === 0 ? 'Active' : 'Inactive'}
                     `;
                     classDetailsDiv.classList.remove('d-none');

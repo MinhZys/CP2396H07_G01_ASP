@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Symphony.Portal.Web.Models.Assignment>
+@{
+    ViewData["Title"] = "My Classroom";
+}
+
+<h2>My Classes</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Class</th>
+            <th>Term</th>
+            <th>Note</th>
+            <th>Status</th>
+            <th>Assigned At</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Class?.ClassName</td>
+                <td>@item.TermOrExamName</td>
+                <td>@item.Note</td>
+                <td>@item.Status</td>
+                <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>

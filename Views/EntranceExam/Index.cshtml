@@ -1,0 +1,65 @@
+@model IEnumerable<Symphony.Portal.Web.Models.EntranceExam>
+
+@{
+    ViewData["Title"] = "Danh sách Kỳ thi đầu vào";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Các kỳ thi đang mở đăng ký</h1>
+        <p class="lead text-muted">Chọn kỳ thi phù hợp để bắt đầu hành trình của bạn tại IT Academy.</p>
+    </div>
+
+    <div class="row">
+        @if (!Model.Any())
+        {
+            <div class="col-12 text-center">
+                <div class="alert alert-light border shadow-sm py-5">
+                    <i class="fas fa-calendar-times display-1 text-muted mb-4"></i>
+                    <h4>Hiện tại không có kỳ thi nào đang mở đăng ký.</h4>
+                    <p>Vui lòng quay lại sau hoặc liên hệ với bộ phận tuyển sinh.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow border-0 hover-lift">
+                        <div class="card-body p-4">
+                            <h3 class="card-title fw-bold text-primary mb-3">@item.Title</h3>
+                            
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="far fa-calendar-alt text-muted me-2" style="width: 20px;"></i>
+                                <span>Ngày thi: <strong>@item.ExamDate.ToString("dd/MM/yyyy")</strong></span>
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="far fa-clock text-muted me-2" style="width: 20px;"></i>
+                                <span>Giờ thi: <strong>@item.ExamDate.ToString("HH:mm")</strong></span>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-4">
+                                <i class="fas fa-tags text-muted me-2" style="width: 20px;"></i>
+                                <span>Lệ phí: <strong class="text-success">@item.Fee.ToString("N0") VNĐ</strong></span>
+                            </div>
+
+                            <div class="d-grid">
+                                <a asp-controller="ExamSession" asp-action="Start" asp-route-entranceExamId="@item.Id" 
+                                   class="btn btn-primary py-2 fw-bold shadow-sm">
+                                    Đăng ký & Vào thi ngay
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<style>
+    .hover-lift { transition: transform 0.2s, box-shadow 0.2s; }
+    .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+</style>

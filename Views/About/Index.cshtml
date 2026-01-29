@@ -1,0 +1,82 @@
+﻿@{
+    ViewData["Title"] = "About Us";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <style>
+        .cyber-card {
+            border: 1px solid rgba(0, 200, 255, 0.1);
+            background: #1e2633;
+        }
+    </style>
+}
+
+<header class="py-12 border-b border-slate-200 dark:border-slate-800 bg-white/5 -mx-6 md:-mx-8 px-6 md:px-8 mb-8">
+    <div class="max-w-[1600px] mx-auto">
+        <h1 class="font-display text-4xl font-bold mb-2">
+            About <span class="text-primary">Symphony Ltd.</span>
+        </h1>
+        <p class="text-slate-400 max-w-2xl">
+            Empowering IT professionals through quality training and industry-focused certifications.
+        </p>
+    </div>
+</header>
+
+<div class="max-w-5xl mx-auto space-y-10">
+
+    <!-- INTRO -->
+    <div class="cyber-card rounded-2xl p-8 md:p-12">
+        <h2 class="font-display text-2xl font-bold mb-4">Who We Are</h2>
+        <p class="text-slate-400 leading-relaxed">
+            Symphony Ltd. is a private IT training institute that provides professional courses
+            and certification programs in software development, networking, and database technologies.
+            With multiple branches across the state, we aim to deliver consistent and high-quality
+            education to aspiring IT professionals.
+        </p>
+    </div>
+
+    <!-- MISSION & VISION -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="cyber-card rounded-2xl p-8">
+            <h3 class="font-display text-xl font-bold mb-3">Our Mission</h3>
+            <p class="text-slate-400 leading-relaxed">
+                To bridge the gap between academic knowledge and industry requirements by offering
+                practical, hands-on training guided by experienced faculty members.
+            </p>
+        </div>
+
+        <div class="cyber-card rounded-2xl p-8">
+            <h3 class="font-display text-xl font-bold mb-3">Our Vision</h3>
+            <p class="text-slate-400 leading-relaxed">
+                To become a leading IT training institute recognized for excellence, innovation,
+                and student success in professional certifications.
+            </p>
+        </div>
+    </div>
+
+    <!-- WHY CHOOSE US -->
+    <div class="cyber-card rounded-2xl p-8 md:p-12">
+        <h2 class="font-display text-2xl font-bold mb-6">Why Choose Symphony Ltd.?</h2>
+
+        <ul class="space-y-4 text-slate-400">
+            <li class="flex items-start gap-3">
+                <span class="material-symbols-outlined text-primary">check_circle</span>
+                Industry-relevant curriculum aligned with certification standards
+            </li>
+            <li class="flex items-start gap-3">
+                <span class="material-symbols-outlined text-primary">check_circle</span>
+                Experienced faculty with real-world expertise
+            </li>
+            <li class="flex items-start gap-3">
+                <span class="material-symbols-outlined text-primary">check_circle</span>
+                Well-equipped lab facilities with extended practice sessions
+            </li>
+            <li class="flex items-start gap-3">
+                <span class="material-symbols-outlined text-primary">check_circle</span>
+                Personalized guidance and post-course feedback for improvement
+            </li>
+        </ul>
+    </div>
+
+</div>

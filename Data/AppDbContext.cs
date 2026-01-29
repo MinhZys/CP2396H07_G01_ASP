@@ -13,6 +13,7 @@ namespace Symphony.Portal.Web.Data
 
         public DbSet<Center> Centers { get; set; }
         public DbSet<Class> Classes { get; set; }
+        public DbSet<ClassAssignment> ClassAssignments { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseSubject> CourseSubjects { get; set; }
         public DbSet<CourseInstructor> CourseInstructors { get; set; }
@@ -44,15 +45,16 @@ namespace Symphony.Portal.Web.Data
         public DbSet<ClassCategory> ClassCategories { get; set; }
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
-<<<<<<< HEAD
-=======
         public DbSet<Notification> Notifications { get; set; }
-        public DbSet<VNPayTransaction> VNPayTransactions { get; set; }
 
-        public DbSet<RevisionPackage> RevisionPackages { get; set; }
-        public DbSet<RevisionRegistration> RevisionRegistrations { get; set; }
+        // Entrance Exam System
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<QuestionOption> QuestionOptions { get; set; }
+        public DbSet<ExamPaper> ExamPapers { get; set; }
+        public DbSet<ExamPaperQuestion> ExamPaperQuestions { get; set; }
+        public DbSet<StudentExamSession> StudentExamSessions { get; set; }
+        public DbSet<StudentAnswer> StudentAnswers { get; set; }
 
->>>>>>> 9d479f5 (Work in progress before switching branch)
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -93,6 +95,19 @@ namespace Symphony.Portal.Web.Data
 
             modelBuilder.Entity<Payment>()
                 .Property(e => e.PaymentMethod)
+                .HasConversion<string>();
+
+            // Exam System Enums
+            modelBuilder.Entity<EntranceExam>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Question>()
+                .Property(e => e.Type)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<StudentExamSession>()
+                .Property(e => e.Status)
                 .HasConversion<string>();
 
              // Composite Key for CourseSubject
