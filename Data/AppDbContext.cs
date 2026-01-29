@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
 
+
 namespace Symphony.Portal.Web.Data
 {
     public class AppDbContext : DbContext
@@ -43,6 +44,15 @@ namespace Symphony.Portal.Web.Data
         public DbSet<ClassCategory> ClassCategories { get; set; }
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+<<<<<<< HEAD
+=======
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<VNPayTransaction> VNPayTransactions { get; set; }
+
+        public DbSet<RevisionPackage> RevisionPackages { get; set; }
+        public DbSet<RevisionRegistration> RevisionRegistrations { get; set; }
+
+>>>>>>> 9d479f5 (Work in progress before switching branch)
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -25,5 +25,7 @@ namespace Symphony.Portal.Web.Models
         public ClassStatus Status { get; set; } = ClassStatus.Active;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public ICollection<RevisionRegistration> RevisionRegistrations { get; set; }
+
     }
 }

@@ -203,7 +203,6 @@
                     <p class="text-slate-500 italic pl-8">Detailed syllabus is being updated.</p>
                 }
             </div>
-        </div>
 
         <!-- Instructor Section -->
         <div>
@@ -402,9 +401,13 @@
                         <h2 class="text-3xl font-bold text-white">@Model.TuitionFee.ToString("N0")<span class="text-lg underline align-top">đ</span></h2>
                          <span class="text-slate-500 line-through text-sm mb-1">@( (Model.TuitionFee * 1.2m).ToString("N0") )đ</span>
                     </div>
-                    <a asp-controller="Guests" asp-action="Register" class="block w-full text-center bg-primary text-background-dark font-bold py-4 rounded-lg hover:opacity-90 transition-all mb-3 shadow-lg shadow-primary/25">
+                    <a asp-controller="CourseRegistration"
+                       asp-action="Confirm"
+                       asp-route-courseId="@Model.Id"
+                       class="block w-full text-center bg-primary text-background-dark font-bold py-4 rounded-lg hover:opacity-90 transition-all mb-3 shadow-lg shadow-primary/25">
                         Register Now
                     </a>
+
                 </div>
             </div>
 
