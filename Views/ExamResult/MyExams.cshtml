@@ -1,18 +1,18 @@
 @model IEnumerable<Symphony.Portal.Web.Models.StudentExamSession>
 
 @{
-    ViewData["Title"] = "Kết quả thi của tôi";
+    ViewData["Title"] = "My Exam Results";
 }
 
 <div class="container py-4">
     <div class="mb-4 d-flex justify-content-between align-items-center">
-        <h1><i class="fas fa-graduation-cap text-success"></i> Kết quả thi của tôi</h1>
+        <h1><i class="fas fa-graduation-cap text-success"></i> My Exam Results</h1>
     </div>
 
     @if (!Model.Any())
     {
         <div class="alert alert-info shadow-sm">
-            <i class="fas fa-info-circle"></i> Bạn chưa tham gia kỳ thi nào.
+            <i class="fas fa-info-circle"></i> You haven't taken any exams yet.
         </div>
     }
     else
@@ -31,17 +31,17 @@
                                 </div>
                                 <div class="text-end">
                                     <div class="h4 mb-0 text-primary">@item.TotalScore.ToString("0.##")</div>
-                                    <small class="text-muted d-block">Điểm thi</small>
+                                    <small class="text-muted d-block">Score</small>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-6 border-end">
-                                    <div class="small text-muted mb-1">Ngày thi</div>
+                                    <div class="small text-muted mb-1">Exam Date</div>
                                     <div class="fw-bold">@item.StartTime?.ToString("dd/MM/yyyy")</div>
                                 </div>
                                 <div class="col-6 ps-3">
-                                    <div class="small text-muted mb-1">Xếp loại</div>
+                                    <div class="small text-muted mb-1">Grade</div>
                                     <div class="fw-bold">
                                         @if (!string.IsNullOrEmpty(item.GradeLevel))
                                         {
@@ -51,7 +51,7 @@
                                         }
                                         else
                                         {
-                                            <span class="text-muted">Chưa xếp loại</span>
+                                            <span class="text-muted">Not Graded</span>
                                         }
                                     </div>
                                 </div>
@@ -59,7 +59,7 @@
 
                             <div class="d-grid mt-3">
                                 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary shadow-sm">
-                                    Xem chi tiết & Phản hồi
+                                    View Details & Feedback
                                 </a>
                             </div>
                         </div>

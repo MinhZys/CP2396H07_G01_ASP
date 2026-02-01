@@ -92,7 +92,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
                     if (totalOccupied >= targetClass.NumberOfSeats)
                     {
-                        TempData["Error"] = $"Lớp {targetClass.ClassName} đã đầy (Sĩ số: {targetClass.NumberOfSeats}, Đã nhận: {totalOccupied}). Vui lòng chọn lớp khác.";
+                        TempData["Error"] = $"Class {targetClass.ClassName} is full (Capacity: {targetClass.NumberOfSeats}, Occupied: {totalOccupied}). Please choose another class.";
                         return RedirectToAction(nameof(Index));
                     }
                 }

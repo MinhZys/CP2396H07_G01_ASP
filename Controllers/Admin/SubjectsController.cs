@@ -212,7 +212,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             {
                 if (await _context.CourseSubjects.AnyAsync(cs => cs.SubjectId == id))
                 {
-                     TempData["Error"] = "Không thể xóa môn học này vì nó đang thuộc về một hoặc nhiều Khóa học.";
+                     TempData["Error"] = "Cannot delete this subject because it is linked to one or more courses.";
                      return RedirectToAction(nameof(Index));
                 }
 

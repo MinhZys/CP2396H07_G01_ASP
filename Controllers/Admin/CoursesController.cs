@@ -321,13 +321,13 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 // Check dependencies
                 if (await _context.StudentRegistrations.AnyAsync(r => r.CourseId == id))
                 {
-                     TempData["Error"] = "Không thể xóa khóa học này vì đã có Học viên đăng ký (Registrations).";
+                     TempData["Error"] = "Cannot delete this course because students have already registered for it.";
                      return RedirectToAction(nameof(Index));
                 }
 
                 if (await _context.Enrollments.AnyAsync(e => e.CourseId == id))
                 {
-                     TempData["Error"] = "Không thể xóa khóa học này vì đã có Học viên nhập học (Enrollments).";
+                     TempData["Error"] = "Cannot delete this course because students are already enrolled in it.";
                      return RedirectToAction(nameof(Index));
                 }
 

@@ -1,8 +1,10 @@
 {
   "nav": {
     "home": "Home",
+    "subjects": "Subjects",
     "entranceExam": "Entrance Exam",
     "courses": "Courses",
+    "revisionCourses": "Revision Courses",
     "mentors": "Mentors",
     "contact": "Contact",
     "about": "About Us",
@@ -11,21 +13,31 @@
     "logout": "Logout",
     "profile": "Profile",
     "admin_dashboard": "Admin Dashboard",
-    "my_classroom": "My Classroom"
+    "my_classroom": "My Classroom",
+    "manage_exams": "Manage Exams",
+    "exam_papers": "Exam Papers",
+    "system_notifications": "System Notifications",
+    "grading_queue": "Grading Queue",
+    "my_exam_schedule": "My Exam Schedule",
+    "my_exam_results": "My Exam Results"
   },
-    "hero": {
-        "title": "Master Technology Today",
-        "subtitle": "Unlock your potential with industry-leading IT certifications and expert-led mentorship.",
-        "explore_btn": "Explore Courses",
-        "view_mentors_btn": "View Mentors"
-    },
-    "common": {
-        "search": "Search",
-        "success": "Success!",
-        "error": "Error!",
-        "confirm_title": "Are you sure?",
-        "confirm_text": "You won't be able to revert this!",
-        "delete_btn": "Yes, delete it!",
-        "cancel_btn": "Cancel"
-    }
+  "hero": {
+    "title": "Master Technology Today",
+    "subtitle": "Unlock your potential with industry-leading IT certifications and expert-led mentorship.",
+    "explore_btn": "Explore Courses",
+    "view_mentors_btn": "View Mentors"
+  },
+  "common": {
+    "search": "Search",
+    "success": "Success!",
+    "error": "Error!",
+    "confirm_title": "Are you sure?",
+    "confirm_text": "You won't be able to revert this!",
+    "delete_btn": "Yes, delete it!",
+    "cancel_btn": "Cancel",
+    "notifications": "Notifications",
+    "mark_all_read": "Mark all read",
+    "view_all": "View All Notifications",
+    "no_notifications": "No new notifications"
+  }
 }

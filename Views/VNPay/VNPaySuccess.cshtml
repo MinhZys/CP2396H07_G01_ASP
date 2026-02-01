@@ -1,21 +1,21 @@
 ﻿@model Symphony.Portal.Web.Models.VNPayTransaction
 @{
-    ViewData["Title"] = "Thanh toán thành công";
+    ViewData["Title"] = "Payment Success";
 }
 
 <div class="container py-5 text-center">
     <div class="alert alert-success shadow-lg rounded-3 p-5">
-        <h2 class="mb-3">🎉 Thanh toán thành công</h2>
-        <p class="text-muted">Mã giao dịch: <strong>@Model.VnpTransactionNo</strong></p>
-        <p>Số tiền: <strong>@(Model.VnpAmount / 100).ToString("N0") đ</strong></p>
-        <p>Ngân hàng: <strong>@Model.VnpBankCode</strong></p>
+        <h2 class="mb-3">🎉 Payment Successful</h2>
+        <p class="text-muted">Transaction ID: <strong>@Model.VnpTransactionNo</strong></p>
+        <p>Amount: <strong>@(Model.VnpAmount / 100).ToString("N0") đ</strong></p>
+        <p>Bank: <strong>@Model.VnpBankCode</strong></p>
 
         <hr />
 
-        <p>Hồ sơ dự thi của bạn đang <b>chờ Admin phê duyệt</b>.</p>
+        <p>Your examination application is <b>awaiting administrator approval</b>.</p>
 
         <a href="/" class="btn btn-primary mt-3">
-            Quay về trang chủ
+            Back to Home
         </a>
     </div>
 </div>

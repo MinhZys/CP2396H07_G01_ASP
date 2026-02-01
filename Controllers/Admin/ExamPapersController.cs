@@ -51,13 +51,13 @@ namespace Symphony.Portal.Web.Controllers.Admin
         {
             if (questions == null || !questions.Any())
             {
-                TempData["Error"] = "Vui lòng thêm ít nhất 1 câu hỏi.";
+                TempData["Error"] = "Please add at least 1 question.";
                 return RedirectToAction(nameof(CreateQuestion));
             }
 
             if (string.IsNullOrEmpty(SubjectId))
             {
-                TempData["Error"] = "Vui lòng chọn môn học.";
+                TempData["Error"] = "Please select a subject.";
                 return RedirectToAction(nameof(CreateQuestion));
             }
 
@@ -71,7 +71,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                         Type = QuestionType.MultipleChoice,
                         SubjectId = SubjectId,
                         Score = qDto.Score,
-                        Difficulty = "Trung bình" // Default value
+                        Difficulty = "Medium" // Default value
                     };
 
                     _context.Add(question);
@@ -94,12 +94,12 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 }
 
                 await _context.SaveChangesAsync();
-                TempData["Success"] = $"Đã thêm {questions.Count} câu hỏi thành công!";
+                TempData["Success"] = $"Added {questions.Count} questions successfully!";
                 return RedirectToAction(nameof(Questions));
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["Error"] = "An error occurred: " + ex.Message;
                 return RedirectToAction(nameof(CreateQuestion));
             }
         }
@@ -135,13 +135,13 @@ namespace Symphony.Portal.Web.Controllers.Admin
         {
             if (string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(SubjectId))
             {
-                TempData["Error"] = "Vui lòng điền đầy đủ thông tin đề thi.";
+                TempData["Error"] = "Please fill in all exam paper details.";
                 return RedirectToAction(nameof(CreatePaper));
             }
 
             if (questions == null || !questions.Any())
             {
-                TempData["Error"] = "Vui lòng thêm ít nhất 1 câu hỏi cho đề thi.";
+                TempData["Error"] = "Please add at least 1 question for the exam paper.";
                 return RedirectToAction(nameof(CreatePaper));
             }
 
@@ -166,7 +166,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                         Type = QuestionType.MultipleChoice,
                         SubjectId = SubjectId,
                         Score = qDto.Score,
-                        Difficulty = "Trung bình"
+                        Difficulty = "Medium"
                     };
                     _context.Add(question);
 
@@ -196,12 +196,12 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 }
 
                 await _context.SaveChangesAsync();
-                TempData["Success"] = $"Đã tạo đề thi '{Title}' với {questions.Count} câu hỏi thành công!";
+                TempData["Success"] = $"Created exam paper '{Title}' with {questions.Count} questions successfully!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["Error"] = "An error occurred: " + ex.Message;
                 return RedirectToAction(nameof(CreatePaper));
             }
         }
@@ -231,14 +231,14 @@ namespace Symphony.Portal.Web.Controllers.Admin
             bool isInUse = await _context.StudentExamSessions.AnyAsync(s => s.ExamPaperId == id);
             if (isInUse)
             {
-                TempData["Error"] = "Đề thi này đang được sử dụng trong các kỳ thi đã hoặc đang tổ chức, không thể xóa.";
+                TempData["Error"] = "This exam paper is in use and cannot be deleted.";
                 return RedirectToAction(nameof(Index));
             }
 
             _context.ExamPaperQuestions.RemoveRange(paper.ExamPaperQuestions);
             _context.ExamPapers.Remove(paper);
             await _context.SaveChangesAsync();
-            TempData["Success"] = "Đề thi đã được xóa thành công.";
+            TempData["Success"] = "Exam paper deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -254,7 +254,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             bool isInUse = await _context.StudentExamSessions.AnyAsync(s => s.ExamPaperId == id);
             if (isInUse)
             {
-                TempData["Error"] = "Đề thi này đang được sử dụng trong các kỳ thi đã hoặc đang tổ chức, không thể chỉnh sửa.";
+                TempData["Error"] = "This exam paper is in use and cannot be edited.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -273,7 +273,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             bool isInUse = await _context.StudentExamSessions.AnyAsync(s => s.ExamPaperId == id);
             if (isInUse)
             {
-                TempData["Error"] = "Đề thi này đang được sử dụng trong các kỳ thi đã hoặc đang tổ chức, không thể chỉnh sửa.";
+                TempData["Error"] = "This exam paper is in use and cannot be edited.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -306,7 +306,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 }
 
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Đề thi đã được cập nhật thành công.";
+                TempData["Success"] = "Exam paper updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -367,7 +367,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 }
 
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Câu hỏi đã được cập nhật thành công.";
+                TempData["Success"] = "Question updated successfully.";
                 return RedirectToAction(nameof(Questions));
             }
 
@@ -390,14 +390,14 @@ namespace Symphony.Portal.Web.Controllers.Admin
             bool isInUse = await _context.ExamPaperQuestions.AnyAsync(epq => epq.QuestionId == id);
             if (isInUse)
             {
-                TempData["Error"] = "Câu hỏi này đang được sử dụng trong các đề thi, không thể xóa.";
+                TempData["Error"] = "This question is in use and cannot be deleted.";
                 return RedirectToAction(nameof(Questions));
             }
 
             _context.QuestionOptions.RemoveRange(question.Options);
             _context.Questions.Remove(question);
             await _context.SaveChangesAsync();
-            TempData["Success"] = "Câu hỏi đã được xóa thành công.";
+            TempData["Success"] = "Question deleted successfully.";
             return RedirectToAction(nameof(Questions));
         }
     }

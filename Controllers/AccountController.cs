@@ -45,7 +45,7 @@ namespace Symphony.Portal.Web.Controllers
                     // Check if active
                     if (!user.IsActive)
                     {
-                        ModelState.AddModelError(string.Empty, "Tài khoản của bạn đã bị vô hiệu hóa.");
+                        ModelState.AddModelError(string.Empty, "Your account has been disabled.");
                         return View(model);
                     }
 
@@ -77,12 +77,12 @@ namespace Symphony.Portal.Web.Controllers
                             new ClaimsPrincipal(claimsIdentity),
                             authProperties);
 
-                        TempData["Success"] = "Đăng nhập thành công! Chào mừng bạn quay trở lại.";
+                        TempData["Success"] = "Login successful! Welcome back.";
                         return RedirectToLocal(returnUrl, user);
                     }
                 }
 
-                ModelState.AddModelError(string.Empty, "Thông tin đăng nhập không hợp lệ.");
+                ModelState.AddModelError(string.Empty, "Invalid login credentials.");
             }
             return View(model);
         }
@@ -113,7 +113,7 @@ namespace Symphony.Portal.Web.Controllers
                 {
                     // Clear the session that was auto-signed in by the Google handler
                     await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                    TempData["Error"] = "Tài khoản không tồn tại. Vui lòng đăng ký và chờ quản trị viên phê duyệt.";
+                    TempData["Error"] = "Account does not exist. Please register and wait for administrator approval.";
                     return RedirectToAction("Login");
                 }
 
@@ -121,7 +121,7 @@ namespace Symphony.Portal.Web.Controllers
                 {
                     // Clear the session that was auto-signed in by the Google handler
                     await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                    TempData["Error"] = "Tài khoản của bạn chưa được duyệt hoặc đã bị vô hiệu hóa.";
+                    TempData["Error"] = "Your account has not been approved or has been disabled.";
                     return RedirectToAction("Login");
                 }
 
@@ -177,7 +177,7 @@ namespace Symphony.Portal.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            TempData["Success"] = "Đăng xuất thành công!";
+            TempData["Success"] = "Logged out successfully!";
             return RedirectToAction("Index", "Home");
         }
 
@@ -229,7 +229,7 @@ namespace Symphony.Portal.Web.Controllers
                 if (user == null)
                 {
                     // Don't reveal that the user does not exist
-                    ModelState.AddModelError(string.Empty, "Nếu email tồn tại, mã xác thực đã được gửi.");
+                    ModelState.AddModelError(string.Empty, "If the email exists, a verification code has been sent.");
                     return View(model); 
                 }
 
@@ -241,8 +241,8 @@ namespace Symphony.Portal.Web.Controllers
                 HttpContext.Session.SetString("ResetCode", otp);
 
                 // Send Email
-                var subject = "Mã xác thực quên mật khẩu";
-                var body = $"Mã xác thực của bạn là: {otp}";
+                var subject = "Password reset verification code";
+                var body = $"Your verification code is: {otp}";
                 
                 try 
                 {
@@ -250,7 +250,7 @@ namespace Symphony.Portal.Web.Controllers
                 } 
                 catch(Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, "Gửi email thất bại: " + ex.Message);
+                    ModelState.AddModelError(string.Empty, "Failed to send email: " + ex.Message);
                     return View(model);
                 }
 
@@ -288,7 +288,7 @@ namespace Symphony.Portal.Web.Controllers
                 return RedirectToAction("ResetPassword");
             }
 
-            ModelState.AddModelError(string.Empty, "Mã xác thực không đúng.");
+            ModelState.AddModelError(string.Empty, "Incorrect verification code.");
             model.Email = email;
             return View(model);
         }
@@ -331,7 +331,7 @@ namespace Symphony.Portal.Web.Controllers
                     // Clear Session
                     HttpContext.Session.Clear();
 
-                    TempData["Success"] = "Đổi mật khẩu thành công. Vui lòng đăng nhập.";
+                    TempData["Success"] = "Password reset successful. Please login.";
                     return RedirectToAction("Login");
                 }
             }

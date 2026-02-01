@@ -1,26 +1,26 @@
 @model Symphony.Portal.Web.Models.StudentExamSession
 
 @{
-    ViewData["Title"] = "Chấm điểm bài thi";
+    ViewData["Title"] = "Grade Exam Paper";
 }
 
 <div class="container py-4">
     <div class="mb-4">
         <a asp-action="Index" class="btn btn-light btn-sm mb-3 d-inline-flex align-items-center gap-2 rounded-pill px-3 shadow-sm text-slate-600">
             <span class="material-symbols-outlined text-sm">arrow_back</span>
-            Quay lại danh sách
+            Back to List
         </a>
         <div class="d-flex justify-content-between align-items-end">
             <div>
-                <h1 class="fw-bold text-slate-800 mb-1">Chấm điểm: @Model.Student?.FullName</h1>
+                <h1 class="fw-bold text-slate-800 mb-1">Grading: @Model.Student?.FullName</h1>
                 <p class="text-slate-400 mb-0">
                     <span class="badge bg-slate-100 text-slate-600 border border-slate-200 fw-medium me-2">@Model.ExamPaper?.Title</span>
-                    <span class="small"><span class="material-symbols-outlined text-xs align-middle me-1">schedule</span>Nộp bài lúc: @Model.EndTime?.ToString("dd/MM/yyyy HH:mm")</span>
+                    <span class="small"><span class="material-symbols-outlined text-xs align-middle me-1">schedule</span>Submitted at: @Model.EndTime?.ToString("dd/MM/yyyy HH:mm")</span>
                 </p>
             </div>
             <div class="text-end bg-primary-subtle p-3 rounded-4 border border-primary-subtle shadow-sm min-w-[150px]">
                 <div class="h2 mb-0 fw-black text-primary" id="liveTotalScore">@Model.TotalScore.ToString("0.##")</div>
-                <div class="text-primary-emphasis small fw-bold text-uppercase tracking-wider">Tổng điểm</div>
+                <div class="text-primary-emphasis small fw-bold text-uppercase tracking-wider">Total Score</div>
             </div>
         </div>
     </div>
@@ -35,12 +35,12 @@
                     <div class="d-flex justify-content-between align-items-start mb-4">
                         <div class="d-flex gap-3">
                             <span class="badge @(answer.Question?.Type == Symphony.Portal.Web.Models.Enums.QuestionType.MultipleChoice ? "bg-info-subtle text-info" : "bg-warning-subtle text-warning-emphasis") rounded-pill px-3 py-2 align-self-start">
-                                @(answer.Question?.Type == Symphony.Portal.Web.Models.Enums.QuestionType.MultipleChoice ? "Trắc nghiệm" : "Tự luận")
+                                @(answer.Question?.Type == Symphony.Portal.Web.Models.Enums.QuestionType.MultipleChoice ? "Multiple Choice" : "Essay")
                             </span>
                             <h5 class="fw-bold text-slate-800 mb-0 pt-1">@answer.Question?.Content</h5>
                         </div>
                         <div class="d-flex align-items-center bg-light rounded-pill p-1 ps-3 border shadow-sm">
-                            <span class="me-2 small fw-bold text-slate-500 text-uppercase">Điểm:</span>
+                            <span class="me-2 small fw-bold text-slate-500 text-uppercase">Score:</span>
                             <input type="number" name="scores[@answer.Id]" class="form-control form-control-sm border-0 bg-transparent fw-black text-primary p-0 text-center score-input" 
                                    value="@answer.EarnedScore" step="0.1" min="0" max="@answer.Question?.Score" 
                                    style="width: 50px; font-size: 1.1rem;" onchange="updateTotal()" />
@@ -52,7 +52,7 @@
                     @if (answer.Question?.Type == Symphony.Portal.Web.Models.Enums.QuestionType.MultipleChoice)
                     {
                         <div class="bg-slate-50 p-4 rounded-4 mb-4 border border-slate-100">
-                            <p class="mb-3 small fw-bold text-slate-500 text-uppercase tracking-wider">Lựa chọn của thí sinh:</p>
+                            <p class="mb-3 small fw-bold text-slate-500 text-uppercase tracking-wider">Student's Selection:</p>
                             <div class="row g-3">
                                 @foreach (var opt in answer.Question.Options)
                                 {
@@ -72,8 +72,8 @@
                                                     <div class="border rounded-circle" style="width: 18px; height: 18px;"></div>
                                                 }
                                                 <span class="fw-medium">@opt.Content</span>
-                                                @if (opt.IsCorrect) { <span class="ms-auto badge bg-success text-white small rounded-pill">Đúng</span> }
-                                                @if (answer.SelectedOptionId == opt.Id && !opt.IsCorrect) { <span class="ms-auto badge bg-danger text-white small rounded-pill">Thí sinh chọn</span> }
+                                                @if (opt.IsCorrect) { <span class="ms-auto badge bg-success text-white small rounded-pill">Correct</span> }
+                                                @if (answer.SelectedOptionId == opt.Id && !opt.IsCorrect) { <span class="ms-auto badge bg-danger text-white small rounded-pill">Student Chosen</span> }
                                             </div>
                                         </div>
                                     </div>
@@ -84,14 +84,14 @@
                     else
                     {
                         <div class="mb-4">
-                            <label class="small fw-bold text-slate-500 text-uppercase tracking-wider mb-2">Đáp án từ thí sinh:</label>
+                            <label class="small fw-bold text-slate-500 text-uppercase tracking-wider mb-2">Student's Answer:</label>
                             <div class="p-4 bg-slate-50 border border-slate-200 rounded-4 text-slate-700 shadow-inner" style="white-space: pre-wrap; line-height: 1.6;">@answer.EssayContent</div>
                         </div>
                     }
 
                     <div class="mb-0">
-                        <label class="small fw-bold text-slate-500 text-uppercase tracking-wider mb-2">Ghi chú của giám khảo:</label>
-                        <textarea name="notes[@answer.Id]" class="form-control rounded-4 border-slate-200 p-3" rows="2" placeholder="Nhập nhận xét hoặc giải thích điểm số cho thí sinh...">@answer.ExaminerNote</textarea>
+                        <label class="small fw-bold text-slate-500 text-uppercase tracking-wider mb-2">Examiner's Note:</label>
+                        <textarea name="notes[@answer.Id]" class="form-control rounded-4 border-slate-200 p-3" rows="2" placeholder="Enter feedback or explain the score for the student...">@answer.ExaminerNote</textarea>
                     </div>
                 </div>
             </div>
@@ -102,13 +102,13 @@
                 <div>
                     <h5 class="fw-bold mb-1 d-flex align-items-center gap-2">
                         <span class="material-symbols-outlined text-primary">verified</span>
-                        Hoàn tất chấm điểm & Xếp loại
+                        Complete Grading & Level Assignment
                     </h5>
-                    <p class="mb-0 small text-slate-400">Hệ thống sẽ tự động xếp hạng trình độ (Level A/B/C) dựa trên tổng điểm bạn vừa nhập.</p>
+                    <p class="mb-0 small text-slate-400">The system will automatically assign a level (Level A/B/C) based on the total score you entered.</p>
                 </div>
                 <button type="submit" class="btn btn-primary d-inline-flex align-items-center gap-2 px-5 py-3 rounded-pill fw-bold shadow-lg">
                     <span class="material-symbols-outlined">save_as</span>
-                    Lưu kết quả & Xếp loại
+                    Save Results & Assign Level
                 </button>
             </div>
         </div>

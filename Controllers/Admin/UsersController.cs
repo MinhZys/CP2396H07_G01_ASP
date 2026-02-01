@@ -59,7 +59,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             if (ModelState.IsValid)
             {
                 if (await _context.Users.AnyAsync(u => u.Email == user.Email)) {
-                    ModelState.AddModelError("Email", "Email đã tồn tại.");
+                    ModelState.AddModelError("Email", "Email already exists.");
                     ViewBag.Roles = await _context.Roles.ToListAsync();
                     return View(user);
                 }
@@ -137,21 +137,21 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 // 1. Check if User is a Guest (UserId)
                 if (await _context.Guests.AnyAsync(g => g.UserId == id))
                 {
-                    TempData["Error"] = "Không thể xóa tài khoản này vì đang liên kết với một hồ sơ Khách (Guest).";
+                    TempData["Error"] = "Cannot delete this account because it is linked to a guest profile.";
                     return RedirectToAction(nameof(Index));
                 }
 
                 // 2. Check if User is an Instructor in a Course (InstructorId)
                 if (await _context.CourseInstructors.AnyAsync(ci => ci.InstructorId == id))
                 {
-                    TempData["Error"] = "Không thể xóa tài khoản này vì đang là Giảng viên của một hoặc nhiều Khóa học.";
+                    TempData["Error"] = "Cannot delete this account because it is an instructor for one or more courses.";
                     return RedirectToAction(nameof(Index));
                 }
 
                 // 3. Check if User is a Student in Enrollment (StudentId)
                 if (await _context.Enrollments.AnyAsync(e => e.StudentId == id))
                 {
-                    TempData["Error"] = "Không thể xóa tài khoản này vì đang có thông tin Nhập học (Enrollment).";
+                    TempData["Error"] = "Cannot delete this account because it has active enrollment information.";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -174,7 +174,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     var adminCount = await _context.Users.CountAsync(u => u.RoleId == "1");
                     if (adminCount <= 1)
                     {
-                        TempData["Error"] = "Không thể xóa Admin cuối cùng của hệ thống!";
+                        TempData["Error"] = "Cannot delete the system's last administrator!";
                         return RedirectToAction(nameof(Index));
                     }
                 }
@@ -198,7 +198,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 var activeAdminCount = await _context.Users.CountAsync(u => u.RoleId == "1" && u.IsActive);
                 if (activeAdminCount <= 1)
                 {
-                     TempData["Error"] = "Không thể khóa Admin đang hoạt động cuối cùng của hệ thống!";
+                     TempData["Error"] = "Cannot deactivate the last active administrator!";
                      return RedirectToAction(nameof(Index));
                 }
             }

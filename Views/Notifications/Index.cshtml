@@ -1,61 +1,116 @@
 @model List<Symphony.Portal.Web.Models.Notification>
 @{
-    ViewData["Title"] = "Thông báo của tôi";
+    ViewData["Title"] = "My Notifications";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>🔔 Thông báo</h2>
-        <form asp-action="MarkAllAsRead" method="post">
-            <button type="submit" class="btn btn-outline-primary btn-sm">Đánh dấu tất cả đã đọc</button>
-        </form>
+<div class="container py-12 max-w-4xl mx-auto px-6">
+    <div class="flex justify-between items-end mb-8">
+        <div>
+            <p class="text-primary font-bold text-xs uppercase tracking-widest mb-2">Updates</p>
+            <h1 class="font-display text-4xl font-bold">Notifications</h1>
+        </div>
+        @if (Model != null && Model.Any(n => !n.IsRead))
+        {
+            <form asp-action="MarkAllAsRead" method="post" id="markAllForm">
+                <button type="button" onclick="handleMarkAll()" class="text-sm font-bold text-primary hover:underline flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">done_all</span>
+                    Mark all as read
+                </button>
+            </form>
+        }
     </div>
 
     @if (Model != null && Model.Any())
     {
-        <div class="list-group">
+        <div class="space-y-4" id="index-notification-list">
             @foreach (var item in Model)
             {
-                <div class="list-group-item list-group-item-action @(item.IsRead ? "bg-light text-muted" : "fw-bold")" onclick="markAsRead(@item.Id, this)">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">@item.Title</h5>
-                        <small>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                <div class="group relative bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl p-6 transition-all duration-300 hover:border-primary/50 hover:shadow-xl @(!item.IsRead ? "border-l-4 border-l-primary" : "opacity-75")" 
+                     id="index-note-@item.Id">
+                    
+                    <div class="flex gap-6">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary text-2xl">@(item.IsRead ? "mail" : "notifications_active")</span>
+                        </div>
+                        
+                        <div class="flex-1 min-w-0" onclick="handleMarkRead(@item.Id, this)">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-lg @(!item.IsRead ? "text-slate-900 dark:text-white" : "text-slate-500")">@item.Title</h3>
+                                <span class="text-xs text-slate-400 font-medium">@item.CreatedAt.ToString("MMM dd, yyyy HH:mm")</span>
+                            </div>
+                            <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-4">@item.Message</p>
+                            
+                            @if (!item.IsRead)
+                            {
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary/10 text-primary">
+                                    New
+                                </span>
+                            }
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="handleDelete(@item.Id)" class="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all">
+                                <span class="material-symbols-outlined text-xl">delete</span>
+                            </button>
+                        </div>
                     </div>
-                    <p class="mb-1">@item.Message</p>
-                    @if (!item.IsRead)
-                    {
-                        <small class="text-primary status-text">Mới</small>
-                    }
                 </div>
             }
         </div>
     }
     else
     {
-        <div class="alert alert-info" role="alert">
-            Bạn chưa có thông báo nào.
+        <div class="py-24 text-center bg-slate-50 dark:bg-white/5 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+            <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-6">
+                <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600">notifications_off</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2">No notifications found</h3>
+            <p class="text-slate-500">We'll let you know when something important happens.</p>
         </div>
     }
 </div>
 
 @section Scripts {
     <script>
-        function markAsRead(id, element) {
-            // Optional: Call API to mark as read immediately when clicking
-            // Specifically if you want "click to read" behavior for individual items
-            // For now, this is just visual feedback or can rely on manual triggers
+        async function handleMarkRead(id, element) {
+            const container = element.closest('.group');
+            if (container.classList.contains('border-l-primary')) {
+                const response = await fetch('/Notifications/MarkAsRead?id=' + id, { method: 'POST' });
+                if (response.ok) {
+                    container.classList.remove('border-l-4', 'border-l-primary');
+                    container.classList.add('opacity-75');
+                    const badge = container.querySelector('.bg-primary/10');
+                    if (badge) badge.remove();
+                    const icon = container.querySelector('.material-symbols-outlined:not(.text-xl)');
+                    if (icon) icon.textContent = 'mail';
+                }
+            }
+        }
+
+        async function handleDelete(id) {
+            if (!confirm('Are you sure you want to delete this notification?')) return;
             
-             /*
-             fetch('/Notifications/MarkAsRead?id=' + id, { method: 'POST' })
-                .then(response => {
-                    if (response.ok) {
-                        element.classList.remove('fw-bold');
-                        element.classList.add('bg-light', 'text-muted');
-                        var status = element.querySelector('.status-text');
-                        if(status) status.remove();
+            const element = document.getElementById('index-note-' + id);
+            element.style.transform = 'scale(0.95)';
+            element.style.opacity = '0';
+            
+            setTimeout(async () => {
+                const response = await fetch('/Notifications/Delete?id=' + id, { method: 'POST' });
+                if (response.ok) {
+                    element.remove();
+                    if (document.getElementById('index-notification-list').children.length === 0) {
+                        location.reload();
                     }
-                });
-            */
+                }
+            }, 300);
+        }
+
+        async function handleMarkAll() {
+            const response = await fetch('/Notifications/MarkAllAsRead', { method: 'POST' });
+            if (response.ok) {
+                location.reload();
+            }
         }
     </script>
 }

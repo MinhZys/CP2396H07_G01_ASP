@@ -1,6 +1,6 @@
 @model Symphony.Portal.Web.Models.ViewModels.VerifyCodeVM
 @{
-    ViewData["Title"] = "Xác Thực Mã";
+    ViewData["Title"] = "Verify Code";
 }
 
 @section Styles {
@@ -22,10 +22,10 @@
                 <span class="material-symbols-outlined text-4xl text-primary">mark_email_read</span>
             </div>
             <h2 class="mt-6 text-center text-3xl font-display font-bold text-white tracking-tight">
-                Xác Thực Mã
+                Verify Code
             </h2>
             <p class="mt-2 text-center text-sm text-slate-400">
-                Nhập mã xác thực đã được gửi đến email <strong>@Model.Email</strong>
+                Enter the verification code sent to <strong>@Model.Email</strong>
             </p>
         </div>
 
@@ -36,7 +36,7 @@
                 
                 <div class="space-y-4">
                     <div>
-                        <label asp-for="Code" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Mã Xác Thực</label>
+                        <label asp-for="Code" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Verification Code</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span class="material-symbols-outlined text-slate-500 text-xl">vpn_key</span>
@@ -52,13 +52,13 @@
                         <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                             <span class="material-symbols-outlined text-background-dark/50 group-hover:text-background-dark transition-colors">check_circle</span>
                         </span>
-                        Xác Thực
+                        Verify
                     </button>
                 </div>
                  
                 <div class="mt-4 text-center">
                     <a asp-action="ForgotPassword" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">
-                        Gửi lại mã?
+                        Resend code?
                     </a>
                 </div>
             </form>

@@ -16,6 +16,7 @@ namespace Symphony.Portal.Web.Services
         Task MarkAsReadAsync(int notificationId);
         Task MarkAllAsReadAsync(string userId);
         Task SendNotificationToRolesAsync(List<string> roleNames, string title, string message);
+        Task DeleteNotificationAsync(int notificationId);
     }
 
     public class NotificationService : INotificationService
@@ -121,6 +122,16 @@ namespace Symphony.Portal.Web.Services
 
             _context.Notifications.AddRange(notifications);
             await _context.SaveChangesAsync();
+        }
+        
+        public async Task DeleteNotificationAsync(int notificationId)
+        {
+            var notification = await _context.Notifications.FindAsync(notificationId);
+            if (notification != null)
+            {
+                _context.Notifications.Remove(notification);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

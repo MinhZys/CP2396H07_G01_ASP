@@ -95,7 +95,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
             if (payment.Status == PaymentStatus.Paid)
             {
-                TempData["Error"] = "Payment này đã được xác nhận trước đó.";
+                TempData["Error"] = "This payment has already been confirmed.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -103,7 +103,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             payment.PaymentDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
-            TempData["Success"] = "Đã xác nhận thanh toán thành công.";
+            TempData["Success"] = "Payment confirmed successfully.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -121,7 +121,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             payment.Status = PaymentStatus.Failed;
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Đã cập nhật trạng thái: Thất bại.";
+            TempData["Success"] = "Payment status updated: Failed.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -138,7 +138,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             payment.Status = PaymentStatus.Cancelled;
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Đã hủy thanh toán.";
+            TempData["Success"] = "Payment cancelled successfully.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -154,14 +154,14 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
             if (payment.Status != PaymentStatus.Paid)
             {
-                TempData["Error"] = "Chỉ hoàn tiền cho Payment đã thanh toán.";
+                TempData["Error"] = "Refund is only available for paid payments.";
                 return RedirectToAction(nameof(Index));
             }
 
             payment.Status = PaymentStatus.Refunded;
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Hoàn tiền thành công.";
+            TempData["Success"] = "Payment refunded successfully.";
             return RedirectToAction(nameof(Index));
         }
     }

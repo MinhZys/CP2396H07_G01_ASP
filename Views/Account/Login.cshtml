@@ -1,6 +1,6 @@
 @model Symphony.Portal.Web.Models.ViewModels.LoginVM
 @{
-    ViewData["Title"] = "Đăng nhập";
+    ViewData["Title"] = "Login";
 }
 
 @section Styles {
@@ -26,7 +26,7 @@
                 Welcome Back
             </h2>
             <p class="mt-2 text-center text-sm text-slate-400">
-                Vui lòng đăng nhập để tiếp tục hành trình của bạn
+                Please login to continue your journey
             </p>
         </div>
 
@@ -62,13 +62,13 @@
                     <div class="flex items-center">
                         <input asp-for="RememberMe" type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-slate-700 rounded bg-background-dark cursor-pointer" />
                         <label asp-for="RememberMe" class="ml-2 block text-sm text-slate-400 cursor-pointer select-none">
-                            Ghi nhớ tôi
+                            Remember Me
                         </label>
                     </div>
 
                     <div class="text-sm">
                         <a asp-action="ForgotPassword" class="font-medium text-primary hover:text-white transition-colors">
-                            Quên mật khẩu?
+                            Forgot password?
                         </a>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
                         <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                             <span class="material-symbols-outlined text-background-dark/50 group-hover:text-background-dark transition-colors">login</span>
                         </span>
-                        Đăng nhập
+                        Login
                     </button>
                 </div>
             </form>
@@ -90,7 +90,7 @@
                     </div>
                     <div class="relative flex justify-center text-sm">
                         <span class="px-2 bg-surface-dark text-slate-500 uppercase text-xs font-bold tracking-widest">
-                            Hoặc đi tiếp với
+                            Or continue with
                         </span>
                     </div>
                 </div>
@@ -98,16 +98,16 @@
                 <div class="mt-6">
                     <a asp-action="LoginGoogle" asp-controller="Account" class="w-full flex items-center justify-center gap-3 px-4 py-3 border border-slate-700 rounded-xl shadow-sm bg-background-dark hover:bg-white/5 transition-all duration-200 group">
                         <img class="h-5 w-auto" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo">
-                        <span class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Đăng nhập bằng Google</span>
+                        <span class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Sign in with Google</span>
                     </a>
                 </div>
             </div>
             
             <div class="mt-6 text-center">
                 <p class="text-sm text-slate-400">
-                    Chưa có tài khoản?
+                    Don't have an account?
                     <a asp-controller="GuestRegistration" asp-action="Create" asp-route-returnUrl="@ViewData["ReturnUrl"]" class="font-bold text-primary hover:text-white transition-colors">
-                        Đăng ký ngay
+                        Register Now
                     </a>
                 </p>
             </div>

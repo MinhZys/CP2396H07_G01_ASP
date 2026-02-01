@@ -94,7 +94,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             {
                 if (await _context.Courses.AnyAsync(c => c.CertificateId == id))
                 {
-                     TempData["Error"] = "Không thể xóa chứng chỉ này vì nó đang được sử dụng cho một hoặc nhiều Khóa học.";
+                     TempData["Error"] = "Cannot delete this certificate because it is being used by one or more courses.";
                      return RedirectToAction(nameof(Index));
                 }
 

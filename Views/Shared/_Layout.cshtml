@@ -56,8 +56,8 @@
 <body class="bg-background-light dark:bg-background-dark font-body text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
     <!-- Top Navigation Bar -->
     <nav class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-        <div class="flex items-center justify-between p-4 max-w-7xl mx-auto">
-            <div class="flex items-center gap-3">
+        <div class="flex items-center justify-between p-4 max-w-[1600px] mx-auto">
+            <div class="flex items-center gap-6">
                 <a asp-controller="Home" asp-action="Index" class="flex items-center gap-3">
                     <div class="bg-primary p-1.5 rounded-lg flex items-center justify-center">
                         <span class="material-symbols-outlined text-background-dark text-2xl font-bold">terminal</span>
@@ -66,59 +66,48 @@
                 </a>
             </div>
             
-            <div class="flex items-center gap-4">
-                 <!-- DesktopNav Links -->
-                <div class="hidden md:flex items-center gap-6 text-sm font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 mr-4">
-                    <a class="hover:text-primary transition-colors" asp-controller="Home" asp-action="Index" data-i18n="nav.home">Home</a>
-                    <a class="hover:text-primary transition-colors" asp-controller="Subjects" asp-action="Index">Subjects</a>
-                    <a class="hover:text-primary transition-colors"
-                       asp-controller="Guests"
-                       asp-action="Register"
-                       data-i18n="nav.entranceExam">
-                        Entrance Exam
-                    </a>
-                    <a class="hover:text-primary transition-colors"
-                       asp-controller="RevisionGuests"
-                       asp-action="Register">
-                        Revision Courses
-                    </a>
+            <!-- DesktopNav Links -->
+            <div class="hidden lg:flex items-center gap-8 text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                <a class="hover:text-primary transition-colors" asp-controller="Home" asp-action="Index" data-i18n="nav.home">Home</a>
+                <a class="hover:text-primary transition-colors" asp-controller="Subjects" asp-action="Index" data-i18n="nav.subjects">Subjects</a>
+                <a class="hover:text-primary transition-colors" asp-controller="Courses" asp-action="Index" data-i18n="nav.courses">Courses</a>
+                <a class="hover:text-primary transition-colors" asp-controller="Guests" asp-action="Register" data-i18n="nav.entranceExam">Entrance Exam</a>
+                <a class="hover:text-primary transition-colors" asp-controller="RevisionGuests" asp-action="Register" data-i18n="nav.revisionCourses">Revision Courses</a>
+                <a class="hover:text-primary transition-colors" asp-controller="Mentors" asp-action="Index" data-i18n="nav.mentors">Mentors</a>
+                <a class="hover:text-primary transition-colors" asp-controller="Contact" asp-action="Index" data-i18n="nav.contact">Contact</a>
+                <a class="hover:text-primary transition-colors" asp-controller="About" asp-action="Index" data-i18n="nav.about">About Us</a>
+            </div>
 
-                    <a class="hover:text-primary transition-colors" asp-controller="Mentors" asp-action="Index" data-i18n="nav.mentors">Mentors</a>
-                    <a class="hover:text-primary transition-colors" asp-controller="Contact" asp-action="Index" data-i18n="nav.contact">Contact</a>
-                    <a class="hover:text-primary transition-colors" asp-controller="About" asp-action="Index" data-i18n="nav.about">About</a>
-                    
+            <div class="flex items-center gap-4">
+                <!-- Language Toggle -->
+                <div class="relative group z-50">
+                    <button class="flex items-center gap-1 p-2 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors font-bold text-sm">
+                        <span class="material-symbols-outlined text-lg">language</span>
+                        <span id="current-lang-text">EN</span>
+                    </button>
+                    <div class="absolute right-0 top-full mt-2 w-24 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        <button onclick="changeLanguage('en')" class="block w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 first:rounded-t-lg">English</button>
+                        <button onclick="changeLanguage('vi')" class="block w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 last:rounded-b-lg">Vietnamese</button>
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <!-- Language Toggle -->
-                    <div class="relative group z-50">
-                        <button class="flex items-center gap-1 p-2 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors font-bold text-sm">
-                            <span class="material-symbols-outlined text-lg">language</span>
-                            <span id="current-lang-text">EN</span>
-                        </button>
-                        <div class="absolute right-0 top-full mt-2 w-24 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                            <button onclick="changeLanguage('en')" class="block w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 first:rounded-t-lg">English</button>
-                            <button onclick="changeLanguage('vi')" class="block w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 last:rounded-b-lg">Tiếng Việt</button>
-                        </div>
+                <!-- Notification Bell -->
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="relative">
+                         @await Component.InvokeAsync("NotificationBell")
                     </div>
+                }
 
-                    <!-- Notification Bell -->
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <div class="mr-2">
-                             @await Component.InvokeAsync("NotificationBell")
-                        </div>
-                    }
-
-                    <button class="p-2 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
-                        <span class="material-symbols-outlined">search</span>
-                    </button>
+                <button class="p-2 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" title="Search" data-i18n-attr="title:common.search">
+                    <span class="material-symbols-outlined">search</span>
+                </button>
                     
                     @using System.Security.Claims
                     @if (User.Identity.IsAuthenticated)
                     {
                         var fullName = User.FindFirst("FullName")?.Value ?? User.Identity.Name;
-                        <div class="relative group ml-4 z-50">
+                        <div class="relative group ml-6 z-50">
                             <button class="flex items-center gap-3 focus:outline-none">
                                 <div class="hidden md:block text-right">
                                     <p class="text-sm font-bold text-slate-700 dark:text-white leading-none mb-1">@fullName</p>
@@ -142,31 +131,31 @@
                                 <div class="p-2">
                                      @if (User.IsInRole("Admin"))
                                     {
-                                         <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                         <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors" data-i18n="nav.admin_dashboard">
                                             <span class="material-symbols-outlined text-lg">dashboard</span>
                                             Admin Dashboard
                                         </a>
                                         <div class="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 border-t dark:border-slate-700/50 pt-2">Examination</div>
-                                         <a asp-area="Admin" asp-controller="EntranceExams" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                         <a asp-area="Admin" asp-controller="EntranceExams" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors" data-i18n="nav.manage_exams">
                                             <span class="material-symbols-outlined text-lg">event_available</span>
                                             Manage Exams
                                         </a>
-                                         <a asp-area="Admin" asp-controller="ExamPapers" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                         <a asp-area="Admin" asp-controller="ExamPapers" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors" data-i18n="nav.exam_papers">
                                             <span class="material-symbols-outlined text-lg">description</span>
                                             Exam Papers
                                         </a>
-                                        <a asp-area="Admin" asp-controller="AdminNotifications" asp-action="Create" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                        <a asp-area="Admin" asp-controller="AdminNotifications" asp-action="Create" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors" data-i18n="nav.system_notifications">
                                             <span class="material-symbols-outlined text-lg">campaign</span>
                                             System Notifications
                                         </a>
                                     }
-                                    <a asp-controller="Profile" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                    <a asp-controller="Profile" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors" data-i18n="nav.profile">
                                         <span class="material-symbols-outlined text-lg">person</span>
                                         Profile
                                     </a>
                                     @if (User.IsInRole("Guest"))
                                     {
-                                         <a asp-controller="Guests" asp-action="Dashboard" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                         <a asp-controller="Guests" asp-action="Dashboard" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors" data-i18n="nav.my_exam_schedule">
                                             <span class="material-symbols-outlined text-lg">calendar_month</span>
                                             My Exam Schedule
                                         </a>
@@ -174,12 +163,12 @@
                                     @if (User.IsInRole("Student"))
                                     {
                                         <a asp-controller="Student" asp-action="ViewClasses"
-                                           class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                           class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors" data-i18n="nav.my_classroom">
                                             <span class="material-symbols-outlined text-lg">school</span>
                                             My Classroom
                                         </a>
                                         <a asp-controller="ExamResult" asp-action="MyExams"
-                                           class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                           class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors" data-i18n="nav.my_exam_results">
                                             <span class="material-symbols-outlined text-lg">history_edu</span>
                                             My Exam Results
                                         </a>
@@ -187,11 +176,11 @@
                                     else if (User.IsInRole("Instructor"))
                                     {
                                         <a asp-area="Instructor" asp-controller="Classes" asp-action="Index"
-                                           class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                           class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors" data-i18n="nav.my_classroom">
                                             <span class="material-symbols-outlined text-lg">school</span>
                                             My Classroom
                                         </a>
-                                        <a asp-area="Instructor" asp-controller="Grading" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                        <a asp-area="Instructor" asp-controller="Grading" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors" data-i18n="nav.grading_queue">
                                             <span class="material-symbols-outlined text-lg">grade</span>
                                             Grading Queue
                                         </a>
@@ -199,7 +188,7 @@
                                 </div>
                                 <div class="p-2 border-t border-slate-200 dark:border-slate-700/50">
                                     <form asp-controller="Account" asp-action="Logout" method="post">
-                                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-500 hover:bg-red-500/10 rounded-lg transition-colors text-left">
+                                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-500 hover:bg-red-500/10 rounded-lg transition-colors text-left" data-i18n="nav.logout">
                                             <span class="material-symbols-outlined text-lg">logout</span>
                                             Logout
                                         </button>
@@ -210,7 +199,7 @@
                     }
                     else
                     {
-                        <a asp-controller="Account" asp-action="Login" class="hidden md:flex items-center gap-2 bg-primary text-background-dark px-5 py-2 rounded-lg font-bold text-sm hover:opacity-90 transition-opacity">
+                        <a asp-controller="Account" asp-action="Login" class="hidden md:flex items-center gap-2 bg-primary text-background-dark px-5 py-2 rounded-lg font-bold text-sm hover:opacity-90 transition-opacity" data-i18n="nav.login">
                             <span class="material-symbols-outlined text-lg">login</span>
                             Login
                         </a>
@@ -243,18 +232,18 @@
             <div>
                 <h5 class="font-bold mb-4 uppercase text-xs tracking-widest text-primary">Resources</h5>
                 <ul class="space-y-3 text-sm text-slate-500">
-                    <li><a class="hover:text-primary transition-colors" asp-controller="Courses" asp-action="Index">Courses</a></li>
+                    <li><a class="hover:text-primary transition-colors" asp-controller="Courses" asp-action="Index" data-i18n="nav.courses">Courses</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Career Path</a></li>
-                    <li><a class="hover:text-primary transition-colors" asp-controller="Mentors" asp-action="Index">Mentors</a></li>
+                    <li><a class="hover:text-primary transition-colors" asp-controller="Mentors" asp-action="Index" data-i18n="nav.mentors">Mentors</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Scholarships</a></li>
                 </ul>
             </div>
             <div>
                 <h5 class="font-bold mb-4 uppercase text-xs tracking-widest text-primary">Support</h5>
                 <ul class="space-y-3 text-sm text-slate-500">
-                    <li><a class="hover:text-primary transition-colors" href="FAQ">FAQ</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="About">ABOUT</a></li>
-                    <li><a class="hover:text-primary transition-colors" asp-controller="Contact" asp-action="Index">Contact Us</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="FAQ" data-i18n="nav.faq">FAQ</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="About" data-i18n="nav.about">About Us</a></li>
+                    <li><a class="hover:text-primary transition-colors" asp-controller="Contact" asp-action="Index" data-i18n="nav.contact">Contact Us</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
                 </ul>
@@ -301,7 +290,7 @@
                 .use(i18nextBrowserLanguageDetector)
                 .init({
                     backend: {
-                        loadPath: '/locales/{{lng}}/translation.json'
+                        loadPath: '/locales/{{lng}}/translation.json?v=1.0.2'
                     },
                     fallbackLng: 'en',
                     debug: false,
@@ -326,6 +315,19 @@
                         element.setAttribute('placeholder', i18next.t(key, jsonOptions));
                     } else {
                         element.textContent = i18next.t(key, jsonOptions);
+                    }
+                });
+
+                // Update attributes for elements with data-i18n-attr
+                document.querySelectorAll('[data-i18n-attr]').forEach(function(element) {
+                    const attrData = element.getAttribute('data-i18n-attr');
+                    if (attrData) {
+                        attrData.split(',').forEach(item => {
+                            const [attr, key] = item.split(':');
+                            if (attr && key) {
+                                element.setAttribute(attr.trim(), i18next.t(key.trim()));
+                            }
+                        });
                     }
                 });
                 

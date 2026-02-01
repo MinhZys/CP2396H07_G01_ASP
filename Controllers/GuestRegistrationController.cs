@@ -68,14 +68,14 @@ public class GuestRegistrationController : Controller
         // validate theo purpose
         if (vm.Purpose == PaymentPurpose.EntranceExam && string.IsNullOrWhiteSpace(vm.SelectedEntranceExamId))
         {
-            ModelState.AddModelError(nameof(vm.SelectedEntranceExamId), "Vui lòng chọn kỳ thi đầu vào.");
+            ModelState.AddModelError(nameof(vm.SelectedEntranceExamId), "Please select an entrance exam.");
             await LoadDropdowns();
             return View(vm);
         }
 
         if ((vm.Purpose == PaymentPurpose.Course || vm.Purpose == PaymentPurpose.Subject) && string.IsNullOrWhiteSpace(vm.ClassId))
         {
-            ModelState.AddModelError(nameof(vm.ClassId), "Vui lòng chọn lớp/môn học.");
+            ModelState.AddModelError(nameof(vm.ClassId), "Please select a class/subject.");
             await LoadDropdowns();
             return View(vm);
         }
@@ -101,7 +101,7 @@ public class GuestRegistrationController : Controller
         var amount = await ResolveAmountAsync(vm);
         if (amount <= 0)
         {
-            ModelState.AddModelError(nameof(vm.ManualAmount), "Số tiền thanh toán không hợp lệ.");
+            ModelState.AddModelError(nameof(vm.ManualAmount), "Invalid payment amount.");
             await LoadDropdowns();
             return View(vm);
         }

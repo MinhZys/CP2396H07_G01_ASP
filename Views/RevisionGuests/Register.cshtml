@@ -4,15 +4,15 @@
 @model RevisionRegisterVM
 
 @{
-    ViewData["Title"] = "Đăng ký lớp ôn thi";
+    ViewData["Title"] = "Register Revision Course";
 }
 
 <div class="min-h-screen bg-background-light dark:bg-background-dark py-12 px-4">
     <div class="max-w-2xl mx-auto bg-surface-dark border border-slate-800 rounded-2xl p-8 shadow-2xl">
 
         <div class="text-center mb-10">
-            <h2 class="text-3xl font-bold text-white">Đăng ký lớp ôn thi</h2>
-            <p class="text-slate-400 mt-2">Chọn gói ôn và điền thông tin cá nhân</p>
+            <h2 class="text-3xl font-bold text-white">Register Revision Course</h2>
+            <p class="text-slate-400 mt-2">Choose a package and fill in your personal information</p>
         </div>
 
         <form asp-action="Register" method="post" class="space-y-6">
@@ -21,23 +21,23 @@
                  class="bg-red-500/10 border border-red-500/40 rounded-lg p-3 text-red-500 text-sm">
             </div>
 
-            <!-- GÓI ÔN -->
+            <!-- REVISION PACKAGE -->
             <div>
-                <label class="text-slate-300 mb-2 block">Gói ôn thi</label>
+                <label class="text-slate-300 mb-2 block">Revision Package</label>
                 <select asp-for="RevisionPackageId"
                         asp-items="@(new SelectList(ViewBag.RevisionPackages, "Id", "Title"))"
                         class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-white">
-                    <option value="">-- Chọn gói ôn --</option>
+                    <option value="">-- Select a package --</option>
                 </select>
                 <span asp-validation-for="RevisionPackageId" class="text-red-500 text-xs"></span>
             </div>
 
             <!-- FULL NAME -->
             <div>
-                <label asp-for="FullName" class="text-slate-300 mb-2 block">Họ và tên</label>
+                <label asp-for="FullName" class="text-slate-300 mb-2 block">Full Name</label>
                 <input asp-for="FullName"
                        class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-white"
-                       placeholder="Nguyễn Văn A" />
+                       placeholder="John Doe" />
                 <span asp-validation-for="FullName" class="text-red-500 text-xs"></span>
             </div>
 
@@ -51,7 +51,7 @@
                 </div>
 
                 <div>
-                    <label asp-for="PhoneNumber" class="text-slate-300 mb-2 block">Số điện thoại</label>
+                    <label asp-for="PhoneNumber" class="text-slate-300 mb-2 block">Phone Number</label>
                     <input asp-for="PhoneNumber"
                            class="w-full bg-background-dark border border-slate-700 rounded-lg px-4 py-3 text-white" />
                     <span asp-validation-for="PhoneNumber" class="text-red-500 text-xs"></span>
@@ -60,7 +60,7 @@
 
             <button type="submit"
                     class="w-full bg-primary text-background-dark font-bold py-3 rounded-lg hover:opacity-90">
-                Đăng ký & Thanh toán
+                Register & Pay
             </button>
         </form>
     </div>

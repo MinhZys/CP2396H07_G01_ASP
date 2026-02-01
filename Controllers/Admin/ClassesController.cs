@@ -143,19 +143,19 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 // Check dependencies
                 if (await _context.Guests.AnyAsync(g => g.ClassId == id))
                 {
-                    TempData["Error"] = "Không thể xóa lớp học này vì vẫn còn Khách (Guests) được gán vào lớp.";
+                    TempData["Error"] = "Cannot delete this class because there are still guests assigned to it.";
                     return RedirectToAction(nameof(Index));
                 }
 
                 if (await _context.Assignments.AnyAsync(a => a.ClassId == id))
                 {
-                    TempData["Error"] = "Không thể xóa lớp học này vì vẫn còn Bài tập (Assignments) được giao cho lớp.";
+                    TempData["Error"] = "Cannot delete this class because there are still assignments assigned to it.";
                     return RedirectToAction(nameof(Index));
                 }
 
                 if (await _context.Enrollments.AnyAsync(e => e.ClassId == id))
                 {
-                    TempData["Error"] = "Không thể xóa lớp học này vì vẫn còn Học viên đăng ký (Enrollments).";
+                    TempData["Error"] = "Cannot delete this class because there are still student enrollments.";
                     return RedirectToAction(nameof(Index));
                 }
 
