@@ -1,19 +1,21 @@
 @model int
 
 <li class="nav-item dropdown">
-    <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-bell-fill" style="font-size: 1.2rem; position: relative;">
+    <a class="nav-link d-flex align-items-center justify-content-center p-2" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="material-symbols-outlined text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-2xl relative leading-none">
+            notifications
             @if (Model > 0)
             {
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
-                    @Model
-                    <span class="visually-hidden">unread messages</span>
+                <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 text-[10px] items-center justify-center text-white font-bold">
+                        @Model
+                    </span>
                 </span>
             }
-        </i>
+        </span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
-        <li><h6 class="dropdown-header">Thông báo</h6></li>
-        <li><a class="dropdown-item" href="/Notifications">Xem tất cả thông báo</a></li>
+        <a class="dropdown-item" href="/Notifications">Notification</a>
     </ul>
-</li>
+</li>   

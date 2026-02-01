@@ -80,31 +80,6 @@ public class GuestRegistrationController : Controller
             return View(vm);
         }
 
-        // Role Guest
-        var guestRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Guest");
-        if (guestRole == null) return BadRequest("Role 'Guest' chưa có trong DB.");
-
-        // Upsert User theo Email
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == vm.Email);
-        if (user == null)
-        {
-            user = new User
-            {
-                Id = Guid.NewGuid().ToString(),
-                FullName = vm.FullName,
-                Email = vm.Email,
-                Password = "123", // TODO hash
-                IsActive = true,
-                RoleId = guestRole.Id
-            };
-            _context.Users.Add(user);
-        }
-        else
-        {
-            user.FullName = vm.FullName;
-            if (user.RoleId == string.Empty) user.RoleId = guestRole.Id;
-        }
-
         // Create Guest
         var guest = new Guest
         {
@@ -116,7 +91,7 @@ public class GuestRegistrationController : Controller
             Address = vm.Address,
             SelectedEntranceExamId = vm.SelectedEntranceExamId,
             ClassId = vm.ClassId,
-            UserId = user.Id,
+            UserId = null,
             Status = GuestRegistrationStatus.PendingPayment,
             CreatedAt = DateTime.Now
         };

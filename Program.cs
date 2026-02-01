@@ -39,6 +39,13 @@ builder.Services.AddControllersWithViews()
         options.AreaViewLocationFormats.Add("/Views/{2}/{1}/{0}.cshtml");
         options.AreaViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
     });
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 //Configuration Login Google Account
 builder.Services.AddAuthentication(options =>
 {
@@ -73,6 +80,8 @@ app.UseCookiePolicy(new CookiePolicyOptions
 });
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();

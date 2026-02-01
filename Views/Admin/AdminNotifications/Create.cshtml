@@ -1,0 +1,122 @@
+@{
+    ViewData["Title"] = "Gửi thông báo hệ thống";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <div class="d-flex align-items-center">
+                        <div class="p-2 bg-primary bg-opacity-10 rounded-3 me-3">
+                            <i class="fas fa-bullhorn text-primary fs-4"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-bold">Gửi thông báo mới</h4>
+                            <p class="text-muted small mb-0">Thông báo này sẽ được gửi đến tất cả người dùng trong hệ thống.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Người nhận</label>
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="form-check form-check-inline p-3 border rounded bg-light">
+                                    <input class="form-check-input" type="checkbox" name="selectedRoles" id="roleAll" value="All" checked onchange="toggleRoles(this)">
+                                    <label class="form-check-label fw-bold" for="roleAll">Tất cả mọi người</label>
+                                </div>
+                                <div class="form-check form-check-inline p-3 border rounded">
+                                    <input class="form-check-input role-item" type="checkbox" name="selectedRoles" id="roleInstructor" value="Instructor" onchange="checkCustom(this)">
+                                    <label class="form-check-label" for="roleInstructor">Giảng viên (Instructor)</label>
+                                </div>
+                                <div class="form-check form-check-inline p-3 border rounded">
+                                    <input class="form-check-input role-item" type="checkbox" name="selectedRoles" id="roleStudent" value="Student" onchange="checkCustom(this)">
+                                    <label class="form-check-label" for="roleStudent">Học viên (Student)</label>
+                                </div>
+                                <div class="form-check form-check-inline p-3 border rounded">
+                                    <input class="form-check-input role-item" type="checkbox" name="selectedRoles" id="roleGuest" value="Guest" onchange="checkCustom(this)">
+                                    <label class="form-check-label" for="roleGuest">Khách (Guest)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            function toggleRoles(source) {
+                                const checkboxes = document.querySelectorAll('.role-item');
+                                if (source.checked) {
+                                    checkboxes.forEach(cb => {
+                                        cb.checked = false;
+                                        cb.disabled = true;
+                                        cb.parentElement.classList.add('opacity-50');
+                                    });
+                                } else {
+                                    checkboxes.forEach(cb => {
+                                        cb.disabled = false;
+                                        cb.parentElement.classList.remove('opacity-50');
+                                    });
+                                }
+                            }
+
+                            function checkCustom(source) {
+                                const allCb = document.getElementById('roleAll');
+                                if (source.checked) {
+                                    allCb.checked = false;
+                                }
+                            }
+                            
+                            // Initialize state
+                            document.addEventListener('DOMContentLoaded', () => {
+                                toggleRoles(document.getElementById('roleAll'));
+                            });
+                        </script>
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-semibold">Tiêu đề thông báo</label>
+                            <input type="text" name="title" id="title" required
+                                   class="form-control form-control-lg border-2"
+                                   placeholder="Nhập tiêu đề thông báo...">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="message" class="form-label fw-semibold">Nội dung chi tiết</label>
+                            <textarea name="message" id="message" rows="6" required
+                                      class="form-control border-2"
+                                      placeholder="Nhập nội dung thông báo..."></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 pt-2">
+                            <a asp-action="Index" asp-controller="Dashboard" 
+                               class="btn btn-light px-4 py-2 fw-semibold text-secondary">
+                                Hủy bỏ
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold">
+                                <i class="fas fa-paper-plane me-2"></i> Gửi ngay bây giờ
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 1rem;
+    }
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+    }
+    .btn-primary {
+        border-radius: 0.75rem;
+    }
+    .btn-light {
+        border-radius: 0.75rem;
+    }
+    .bg-opacity-10 {
+        --bs-bg-opacity: 0.1;
+    }
+</style>

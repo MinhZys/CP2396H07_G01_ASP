@@ -1,0 +1,108 @@
+@model IEnumerable<Symphony.Portal.Web.Models.Subject>
+@{
+    ViewData["Title"] = "Subjects";
+    var currentSearch = ViewBag.CurrentSearch as string;
+    var currentSort = ViewBag.CurrentSort as string;
+    var currentPage = (int)ViewBag.CurrentPage;
+    var totalPages = (int)ViewBag.TotalPages;
+}
+
+@section Styles {
+    <style type="text/tailwindcss">
+        .cyber-card {
+            border: 1px solid rgba(0, 200, 255, 0.1);
+            background: #1e2633;
+        }
+        .cyber-card:hover {
+            border-color: #00c8ff;
+            background: rgba(0, 200, 255, 0.05);
+        }
+    </style>
+}
+
+<header class="py-12 border-b border-slate-200 dark:border-slate-800 bg-white/5 -mx-6 md:-mx-8 px-6 md:px-8 mb-8">
+    <div class="max-w-[1600px] mx-auto">
+        <h1 class="font-display text-4xl font-bold mb-2">Explore <span class="text-primary">Subjects</span></h1>
+        <p class="text-slate-400 max-w-2xl">Discover the fundamental building blocks of our curriculum.</p>
+    </div>
+</header>
+
+<div class="max-w-[1600px] mx-auto px-6 md:px-0">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        @* Search Form *@
+        <form method="get" action="@Url.Action("Index")" class="w-full md:w-96">
+            <div class="relative">
+                <input type="text" name="searchString" value="@currentSearch" placeholder="Search subjects..." 
+                       class="w-full bg-surface-dark border border-slate-700 rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-primary focus:border-primary placeholder-slate-500 text-slate-200" />
+                <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-500 text-lg">search</span>
+                <input type="hidden" name="sort" value="@currentSort" />
+            </div>
+        </form>
+
+        @* Sorting *@
+        <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase text-slate-500">Sort By:</span>
+            <form method="get" action="@Url.Action("Index")">
+                <input type="hidden" name="searchString" value="@currentSearch" />
+                <select name="sort" class="bg-surface-dark border-none text-sm rounded-lg focus:ring-primary py-1 pr-8" onchange="this.form.submit()">
+                    <!option value="Name: A to Z" @(currentSort == "Name: A to Z" ? "selected" : "")>Name: A to Z</!option>
+                    <!option value="Name: Z to A" @(currentSort == "Name: Z to A" ? "selected" : "")>Name: Z to A</!option>
+                    <!option value="Study Time: Low to High" @(currentSort == "Study Time: Low to High" ? "selected" : "")>Study Time: Low to High</!option>
+                    <!option value="Study Time: High to Low" @(currentSort == "Study Time: High to Low" ? "selected" : "")>Study Time: High to Low</!option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-20">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-800 mb-4">
+                <span class="material-symbols-outlined text-3xl text-slate-500">school</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-400">No subjects found</h3>
+            <p class="text-slate-500 text-sm">Try adjusting your search terms.</p>
+        </div>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @foreach (var item in Model)
+            {
+                <div class="cyber-card rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1 cursor-pointer" onclick="window.location.href='@Url.Action("Details", "Subjects", new { id = item.Id })'">
+                    <div class="relative aspect-video overflow-hidden">
+                        <div class="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500" 
+                             style="background-image: url('@(string.IsNullOrEmpty(item.Image) ? "https://placeholder.pics/svg/400" : item.Image)');"></div>
+                        <div class="absolute top-3 left-3 bg-background-dark/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary uppercase">Subject</div>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-2">
+                            <h3 class="font-display font-bold text-base group-hover:text-primary transition-colors leading-tight">@item.Name</h3>
+                        </div>
+                        
+                        <p class="text-slate-400 text-xs mb-4 line-clamp-2">@item.Description</p>
+                        
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-800/50">
+                            <div class="flex items-center gap-1" title="Study Time">
+                                <span class="material-symbols-outlined text-primary text-sm">schedule</span>
+                                <span class="text-xs text-slate-300">@item.StudyTime hours</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @* Pagination *@
+        <div class="mt-12 flex justify-center gap-2">
+            @if (totalPages > 1) {
+                for (int i = 1; i <= totalPages; i++) {
+                     <a href="@Url.Action("Index", new { page = i, sort = currentSort, searchString = currentSearch })" 
+                        class="w-10 h-10 rounded-lg flex items-center justify-center border border-slate-800 @(i == currentPage ? "bg-surface-dark text-primary" : "hover:bg-white/5 transition-colors")">
+                        @i
+                     </a>
+                }
+            }
+        </div>
+    }
+</div>

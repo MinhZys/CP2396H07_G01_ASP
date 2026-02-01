@@ -70,6 +70,7 @@
                  <!-- DesktopNav Links -->
                 <div class="hidden md:flex items-center gap-6 text-sm font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 mr-4">
                     <a class="hover:text-primary transition-colors" asp-controller="Home" asp-action="Index" data-i18n="nav.home">Home</a>
+                    <a class="hover:text-primary transition-colors" asp-controller="Subjects" asp-action="Index">Subjects</a>
                     <a class="hover:text-primary transition-colors"
                        asp-controller="Guests"
                        asp-action="Register"
@@ -153,6 +154,10 @@
                                          <a asp-area="Admin" asp-controller="ExamPapers" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
                                             <span class="material-symbols-outlined text-lg">description</span>
                                             Exam Papers
+                                        </a>
+                                        <a asp-area="Admin" asp-controller="AdminNotifications" asp-action="Create" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                            <span class="material-symbols-outlined text-lg">campaign</span>
+                                            System Notifications
                                         </a>
                                     }
                                     <a asp-controller="Profile" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">

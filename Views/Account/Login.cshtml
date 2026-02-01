@@ -67,7 +67,7 @@
                     </div>
 
                     <div class="text-sm">
-                        <a href="#" class="font-medium text-primary hover:text-white transition-colors">
+                        <a asp-action="ForgotPassword" class="font-medium text-primary hover:text-white transition-colors">
                             Quên mật khẩu?
                         </a>
                     </div>
@@ -106,7 +106,7 @@
             <div class="mt-6 text-center">
                 <p class="text-sm text-slate-400">
                     Chưa có tài khoản?
-                    <a asp-controller="Account" asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]" class="font-bold text-primary hover:text-white transition-colors">
+                    <a asp-controller="GuestRegistration" asp-action="Create" asp-route-returnUrl="@ViewData["ReturnUrl"]" class="font-bold text-primary hover:text-white transition-colors">
                         Đăng ký ngay
                     </a>
                 </p>
