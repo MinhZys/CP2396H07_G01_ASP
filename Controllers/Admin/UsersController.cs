@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -18,7 +19,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string searchString, string statusFilter)
+        public async Task<IActionResult> Index(string searchString, string statusFilter, int? pageNumber)
         {
             var usersQuery = _context.Users.Include(u => u.Role).AsQueryable();
 
@@ -39,10 +40,11 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 }
             }
 
-            var users = await usersQuery.ToListAsync();
             ViewData["CurrentFilter"] = searchString;
             ViewData["StatusFilter"] = statusFilter;
-            return View(users);
+
+            int pageSize = 10;
+            return View(await PaginatedList<User>.CreateAsync(usersQuery.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         [HttpGet]

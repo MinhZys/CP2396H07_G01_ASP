@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -21,7 +22,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         // =========================
         // INDEX (LIST)
         // =========================
-        public async Task<IActionResult> Index(string? classId)
+        public async Task<IActionResult> Index(string? classId, int? pageNumber)
         {
             var query = _context.ClassAssignments
                 .Include(a => a.Student).ThenInclude(u => u.Role)
@@ -34,8 +35,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 ViewBag.FilterClassId = classId;
             }
 
-            var data = await query.ToListAsync();
-            return View(data);
+            int pageSize = 10;
+            return View(await PaginatedList<ClassAssignment>.CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
 

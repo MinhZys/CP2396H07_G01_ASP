@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace CP2396H07_G01.Controllers.Admin
 {
@@ -19,9 +20,11 @@ namespace CP2396H07_G01.Controllers.Admin
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-            return View(await _context.EntranceExams.ToListAsync());
+            var query = _context.EntranceExams.AsNoTracking();
+            int pageSize = 10;
+            return View(await PaginatedList<EntranceExam>.CreateAsync(query, pageNumber ?? 1, pageSize));
         }
 
         public IActionResult Create()

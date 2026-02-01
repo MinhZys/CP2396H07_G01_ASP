@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -16,10 +17,15 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // GET: Admin/CourseReviews
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-            var reviews = _context.CourseReviews.Include(c => c.Course).Include(c => c.Student);
-            return View(await reviews.ToListAsync());
+            var reviews = _context.CourseReviews
+                .Include(c => c.Course)
+                .Include(c => c.Student)
+                .AsNoTracking();
+
+            int pageSize = 10;
+            return View(await PaginatedList<CourseReview>.CreateAsync(reviews, pageNumber ?? 1, pageSize));
         }
 
         // GET: Admin/CourseReviews/Details/5

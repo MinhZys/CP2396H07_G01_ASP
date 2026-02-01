@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
+using Symphony.Portal.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 
@@ -24,7 +25,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // GET: Admin/Courses
-        public async Task<IActionResult> Index(string searchString, string categoryId, CourseLevel? level)
+        public async Task<IActionResult> Index(string searchString, string categoryId, CourseLevel? level, int? pageNumber)
         {
              var query = _context.Courses
                 .Include(c => c.Category)
@@ -55,7 +56,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
             ViewData["CurrentCategory"] = categoryId;
             ViewData["CurrentLevel"] = level;
 
-            return View(await query.ToListAsync());
+            int pageSize = 10;
+            return View(await PaginatedList<Course>.CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Admin/Courses/Create

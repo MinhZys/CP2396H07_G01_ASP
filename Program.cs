@@ -37,6 +37,7 @@ builder.Services.AddControllersWithViews()
         // Add support for Areas with custom view location
         options.AreaViewLocationFormats.Clear();
         options.AreaViewLocationFormats.Add("/Views/{2}/{1}/{0}.cshtml");
+        options.AreaViewLocationFormats.Add("/Views/{2}/Shared/{0}.cshtml");
         options.AreaViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
     });
 

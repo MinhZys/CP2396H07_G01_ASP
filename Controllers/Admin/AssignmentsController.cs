@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -21,7 +22,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // GET: Admin/Assignments
-        public async Task<IActionResult> Index(string? instructorId, string? classId, string? searchTerm)
+        public async Task<IActionResult> Index(string? instructorId, string? classId, string? searchTerm, int? pageNumber)
         {
             var query = _context.Assignments
                 .Include(a => a.Class)
@@ -47,7 +48,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
             ViewBag.Instructors = new SelectList(_context.Users.Where(u => u.Role.Name == "Instructor"), "Id", "FullName");
             ViewBag.Classes = new SelectList(_context.Classes, "Id", "ClassName");
 
-            return View(await query.OrderByDescending(a => a.CreatedAt).ToListAsync());
+            int pageSize = 10;
+            return View(await PaginatedList<Assignment>.CreateAsync(query.OrderByDescending(a => a.CreatedAt).AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         public IActionResult Create()

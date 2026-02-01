@@ -1,4 +1,4 @@
-@model IEnumerable<Symphony.Portal.Web.Models.EntranceExam>
+@model Symphony.Portal.Web.Models.ViewModels.PaginatedList<Symphony.Portal.Web.Models.EntranceExam>
 
 @{
     ViewData["Title"] = "Entrance Exams Management";
@@ -97,5 +97,6 @@
                 <p class="text-slate-500 mb-0">No entrance exams found.</p>
             </div>
         }
+        <partial name="_Pagination" model="Model" />
     </div>
 </div>

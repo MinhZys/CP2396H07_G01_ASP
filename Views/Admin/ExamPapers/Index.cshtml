@@ -1,4 +1,4 @@
-@model IEnumerable<Symphony.Portal.Web.Models.ExamPaper>
+@model Symphony.Portal.Web.Models.ViewModels.PaginatedList<Symphony.Portal.Web.Models.ExamPaper>
 
 @{
     ViewData["Title"] = "Manage Exam Papers";
@@ -108,4 +108,5 @@
             </div>
         }
     </div>
+    <partial name="_Pagination" model="Model" />
 </div>

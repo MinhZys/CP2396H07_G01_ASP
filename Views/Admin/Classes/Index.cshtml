@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Symphony.Portal.Web.Models.Class>
+﻿@model Symphony.Portal.Web.Models.ViewModels.PaginatedList<Symphony.Portal.Web.Models.Class>
 @using System.Collections.Generic
 
 @{
@@ -106,6 +106,8 @@
         }
     </tbody>
 </table>
+
+<partial name="_Pagination" model="Model" />
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
