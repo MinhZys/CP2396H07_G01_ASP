@@ -35,6 +35,7 @@
                 <th>Date</th>
                 <th>Score</th>
                 <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -60,8 +61,45 @@
                             <span class="badge bg-danger">FAILED</span>
                         }
                     </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="sendEmail('@item.Id', this)">
+                            <i class="bi bi-envelope"></i> Send Email
+                        </button>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+    <script>
+        function sendEmail(id, btn) {
+            if (!confirm('Are you sure you want to send the result to the student via email?')) {
+                return;
+            }
+
+            // Disable button and show loading state
+            var originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+
+            $.post('/Admin/ExamResults/SendResultEmail', { id: id })
+                .done(function (data) {
+                    if (data.success) {
+                        alert(data.message);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .fail(function () {
+                    alert('An error occurred while sending the email.');
+                })
+                .always(function () {
+                    // Restore button state
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                });
+        }
+    </script>
+}

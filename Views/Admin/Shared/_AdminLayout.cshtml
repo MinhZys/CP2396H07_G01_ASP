@@ -175,6 +175,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ExamResults" ? "active" : "")" asp-area="Admin" asp-controller="ExamResults" asp-action="Index">
+                                <i class="fas fa-poll-h"></i> Exam Results
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link"
                                asp-area="Admin"
                                asp-controller="RevisionPackages"
