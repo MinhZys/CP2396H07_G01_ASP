@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -21,7 +22,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // GET: Admin/Guests
-        public async Task<IActionResult> Index(string status)
+        public async Task<IActionResult> Index(string status, int? pageNumber)
         {
             var query = _context.Guests.AsQueryable();
 
@@ -36,10 +37,22 @@ namespace Symphony.Portal.Web.Controllers.Admin
             }
 
             ViewBag.CurrentStatus = status;
+            
+            int pageSize = 10;
+            var paginatedGuests = await PaginatedList<Guest>.CreateAsync(
+                query.Include(g => g.SelectedEntranceExam)
+                     .Include(g => g.User)
+                     .Include(g => g.Class)
+                     .OrderByDescending(g => g.CreatedAt)
+                     .AsNoTracking(), 
+                pageNumber ?? 1, 
+                pageSize);
+
+            // Fetch classes for modal (all active classes)
             var classes = await _context.Classes.Include(c => c.ClassCategory).ToListAsync();
             ViewBag.Classes = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(classes, "Id", "ClassName");
             
-            // Calculate remaining seats for modal
+            // Calculate remaining seats for modal using projection for efficiency
             var classesWithSeats = classes.Select(c => new 
             {
                 c.Id,
@@ -53,13 +66,9 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 )
             }).ToList();
 
-            ViewBag.ClassesList = classesWithSeats; // Pass projected object for JS
-            return View(await query
-                .Include(g => g.SelectedEntranceExam)
-                .Include(g => g.User)
-                .Include(g => g.Class) // Include Class for display
-                .OrderByDescending(g => g.CreatedAt)
-                .ToListAsync());
+            ViewBag.ClassesList = classesWithSeats;
+            
+            return View(paginatedGuests);
         }
 
         // POST: Admin/Guests/Approve/5

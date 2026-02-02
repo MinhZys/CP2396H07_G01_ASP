@@ -1,0 +1,65 @@
+@model dynamic
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    var pageIndex = Model.PageIndex;
+    var totalPages = Model.TotalPages;
+}
+
+<div class="d-flex justify-content-between align-items-center mt-4">
+    <div class="text-muted">
+        Page @pageIndex of @totalPages
+    </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination mb-0">
+            <li class="page-item @prevDisabled">
+                <a class="page-link" 
+                   asp-action="Index" 
+                   asp-route-pageNumber="@(pageIndex - 1)"
+                   asp-route-searchString="@ViewData["CurrentFilter"]"
+                   asp-route-statusFilter="@ViewData["StatusFilter"]">
+                    Previous
+                </a>
+            </li>
+
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                if (i == pageIndex)
+                {
+                    <li class="page-item active">
+                        <span class="page-link">@i</span>
+                    </li>
+                }
+                else if (i <= 3 || i > totalPages - 3 || (i >= pageIndex - 1 && i <= pageIndex + 1))
+                {
+                    <li class="page-item">
+                        <a class="page-link" 
+                           asp-action="Index" 
+                           asp-route-pageNumber="@i"
+                           asp-route-searchString="@ViewData["CurrentFilter"]"
+                           asp-route-statusFilter="@ViewData["StatusFilter"]">
+                            @i
+                        </a>
+                    </li>
+                }
+                else if (i == 4 || i == totalPages - 3)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+            }
+
+            <li class="page-item @nextDisabled">
+                <a class="page-link" 
+                   asp-action="Index" 
+                   asp-route-pageNumber="@(pageIndex + 1)"
+                   asp-route-searchString="@ViewData["CurrentFilter"]"
+                   asp-route-statusFilter="@ViewData["StatusFilter"]">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

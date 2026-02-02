@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -21,7 +22,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
         // --- Question Management ---
 
-        public async Task<IActionResult> Questions(string? subjectId, string? search)
+        public async Task<IActionResult> Questions(string? subjectId, string? search, int? pageNumber)
         {
             var query = _context.Questions.Include(q => q.Subject).AsQueryable();
 
@@ -36,7 +37,11 @@ namespace Symphony.Portal.Web.Controllers.Admin
             }
 
             ViewBag.Subjects = await _context.Subjects.ToListAsync();
-            return View(await query.ToListAsync());
+            ViewData["SubjectId"] = subjectId;
+            ViewData["Search"] = search;
+
+            int pageSize = 10;
+            return View(await PaginatedList<Question>.CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         public IActionResult CreateQuestion()
@@ -115,13 +120,15 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
         // --- Exam Paper Management ---
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-            var papers = await _context.ExamPapers
+            var papersQuery = _context.ExamPapers
                 .Include(p => p.Subject)
                 .Include(p => p.ExamPaperQuestions)
-                .ToListAsync();
-            return View(papers);
+                .AsNoTracking();
+            
+            int pageSize = 10;
+            return View(await PaginatedList<ExamPaper>.CreateAsync(papersQuery, pageNumber ?? 1, pageSize));
         }
 
         public async Task<IActionResult> CreatePaper()

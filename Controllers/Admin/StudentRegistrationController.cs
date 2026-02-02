@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -21,13 +22,16 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // GET: Admin/StudentRegistration
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-            return View(await _context.StudentRegistrations
+            var query = _context.StudentRegistrations
                 .Include(r => r.Course)
                 .Include(r => r.Center)
                 .OrderByDescending(r => r.RegisteredAt)
-                .ToListAsync());
+                .AsNoTracking();
+            
+            int pageSize = 10;
+            return View(await PaginatedList<StudentRegistration>.CreateAsync(query, pageNumber ?? 1, pageSize));
         }
 
         // GET: Admin/StudentRegistration/Details/5

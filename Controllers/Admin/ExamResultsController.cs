@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -20,7 +21,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // GET: Admin/ExamResults
-        public async Task<IActionResult> Index(string examId)
+        public async Task<IActionResult> Index(string examId, int? pageNumber)
         {
             var query = _context.ExamResults
                 .Include(r => r.Student)
@@ -35,7 +36,11 @@ namespace Symphony.Portal.Web.Controllers.Admin
             ViewBag.EntranceExams = await _context.EntranceExams.ToListAsync();
             ViewBag.SelectedExamId = examId;
 
-            return View(await query.OrderByDescending(r => r.ExamDate).ToListAsync());
+            int pageSize = 10;
+            return View(await PaginatedList<ExamResult>.CreateAsync(
+                query.OrderByDescending(r => r.ExamDate).AsNoTracking(), 
+                pageNumber ?? 1, 
+                pageSize));
         }
 
         [HttpPost]

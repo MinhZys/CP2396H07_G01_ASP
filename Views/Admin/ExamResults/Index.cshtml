@@ -1,4 +1,4 @@
-@model IEnumerable<Symphony.Portal.Web.Models.ExamResult>
+@model Symphony.Portal.Web.Models.ViewModels.PaginatedList<Symphony.Portal.Web.Models.ExamResult>
 
 @{
     ViewData["Title"] = "Exam Results";
@@ -71,6 +71,8 @@
         </tbody>
     </table>
 </div>
+
+<partial name="_Pagination" model="Model" />
 
 @section Scripts {
     <script>

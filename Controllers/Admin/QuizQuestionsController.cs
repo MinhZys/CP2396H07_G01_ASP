@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -17,7 +18,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // GET: Admin/QuizQuestions
-        public async Task<IActionResult> Index(string quizId)
+        public async Task<IActionResult> Index(string quizId, int? pageNumber)
         {
             var questions = _context.QuizQuestions.Include(q => q.Quiz).AsQueryable();
             
@@ -27,7 +28,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 ViewData["CurrentQuizId"] = quizId;
             }
 
-            return View(await questions.ToListAsync());
+            int pageSize = 10;
+            return View(await PaginatedList<QuizQuestion>.CreateAsync(questions.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Admin/QuizQuestions/Details/5

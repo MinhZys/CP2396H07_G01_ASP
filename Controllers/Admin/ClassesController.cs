@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -20,15 +21,18 @@ namespace Symphony.Portal.Web.Controllers.Admin
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-            var classes = await _context.Classes
+            var classesQuery = _context.Classes
                 .Include(c => c.ClassCategory)
-                .ToListAsync();
+                .AsNoTracking();
 
-            // Remaining seats (your current logic)
+            int pageSize = 10;
+            var paginatedClasses = await PaginatedList<Class>.CreateAsync(classesQuery, pageNumber ?? 1, pageSize);
+
+            // Remaining seats calculation for CURRENT PAGE only
             var remainingSeats = new Dictionary<string, int>();
-            foreach (var cls in classes)
+            foreach (var cls in paginatedClasses)
             {
                 var approvedGuests = await _context.Guests.CountAsync(g => g.ClassId == cls.Id && g.Status == GuestRegistrationStatus.Approved);
                 var enrollments = await _context.Enrollments.CountAsync(e => e.ClassId == cls.Id);
@@ -37,15 +41,17 @@ namespace Symphony.Portal.Web.Controllers.Admin
             }
             ViewBag.ClassRemainingSeats = remainingSeats;
 
-            // ✅ NEW: assigned student count per class (ClassAssignment)
+            // ✅ assigned student count per class for CURRENT PAGE only
+            var classIds = paginatedClasses.Select(c => c.Id).ToList();
             var assignedCounts = await _context.ClassAssignments
+                .Where(a => classIds.Contains(a.ClassId))
                 .GroupBy(a => a.ClassId)
                 .Select(g => new { ClassId = g.Key, Count = g.Count() })
                 .ToDictionaryAsync(x => x.ClassId, x => x.Count);
 
             ViewBag.ClassAssignedCounts = assignedCounts;
 
-            return View(classes);
+            return View(paginatedClasses);
         }
 
 

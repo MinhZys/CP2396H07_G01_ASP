@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Symphony.Portal.Web.Models.Payment>
+﻿@model Symphony.Portal.Web.Models.ViewModels.PaginatedList<Symphony.Portal.Web.Models.Payment>
 @using Symphony.Portal.Web.Models.Enums
 
 @{
@@ -131,6 +131,7 @@
                 </tbody>
             </table>
         </div>
+        <partial name="_Pagination" model="Model" />
     </div>
 </div>
 

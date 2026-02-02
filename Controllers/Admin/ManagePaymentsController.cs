@@ -5,6 +5,7 @@ using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -26,7 +27,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
         public async Task<IActionResult> Index(
             string? searchString,
             PaymentStatus? status,
-            PaymentMethod? method)
+            PaymentMethod? method,
+            int? pageNumber)
         {
             var query = _context.Payments
                 .Include(p => p.Student)
@@ -61,9 +63,11 @@ namespace Symphony.Portal.Web.Controllers.Admin
             ViewData["CurrentStatus"] = status;
             ViewData["CurrentMethod"] = method;
 
-            return View(await query
-                .OrderByDescending(p => p.PaymentDate)
-                .ToListAsync());
+            int pageSize = 10;
+            return View(await PaginatedList<Payment>.CreateAsync(
+                query.OrderByDescending(p => p.PaymentDate).AsNoTracking(), 
+                pageNumber ?? 1, 
+                pageSize));
         }
 
         // =========================

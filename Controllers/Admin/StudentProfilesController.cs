@@ -20,38 +20,27 @@ namespace Symphony.Portal.Web.Controllers.Admin
             _environment = environment;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-            var students = await _context.Users
-                .Where(u => u.Role.Name == "Student")
-                .ToListAsync();
+            var query = from u in _context.Users.Where(u => u.Role.Name == "Student")
+                        join p in _context.StudentProfiles on u.Id equals p.UserId into profileJoin
+                        from subProfile in profileJoin.DefaultIfEmpty()
+                        orderby u.FullName
+                        select new ProfileVM
+                        {
+                            UserId = u.Id,
+                            FullName = u.FullName,
+                            Email = u.Email,
+                            Role = "Student",
+                            DateOfBirth = subProfile.DateOfBirth,
+                            Gender = subProfile.Gender ?? "",
+                            PhoneNumber = subProfile.PhoneNumber ?? "",
+                            AddressLine = subProfile.AddressLine ?? "",
+                            AvatarUrl = subProfile.AvatarUrl ?? "",
+                        };
 
-            var studentIds = students.Select(u => u.Id).ToList();
-            var profiles = await _context.StudentProfiles
-                .Where(p => studentIds.Contains(p.UserId))
-                .ToListAsync();
-
-            var modelList = new List<ProfileVM>();
-
-            foreach (var student in students)
-            {
-                var profile = profiles.FirstOrDefault(p => p.UserId == student.Id);
-                modelList.Add(new ProfileVM
-                {
-                    UserId = student.Id,
-                    FullName = student.FullName,
-                    Email = student.Email,
-                    Role = "Student",
-                    // Profile fields
-                    DateOfBirth = profile?.DateOfBirth,
-                    Gender = profile?.Gender ?? "",
-                    PhoneNumber = profile?.PhoneNumber ?? "",
-                    AddressLine = profile?.AddressLine ?? "",
-                    AvatarUrl = profile?.AvatarUrl ?? "",
-                });
-            }
-
-            return View(modelList);
+            int pageSize = 10;
+            return View(await PaginatedList<ProfileVM>.CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         [HttpGet]
