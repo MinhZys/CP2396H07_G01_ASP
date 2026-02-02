@@ -14,8 +14,8 @@ namespace Symphony.Portal.Web.Controllers
             _context = context;
         }
 
-        // /about
-        [Route("about")]
+        // /page/about-us
+        [Route("page/about-us")]
         public async Task<IActionResult> Index()
         {
             var about = await _context.PageContents

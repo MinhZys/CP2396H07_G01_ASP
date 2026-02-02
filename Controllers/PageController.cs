@@ -13,12 +13,6 @@ namespace Symphony.Portal.Web.Controllers
             _context = context;
         }
 
-        // Redirect old About page to new /about (SEO-safe)
-        [Route("page/about-us")]
-        public IActionResult AboutRedirect()
-        {
-            return RedirectToActionPermanent("Index", "About");
-        }
 
         // /page/{slug}
         [Route("page/{slug}")]
