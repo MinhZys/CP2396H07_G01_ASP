@@ -19,16 +19,21 @@ namespace Symphony.Portal.Web.Models
         [Required]
         public string Content { get; set; } = string.Empty;
 
-        public DateTime LastUpdated { get; set; }
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
         public string? SubjectId { get; set; }
-        
+
         [ForeignKey("SubjectId")]
         public Subject? Subject { get; set; }
 
         public string? CenterId { get; set; }
-        
+
         [ForeignKey("CenterId")]
         public Center? Center { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
+        public string? FeaturedImage { get; set; }
+        public ICollection<PageImage> Images { get; set; } = new List<PageImage>();
     }
 }
