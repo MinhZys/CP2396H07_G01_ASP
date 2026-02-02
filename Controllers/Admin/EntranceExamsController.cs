@@ -40,6 +40,7 @@ namespace CP2396H07_G01.Controllers.Admin
             if (ModelState.IsValid)
             {
                 entranceExam.Id = Guid.NewGuid().ToString();
+                _context.EntranceExams.Add(entranceExam);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Entrance exam created successfully!";
                 return RedirectToAction(nameof(Index));
@@ -69,6 +70,7 @@ namespace CP2396H07_G01.Controllers.Admin
             {
                 try
                 {
+                    _context.Update(entranceExam);
                     await _context.SaveChangesAsync();
                     TempData["Success"] = "Entrance exam updated successfully!";
                 }

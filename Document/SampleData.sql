@@ -1,7 +1,3 @@
--- =============================================
--- SAMPLE DATA FOR SYMPHONY PORTAL (FIXED)
--- =============================================
-
 -- 1. ADD MORE CERTIFICATES (Total 5)
 INSERT INTO [Certificates] ([Id], [Name], [Description], [IsActive]) VALUES
 (NEWID(), N'PHP Web Development', N'Advanced PHP and Laravel certificate', 1),
@@ -141,12 +137,7 @@ INSERT INTO [Classes] ([Id], [ClassName], [ClassCategoryId], [NumberOfSeats], [S
 (CAST(NEWID() AS NVARCHAR(36)), N'JAVA-ENT-004', @ClsCat3, 25, '1', GETDATE()),
 (CAST(NEWID() AS NVARCHAR(36)), N'CYBER-SEC-005', @ClsCat4, 40, '1', GETDATE());
 
--- 8. TEACHER ASSIGNMENTS (5 Assignments)
-INSERT INTO [Assignments] ([Id], [Title], [ClassId], [InstructorId], [AssignmentType], [Status], [CreatedAt]) 
-SELECT TOP 5 CAST(NEWID() AS NVARCHAR(36)), 'Module Instruction', c.Id, u.Id, 'Teaching', 'Active', GETDATE()
-FROM Classes c, Users u
-WHERE u.RoleId = '2'
-ORDER BY NEWID();
+
 
 -- 9. COURSE REVIEWS (5/Course = 25 total)
 INSERT INTO [CourseReviews] ([Id], [CourseId], [StudentId], [Rating], [ReviewText], [ReviewDate], [IsApproved])
