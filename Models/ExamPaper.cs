@@ -26,7 +26,7 @@ namespace Symphony.Portal.Web.Models
 
         public virtual ICollection<ExamPaperQuestion> ExamPaperQuestions { get; set; } = new List<ExamPaperQuestion>();
 
-        // ✅ NEW: sessions làm bài của học viên theo đề này
+        // ✅ NEW: sessions làm bài của học viên theo đề nà
         public virtual ICollection<StudentExamSession> StudentExamSessions { get; set; }
             = new List<StudentExamSession>();
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
@@ -6,8 +7,10 @@ using Symphony.Portal.Web.ViewModels.Schedule;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
-    [Route("admin/class-schedules")]
-    public class ClassSchedulesController : Controller
+[Area("Admin")]
+[Authorize(Roles = "Admin")]
+[Route("admin/class-schedules")]
+public class ClassSchedulesController : Controller
     {
         private readonly AppDbContext _context;
 

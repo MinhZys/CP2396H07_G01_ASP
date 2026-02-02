@@ -74,7 +74,7 @@
                 </a>
             </li>
 
-            <h6 class="sidebar-heading">ACADEMIC</h6>
+            <li class="sidebar-heading">ACADEMIC</li>
 
             <li class="nav-item">
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Categories" ? "active" : "")"
@@ -125,6 +125,14 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ClassSchedules" ? "active" : "")"
+                   asp-area="Admin" asp-controller="ClassSchedules" asp-action="Index">
+                    <i class="fas fa-calendar-alt nav-icon"></i>
+                    <span class="nav-text">Class Schedules</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Assignments" ? "active" : "")"
                    asp-area="Admin" asp-controller="Assignments" asp-action="Index">
                     <i class="fas fa-tasks nav-icon"></i>
@@ -140,13 +148,21 @@
                 </a>
             </li>
 
-            <h6 class="sidebar-heading">ADMISSIONS & USERS</h6>
+            <li class="sidebar-heading">ADMISSIONS & USERS</li>
 
             <li class="nav-item">
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "EntranceExams" ? "active" : "")"
                    asp-area="Admin" asp-controller="EntranceExams" asp-action="Index">
                     <i class="fas fa-file-signature nav-icon"></i>
                     <span class="nav-text" data-i18n="nav.entrance_exams">Entrance Exams</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ExamResults" ? "active" : "")"
+                   asp-area="Admin" asp-controller="ExamResults" asp-action="Index">
+                    <i class="fas fa-poll nav-icon"></i>
+                    <span class="nav-text" data-i18n="nav.exam_results">Exam Results</span>
                 </a>
             </li>
 
@@ -174,7 +190,7 @@
                 </a>
             </li>
 
-            <h6 class="sidebar-heading">SYSTEM</h6>
+            <li class="sidebar-heading">SYSTEM</li>
 
             <li class="nav-item">
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CMS" ? "active" : "")"
