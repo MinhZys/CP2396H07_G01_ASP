@@ -453,6 +453,84 @@ entity "RevisionRegistrations" as RevisionRegistrations {
     CreatedAt : datetime2
 }
 
+entity "ClassSchedules" as ClassSchedules {
+    Id : int <<PK, Identity>>
+    --
+    ClassId : nvarchar(36) <<FK>>
+    StartDate : datetime2
+    EndDate : datetime2
+    Status : int
+    IsPublished : bit
+    IsLocked : bit
+    PublishedAt : datetime2
+    PublishedByUserId : nvarchar(36)
+    CreatedAt : datetime2
+    UpdatedAt : datetime2
+}
+
+entity "ClassSessions" as ClassSessions {
+    Id : int <<PK, Identity>>
+    --
+    ClassScheduleId : int <<FK>>
+    SessionDate : datetime2
+    StartTime : time
+    EndTime : time
+    RoomId : int <<FK>>
+    InstructorId : nvarchar(36) <<FK>>
+    SessionType : int
+    Note : nvarchar(500)
+    IsCancelled : bit
+    CancelReason : nvarchar(300)
+    RescheduledFromSessionId : int
+    CreatedAt : datetime2
+    UpdatedAt : datetime2
+}
+
+entity "Rooms" as Rooms {
+    Id : int <<PK, Identity>>
+    --
+    Name : nvarchar(100)
+    Type : int
+    Capacity : int
+    IsActive : bit
+    LocationNote : nvarchar(200)
+    CreatedAt : datetime2
+    UpdatedAt : datetime2
+}
+
+entity "Holidays" as Holidays {
+    Id : int <<PK, Identity>>
+    --
+    Date : datetime2
+    Name : nvarchar(120)
+    IsRecurringAnnual : bit
+    Note : nvarchar(250)
+    IsActive : bit
+    CreatedAt : datetime2
+    UpdatedAt : datetime2
+}
+
+entity "ContactMessages" as ContactMessages {
+    Id : nvarchar(36) <<PK>>
+    --
+    FullName : nvarchar(100)
+    Email : nvarchar(120)
+    CenterId : nvarchar(36) <<FK>>
+    Message : nvarchar(2000)
+    CreatedAt : datetime2
+    IsRead : bit
+}
+
+entity "PageImages" as PageImages {
+    Id : nvarchar(36) <<PK>>
+    --
+    PageContentId : nvarchar(36) <<FK>>
+    ImageUrl : nvarchar(max)
+    SortOrder : int
+    IsFeatured : bit
+    CreatedAt : datetime2
+}
+
 ' Relationships
 Users }-- Roles
 StudentProfiles }-- Users
@@ -509,5 +587,11 @@ Guests }-- Users
 Guests }-- Classes
 RevisionRegistrations }-- RevisionPackages
 RevisionRegistrations }-- Classes
+ClassSchedules }-- Classes
+ClassSessions }-- ClassSchedules
+ClassSessions }-- Rooms
+ClassSessions }-- Users : Instructor
+ContactMessages }-- Centers
+PageImages }-- PageContents
 
 @enduml
