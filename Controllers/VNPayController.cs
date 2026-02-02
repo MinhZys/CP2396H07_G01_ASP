@@ -110,14 +110,17 @@ public class VNPayController : Controller
                 txn.Payment.Guest.Status = GuestRegistrationStatus.PaidPendingApproval;
 
             // ✅ Nếu thanh toán COURSE (hoặc SUBJECT) thành công -> nâng role Guest -> Student
+            // LƯU Ý: Tạm thời giữ logic này theo thiết kế hiện tại, nhưng nên được Admin duyệt hoặc dựa trên kết quả thi.
             if (txn.Payment.Purpose == PaymentPurpose.Course || txn.Payment.Purpose == PaymentPurpose.Subject)
             {
                 var studentRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == RoleNames.Student);
                 if (studentRole != null && txn.Payment.Guest?.UserId != null)
                 {
                     var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == txn.Payment.Guest.UserId);
-                    if (user != null)
+                    if (user != null && user.RoleId != studentRole.Id)
+                    {
                         user.RoleId = studentRole.Id;
+                    }
                 }
             }
         }

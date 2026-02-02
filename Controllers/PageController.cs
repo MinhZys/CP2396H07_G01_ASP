@@ -16,7 +16,7 @@ namespace Symphony.Portal.Web.Controllers
 
         // /page/{slug}
         [Route("page/{slug}")]
-        public async Task<IActionResult> View(string slug)
+        public async Task<IActionResult> Details(string slug)
         {
             slug = (slug ?? string.Empty).Trim().ToLowerInvariant();
 

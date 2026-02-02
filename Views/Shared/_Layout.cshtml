@@ -70,16 +70,22 @@
             <div class="flex items-center gap-4">
                 <!-- DesktopNav Links -->
                 <div class="hidden md:flex items-center gap-6 text-sm font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 mr-4">
-                    <a class="hover:text-primary transition-colors"
-                       asp-controller="Guests"
-                       asp-action="Register"
-                       data-i18n="nav.entranceExam">
-                        Entrance Exam
-                    </a>
+                    @if (!User.Identity.IsAuthenticated || (!User.IsInRole("Guest") && !User.IsInRole("Student")))
+                    {
+                        <a class="hover:text-primary transition-colors"
+                           asp-controller="Guests"
+                           asp-action="Register"
+                           data-i18n="nav.entranceExam">
+                            Entrance Exam
+                        </a>
+                    }
 
                     <a class="hover:text-primary transition-colors" asp-controller="Courses" asp-action="Index" data-i18n="nav.courses">Courses</a>
                     <a class="hover:text-primary transition-colors" asp-controller="Subjects" asp-action="Index" data-i18n="nav.subjects">Subjects</a>
-                    <a class="hover:text-primary transition-colors" asp-controller="RevisionGuests" asp-action="Register" data-i18n="nav.revisionCourses">Revision Courses</a>
+                    @if (!User.IsInRole("Student"))
+                    {
+                        <a class="hover:text-primary transition-colors" asp-controller="RevisionGuests" asp-action="Register" data-i18n="nav.revisionCourses">Revision Courses</a>
+                    }
                     <a class="hover:text-primary transition-colors" asp-controller="Mentors" asp-action="Index" data-i18n="nav.mentors">Mentors</a>
                     <a class="hover:text-primary transition-colors" asp-controller="Contact" asp-action="Index" data-i18n="nav.contact">Contact</a>
 
@@ -90,7 +96,7 @@
                        data-i18n="nav.about">About</a>
 
                     @* ✅ Student - My Schedule (Top Nav) *@
-                    @if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
+                    @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Student"))
                     {
                         <a asp-controller="StudySchedule"
                            asp-action="Index"
@@ -144,9 +150,17 @@
                                         {
                                             <span>Instructor</span>
                                         }
-                                        else
+                                        else if (User.IsInRole("Guest"))
+                                        {
+                                            <span>Guest</span>
+                                        }
+                                        else if (User.IsInRole("Student"))
                                         {
                                             <span>Student</span>
+                                        }
+                                        else
+                                        {
+                                            <span>User</span>
                                         }
                                     </p>
                                 </div>

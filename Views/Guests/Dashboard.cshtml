@@ -97,9 +97,9 @@
                                     @{
                                         var now = DateTime.Now;
                                         var examStart = Model.SelectedEntranceExam.ExamDate;
-                                        // Assume default duration 60 mins if paper not linked, or fetch from paper later (using navigation property if included)
-                                        // Since we don't have Duration directly on EntranceExam (it's on ExamPaper), we will rely on just Start Time for now or simple logic
+                                        // Assume default duration 60 mins if paper not linked
                                         var isTime = now >= examStart && now < examStart.AddHours(2); 
+                                        var isEntryOpen = now >= examStart && now <= examStart.AddMinutes(5);
                                         var isCompleted = now > examStart.AddHours(2);
                                         var isUpcoming = now < examStart;
                                     }
@@ -113,11 +113,18 @@
                                                     Upcoming
                                                 </span>
                                             }
-                                            else if (isTime)
+                                            else if (isEntryOpen)
                                             {
                                                 <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-500 text-sm font-bold">
                                                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                                                    In Progress
+                                                    In Progress (Open)
+                                                </span>
+                                            }
+                                            else if (isTime)
+                                            {
+                                                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-500 text-sm font-bold">
+                                                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                                    In Progress (Entry Closed)
                                                 </span>
                                             }
                                             else
@@ -128,11 +135,30 @@
                                             }
                                         </div>
 
-                                        @if (isTime)
+                                        @{
+                                            var hasTaken = results?.Any(r => r.EntranceExamId == Model.SelectedEntranceExamId) ?? false;
+                                        }
+
+                                        @if (isTime && !hasTaken)
                                         {
-                                            <a asp-controller="EntranceExam" asp-action="TakeExam" asp-route-id="@Model.SelectedEntranceExam.Id" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
-                                                <i class="fas fa-play-circle me-2"></i> Vào Thi Ngay
-                                            </a>
+                                            @if (isEntryOpen)
+                                            {
+                                                <a asp-controller="EntranceExam" asp-action="TakeExam" asp-route-id="@Model.SelectedEntranceExam.Id" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+                                                    <i class="fas fa-play-circle me-2"></i> Vào Thi Ngay
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <button disabled class="btn btn-secondary rounded-pill px-4 opacity-75 cursor-not-allowed">
+                                                    <i class="fas fa-lock me-2"></i> Đã hết giờ vào thi
+                                                </button>
+                                            }
+                                        }
+                                        else if (hasTaken)
+                                        {
+                                             <button disabled class="btn btn-success rounded-pill px-4 opacity-75 cursor-default">
+                                                <i class="fas fa-check-circle me-2"></i> Đã hoàn thành
+                                            </button>
                                         }
                                         else if (isUpcoming)
                                         {

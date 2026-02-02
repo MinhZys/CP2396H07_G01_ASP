@@ -100,8 +100,14 @@ namespace Symphony.Portal.Web.Controllers
 
         public async Task<IActionResult> GoogleResponse()
         {
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            var claims = result.Principal?.Identities.FirstOrDefault()?.Claims;
+            // Try to authenticate against the Google/External provider
+            var result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var claims = result.Principal?.Claims;
             var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var fullName = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 
