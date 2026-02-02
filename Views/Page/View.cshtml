@@ -1,0 +1,58 @@
+﻿@model Symphony.Portal.Web.Models.PageContent
+
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "_Layout";
+
+    var content = Model.Content ?? "";
+    var looksLikeHtml = content.Contains("<") && content.Contains(">");
+
+    var images = (Model.Images ?? new List<Symphony.Portal.Web.Models.PageImage>())
+        .OrderBy(x => x.SortOrder)
+        .ToList();
+
+    var featured = images.FirstOrDefault(x => x.IsFeatured) ?? images.FirstOrDefault();
+    var featuredUrl = featured?.ImageUrl ?? Model.FeaturedImage;
+}
+
+<header class="py-12 border-b border-slate-200 dark:border-slate-800 bg-white/5 -mx-6 md:-mx-8 px-6 md:px-8 mb-8">
+    <div class="max-w-[1600px] mx-auto">
+        <h1 class="font-display text-4xl font-bold mb-2">@Model.Title</h1>
+
+        @* Featured *@
+        @if (!string.IsNullOrWhiteSpace(featuredUrl))
+        {
+            <img src="@featuredUrl"
+                 alt="@Model.Title"
+                 class="mt-6 w-full rounded-2xl object-cover"
+                 style="max-height:420px;" />
+        }
+
+        @* Thumbnails *@
+        @if (images.Count > 1)
+        {
+            <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                @foreach (var img in images)
+                {
+                    <img src="@img.ImageUrl"
+                         alt="@Model.Title"
+                         class="w-full rounded-xl object-cover border border-slate-200/60 dark:border-slate-700/60"
+                         style="height:110px;" />
+                }
+            </div>
+        }
+    </div>
+</header>
+
+<div class="max-w-5xl mx-auto space-y-10">
+    @if (looksLikeHtml)
+    {
+        @Html.Raw(content)
+    }
+    else
+    {
+        @Html.Raw(System.Net.WebUtility.HtmlEncode(content)
+                .Replace("\r\n", "\n")
+                .Replace("\n", "<br />"))
+    }
+</div>

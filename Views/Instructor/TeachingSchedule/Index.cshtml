@@ -1,0 +1,61 @@
+﻿@model List<Symphony.Portal.Web.Models.ClassSession>
+
+@{
+    ViewData["Title"] = "Teaching Schedule";
+    Layout = "~/Views/Instructor/Shared/_InstructorLayout.cshtml"; 
+    var from = (DateTime)(ViewBag.From ?? DateTime.Today);
+    var to = (DateTime)(ViewBag.To ?? DateTime.Today.AddDays(6));
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="mb-1">Teaching Schedule</h2>
+        <div class="text-muted small">@from:yyyy-MM-dd → @to:yyyy-MM-dd</div>
+    </div>
+
+    <form method="get" class="d-flex gap-2">
+        <input type="date" name="from" value="@from.ToString("yyyy-MM-dd")" class="form-control" />
+        <input type="date" name="to" value="@to.ToString("yyyy-MM-dd")" class="form-control" />
+        <button class="btn btn-primary" type="submit">Go</button>
+    </form>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Class</th>
+                        <th>Room</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr><td colspan="5" class="text-center text-muted py-4">No sessions in this range.</td></tr>
+                    }
+                    else
+                    {
+                        foreach (var s in Model)
+                        {
+                            <tr>
+                                <td>@s.SessionDate.ToString("yyyy-MM-dd")</td>
+                                <td>@s.StartTime.ToString(@"hh\:mm") - @s.EndTime.ToString(@"hh\:mm")</td>
+                                <td>
+                                    <div class="fw-semibold">@s.ClassSchedule?.ClassId</div>
+                                    <div class="small text-muted">@s.ClassSchedule?.Class?.ClassName</div>
+                                </td>
+                                <td>@(s.Room?.Name ?? "—")</td>
+                                <td><span class="badge bg-secondary">@s.SessionType</span></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
