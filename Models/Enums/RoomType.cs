@@ -5,8 +5,6 @@ namespace Symphony.Portal.Web.Models.Enums
         TheoryRoom,
         LabRoom,
         Online,
-        Any,
-        Classroom = 0,
-        Lab = 1
+        Any
     }
 }
