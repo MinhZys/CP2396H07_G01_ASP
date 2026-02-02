@@ -41,9 +41,5 @@ namespace Symphony.Portal.Web.Models
         public ExamPaper? ExamPaper { get; set; }
 
         public ICollection<ExamPaper> ExamPapers { get; set; } = new List<ExamPaper>();
-
-        public virtual ICollection<StudentExamSession> StudentExamSessions { get; set; }
-            = new List<StudentExamSession>();
-
     }
 }

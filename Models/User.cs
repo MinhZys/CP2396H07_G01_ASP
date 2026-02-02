@@ -26,9 +26,5 @@ namespace Symphony.Portal.Web.Models
         
         [ForeignKey("RoleId")]
         public Role? Role { get; set; }
-
-        public virtual ICollection<StudentExamSession> StudentExamSessions { get; set; }
-            = new List<StudentExamSession>();
-
     }
 }

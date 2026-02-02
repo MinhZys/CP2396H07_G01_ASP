@@ -2,12 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
 
+
 namespace Symphony.Portal.Web.Data
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
         public DbSet<ClassLesson> ClassLessons { get; set; }
         public DbSet<Center> Centers { get; set; }
         public DbSet<Class> Classes { get; set; }
@@ -26,15 +28,10 @@ namespace Symphony.Portal.Web.Data
         public DbSet<StudentRegistration> StudentRegistrations { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<User> Users { get; set; }
+        
         public DbSet<Guest> Guests { get; set; }
 
         // New Models
-        public DbSet<ClassSchedule> ClassSchedules { get; set; }
-        public DbSet<ClassSession> ClassSessions { get; set; }
-        public DbSet<Room> Rooms { get; set; }
-        public DbSet<Holiday> Holidays { get; set; }
-        public DbSet<PageImage> PageImages { get; set; }
-        public DbSet<ContactMessage> ContactMessages { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Quiz> Quizzes { get; set; }
         public DbSet<QuizQuestion> QuizQuestions { get; set; }
@@ -44,7 +41,6 @@ namespace Symphony.Portal.Web.Data
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<StudentProfile> StudentProfiles { get; set; }
         public DbSet<InstructorProfile> InstructorProfiles { get; set; }
-
         // Class Management
         public DbSet<ClassCategory> ClassCategories { get; set; }
         public DbSet<Assignment> Assignments { get; set; }
@@ -58,7 +54,7 @@ namespace Symphony.Portal.Web.Data
         public DbSet<ExamPaperQuestion> ExamPaperQuestions { get; set; }
         public DbSet<StudentExamSession> StudentExamSessions { get; set; }
         public DbSet<StudentAnswer> StudentAnswers { get; set; }
-
+        
         // Payment & VNPay
         public DbSet<VNPayTransaction> VNPayTransactions { get; set; }
 
@@ -66,121 +62,74 @@ namespace Symphony.Portal.Web.Data
         public DbSet<RevisionPackage> RevisionPackages { get; set; }
         public DbSet<RevisionRegistration> RevisionRegistrations { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // =========================
-            // Composite / Index
-            // =========================
+            // Composite Key for ClassLesson
             modelBuilder.Entity<ClassLesson>()
                 .HasIndex(x => new { x.ClassId, x.LessonId })
                 .IsUnique();
 
-            modelBuilder.Entity<CourseSubject>()
-                .HasKey(x => new { x.CourseId, x.SubjectId });
+            // Configure Enums as Strings
+            modelBuilder.Entity<Guest>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
 
-            modelBuilder.Entity<CourseInstructor>()
-                .HasKey(x => new { x.CourseId, x.InstructorId });
+            // Class Category & Classroom Enums
+            // Class Category & Assignment Enums
+            modelBuilder.Entity<Class>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
 
-            // =========================
-            // Enum as string
-            // =========================
-            modelBuilder.Entity<Guest>().Property(x => x.Status).HasConversion<string>();
-            modelBuilder.Entity<Class>().Property(x => x.Status).HasConversion<string>();
-            modelBuilder.Entity<Assignment>().Property(x => x.AssignmentType).HasConversion<string>();
-            modelBuilder.Entity<Assignment>().Property(x => x.Status).HasConversion<string>();
-            modelBuilder.Entity<StudentRegistration>().Property(x => x.Status).HasConversion<string>();
-            modelBuilder.Entity<StudentRegistration>().Property(x => x.Gender).HasConversion<string>();
-            modelBuilder.Entity<Course>().Property(x => x.Level).HasConversion<string>();
-            modelBuilder.Entity<Payment>().Property(x => x.PaymentMethod).HasConversion<string>();
-            modelBuilder.Entity<EntranceExam>().Property(x => x.Status).HasConversion<string>();
-            modelBuilder.Entity<Question>().Property(x => x.Type).HasConversion<string>();
+            modelBuilder.Entity<Assignment>()
+                .Property(e => e.AssignmentType)
+                .HasConversion<string>();
 
-            // =========================
-            // Class Schedule
-            // =========================
-            modelBuilder.Entity<ClassSchedule>()
-                .HasOne(x => x.Class)
-                .WithMany(c => c.ClassSchedules)
-                .HasForeignKey(x => x.ClassId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<ClassSession>()
-                .HasOne(x => x.ClassSchedule)
-                .WithMany(cs => cs.Sessions)
-                .HasForeignKey(x => x.ClassScheduleId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<ClassSession>()
-                .Property(x => x.StartTime)
-                .HasColumnType("time");
-
-            modelBuilder.Entity<ClassSession>()
-                .Property(x => x.EndTime)
-                .HasColumnType("time");
-
-            // =====================================================
-            // ===== EntranceExam -> ExamPaper (selected paper) =====
-            // =====================================================
-            modelBuilder.Entity<EntranceExam>()
-                .HasOne(e => e.ExamPaper)
-                .WithMany(p => p.EntranceExams)
-                .HasForeignKey(e => e.ExamPaperId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            // ===== StudentExamSession (explicit mapping) =====
-            modelBuilder.Entity<StudentExamSession>(b =>
-            {
-                b.HasKey(x => x.Id);
-
-                b.Property(x => x.Status).HasConversion<string>();
-
-                b.HasOne(x => x.Student)
-                    .WithMany(u => u.StudentExamSessions)
-                    .HasForeignKey(x => x.StudentId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                b.HasOne(x => x.ExamPaper)
-                    .WithMany(p => p.StudentExamSessions)
-                    .HasForeignKey(x => x.ExamPaperId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                b.HasOne(x => x.EntranceExam)
-                    .WithMany(e => e.StudentExamSessions)
-                    .HasForeignKey(x => x.EntranceExamId)
-                    .OnDelete(DeleteBehavior.Restrict);
-            });
-
-            // ===== StudentAnswer =====
-            modelBuilder.Entity<StudentAnswer>(b =>
-            {
-                b.HasKey(x => x.Id);
-
-                b.HasOne(x => x.Session)
-                    .WithMany(s => s.Answers)
-                    .HasForeignKey(x => x.SessionId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                b.HasOne(x => x.Question)
-                    .WithMany()
-                    .HasForeignKey(x => x.QuestionId)
-                    .OnDelete(DeleteBehavior.Restrict);
-            });
+            modelBuilder.Entity<Assignment>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
 
 
-            // =========================
-            // One-to-one ExamDetail
-            // =========================
+
             modelBuilder.Entity<StudentRegistration>()
-                .HasOne(x => x.ExamDetail)
-                .WithOne(e => e.StudentRegistration)
-                .HasForeignKey<ExamDetail>(x => x.RegistrationId);
+                .Property(e => e.Status)
+                .HasConversion<string>();
 
-            // =========================
-            // Seeding
-            // =========================
+            modelBuilder.Entity<StudentRegistration>()
+                .Property(e => e.Gender)
+                .HasConversion<string>();
 
+            modelBuilder.Entity<Course>()
+                .Property(e => e.Level)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Payment>()
+                .Property(e => e.PaymentMethod)
+                .HasConversion<string>();
+
+            // Exam System Enums
+            modelBuilder.Entity<EntranceExam>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Question>()
+                .Property(e => e.Type)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<StudentExamSession>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
+
+             // Composite Key for CourseSubject
+            modelBuilder.Entity<CourseSubject>()
+                .HasKey(cs => new { cs.CourseId, cs.SubjectId });
+
+            // Composite Key for CourseInstructor
+            modelBuilder.Entity<CourseInstructor>()
+                .HasKey(ci => new { ci.CourseId, ci.InstructorId });
+
+            // Seeding Roles
             modelBuilder.Entity<Role>().HasData(
                 new Role { Id = "1", Name = "Admin", Description = "System Administrator" },
                 new Role { Id = "2", Name = "Instructor", Description = "Course Instructor" },
@@ -188,46 +137,50 @@ namespace Symphony.Portal.Web.Data
                 new Role { Id = "4", Name = "Guest", Description = "Prospective Student" }
             );
 
+            // Seeding Users
             modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = "1",
-                    FullName = "System Admin",
-                    Email = "admin@symphony.local",
-                    Password = "admin",
-                    RoleId = "1",
-                    IsActive = true
+                new User 
+                { 
+                    Id = "1", 
+                    FullName = "System Admin", 
+                    Email = "admin@symphony.local", 
+                    Password = "admin", 
+                    RoleId = "1", 
+                    IsActive = true 
                 },
-                new User
-                {
-                    Id = "2",
-                    FullName = "Mr. Teacher",
-                    Email = "teacher@symphony.local",
-                    Password = "123",
-                    RoleId = "2",
-                    IsActive = true
+                new User 
+                { 
+                    Id = "2", 
+                    FullName = "Mr. Teacher", 
+                    Email = "teacher@symphony.local", 
+                    Password = "123", 
+                    RoleId = "2", 
+                    IsActive = true 
                 },
-                new User
-                {
-                    Id = "3",
-                    FullName = "Student One",
-                    Email = "student@symphony.local",
-                    Password = "123",
-                    RoleId = "3",
-                    IsActive = true
+                new User 
+                { 
+                    Id = "3", 
+                    FullName = "Student One", 
+                    Email = "student@symphony.local", 
+                    Password = "123", 
+                    RoleId = "3", 
+                    IsActive = true 
                 }
             );
 
+            // Seed Categories
             modelBuilder.Entity<Category>().HasData(
                 new Category { Id = "1", Name = "Programming", Description = "Software Development Courses" },
                 new Category { Id = "2", Name = "Music", Description = "Music Theory and Instruments" },
                 new Category { Id = "3", Name = "Art", Description = "Visual Arts and Design" }
             );
 
+            // Seed Certificates
             modelBuilder.Entity<Certificate>().HasData(
                 new Certificate { Id = "2", Name = "Professional Certification", Description = "Recognized industry standard certification.", IsActive = true }
             );
 
+            // Seed Class Categories
             modelBuilder.Entity<ClassCategory>().HasData(
                 new ClassCategory { Id = "1", Name = "Theory", Description = "Standard classrooms", IsActive = true },
                 new ClassCategory { Id = "2", Name = "Lab", Description = "Computer labs", IsActive = true },
@@ -239,6 +192,12 @@ namespace Symphony.Portal.Web.Data
                 .HasOne(s => s.ExamDetail)
                 .WithOne(e => e.StudentRegistration)
                 .HasForeignKey<ExamDetail>(e => e.RegistrationId);
+
+            // One-to-many relationship for StudentExamSession
+            modelBuilder.Entity<StudentExamSession>()
+                .HasMany(s => s.Answers)
+                .WithOne(a => a.Session)
+                .HasForeignKey(a => a.SessionId);
         }
     }
 }

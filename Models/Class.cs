@@ -26,9 +26,6 @@ namespace Symphony.Portal.Web.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public ICollection<RevisionRegistration> RevisionRegistrations { get; set; }
-                    = new List<RevisionRegistration>();
-        public ICollection<ClassSchedule> ClassSchedules { get; set; }
-                    = new List<ClassSchedule>();
 
     }
 }

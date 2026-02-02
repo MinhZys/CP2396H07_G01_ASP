@@ -6,115 +6,29 @@
 
 <h2>Edit Page: @Model.Title</h2>
 
-<form asp-action="EditPage"
-      asp-route-id="@Model.Id"
-      method="post"
-      enctype="multipart/form-data">
-
-    @Html.AntiForgeryToken()
-
-    <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="Slug" />
-
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-    <div class="form-group mb-3">
-        <label asp-for="Slug" class="control-label"></label>
-        <input class="form-control" value="@Model.Slug" disabled />
-        <small class="text-muted">Slug is fixed here; change it in database only if necessary.</small>
-    </div>
-
-    <div class="form-group mb-3">
-        <label asp-for="Title" class="control-label"></label>
-        <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
-    </div>
-
-    <div class="form-group mb-3">
-        <label asp-for="Content" class="control-label">Content</label>
-        <textarea asp-for="Content" class="form-control" rows="15"
-                  placeholder="Nhập nội dung bình thường..."></textarea>
-        <span asp-validation-for="Content" class="text-danger"></span>
-    </div>
-
-    <div class="form-group mb-3">
-        <label class="control-label fw-bold">Images (max 10)</label>
-
-        @if (Model.Images != null && Model.Images.Any())
-        {
-            <div class="row g-3 mt-1">
-                @foreach (var img in Model.Images.OrderBy(x => x.SortOrder))
-                {
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                        <div class="border rounded p-2 h-100">
-                            <img src="@img.ImageUrl"
-                                 alt="@Model.Title"
-                                 style="width:100%;height:140px;object-fit:cover;border-radius:10px;" />
-
-                            <div class="d-flex align-items-center justify-content-between mt-2">
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="radio"
-                                           name="featuredImageId"
-                                           value="@img.Id"
-                                    @(img.IsFeatured ? "checked" : "") />
-                                    <label class="form-check-label">Featured</label>
-                                </div>
-
-                                <!-- ✅ KHÔNG lồng form: dùng formaction -->
-                                <button type="submit"
-                                        class="btn btn-sm btn-outline-danger"
-                                        formmethod="post"
-                                        formaction="@Url.Action("DeletePageImage", "CMS", new { area = "Admin", id = Model.Id, imageId = img.Id })"
-                                        onclick="return confirm('Delete this image?');">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                }
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditPage">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Slug" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-
-            <small class="text-muted d-block mt-2">
-                Chọn ảnh Featured để hiển thị trên ManagePages và banner.
-            </small>
-        }
-        else
-        {
-            <div class="text-muted mt-2">No images yet.</div>
-        }
+            
+            <div class="form-group mb-3">
+                <label asp-for="Content" class="control-label">HTML Content</label>
+                <textarea asp-for="Content" class="form-control" rows="15"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+                <small class="form-text text-muted">You can use HTML tags here.</small>
+            </div>
+            
+            <div class="form-group mt-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="ManagePages" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
     </div>
-
-    <div class="form-group mb-3">
-        <label class="control-label">Add more images</label>
-        <input type="file" name="imageFiles" class="form-control" accept="image/*" multiple />
-        <small class="text-muted">Bạn có thể thêm ảnh mới miễn tổng ảnh không vượt quá 10.</small>
-    </div>
-
-    <div class="form-group mb-3">
-        <div class="form-check">
-            <input asp-for="IsActive" class="form-check-input" />
-            <label asp-for="IsActive" class="form-check-label">Publish this page</label>
-        </div>
-    </div>
-
-    <div class="form-group mb-3">
-        <label>Last Updated</label>
-        <input class="form-control"
-               value="@(Model.LastUpdated == DateTime.MinValue ? "-" : Model.LastUpdated.ToString("dd/MM/yyyy HH:mm"))"
-               disabled />
-    </div>
-
-    <div class="form-group mt-4">
-        <button type="submit" class="btn btn-primary">
-            Save Changes
-        </button>
-        <a asp-action="ManagePages" class="btn btn-secondary">
-            Back
-        </a>
-    </div>
-</form>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+</div>
