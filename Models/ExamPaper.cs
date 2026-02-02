@@ -18,13 +18,21 @@ namespace Symphony.Portal.Web.Models
 
         [Display(Name = "Môn học")]
         public string? SubjectId { get; set; }
-        
+
         [ForeignKey("SubjectId")]
         public Subject? Subject { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public virtual ICollection<ExamPaperQuestion> ExamPaperQuestions { get; set; } = new List<ExamPaperQuestion>();
+
+        // ✅ NEW: sessions làm bài của học viên theo đề này
+        public virtual ICollection<StudentExamSession> StudentExamSessions { get; set; }
+            = new List<StudentExamSession>();
+
+        // ✅ NEW: các kỳ thi đang chọn đề này qua EntranceExam.ExamPaperId
+        public virtual ICollection<EntranceExam> EntranceExams { get; set; }
+            = new List<EntranceExam>();
     }
 
     public class ExamPaperQuestion
@@ -33,10 +41,12 @@ namespace Symphony.Portal.Web.Models
         public int Id { get; set; }
 
         public string ExamPaperId { get; set; } = string.Empty;
+
         [ForeignKey("ExamPaperId")]
         public ExamPaper? ExamPaper { get; set; }
 
         public string QuestionId { get; set; } = string.Empty;
+
         [ForeignKey("QuestionId")]
         public Question? Question { get; set; }
 

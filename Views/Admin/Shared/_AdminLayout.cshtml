@@ -1,97 +1,40 @@
+@* Views/Shared/_AdminLayout.cshtml *@
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Symphony Admin</title>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        :root {
-            --sidebar-width: 250px;
-            --header-height: 56px;
-        }
-        body {
-            padding-top: var(--header-height);
-        }
-        .sidebar {
-            width: var(--sidebar-width);
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 100;
-            padding-top: var(--header-height);
-            background-color: #f8f9fa;
-            border-right: 1px solid #dee2e6;
-            overflow-y: auto;
-        }
-        main {
-            margin-left: var(--sidebar-width);
-            padding: 2rem;
-            min-height: calc(100vh - var(--header-height));
-            background-color: #fce4ec; /* Light pink background requested/implied by previous context or just clean white if not specified. Keeping white/light gray usually safer. Let's use light gray for now. */
-            background-color: #fdfdfd; 
-        }
-        
-        /* Sidebar Links */
-        .sidebar .nav-link {
-            font-weight: 500;
-            color: #333;
-            padding: 0.75rem 1rem;
-            border-radius: 0.25rem;
-            margin: 0.2rem 0.5rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-        }
-        .sidebar .nav-link i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
-            color: #6c757d;
-        }
-        .sidebar .nav-link:hover {
-            color: #0d6efd;
-            background-color: rgba(13, 110, 253, 0.1);
-        }
-        .sidebar .nav-link:hover i {
-            color: #0d6efd;
-        }
-        .sidebar .nav-link.active {
-            color: #fff;
-            background-color: #0d6efd;
-        }
-        .sidebar .nav-link.active i {
-            color: #fff;
-        }
-        
-        .sidebar-heading {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-            color: #adb5bd;
-            padding: 0.5rem 1rem;
-            margin-top: 1rem;
-        }
-    </style>
 </head>
+
 <body>
-    <header class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow" style="height: var(--header-height); z-index: 1030;">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#" style="width: var(--sidebar-width);">
-            <i class="fas fa-music me-2"></i> Symphony Admin
-        </a>
-        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+    <!-- Header -->
+    <header class="main-header">
+        <button class="mobile-menu-toggle" type="button" onclick="toggleMobileSidebar()">
+            <i class="fas fa-bars fa-lg"></i>
         </button>
-        <div class="navbar-nav w-100">
-            <!-- Empty spacer -->
+
+        <div class="brand-section">
+            <i class="fas fa-music brand-icon"></i>
+            <span class="brand-text">Symphony Admin</span>
         </div>
+
+        <div class="header-actions">
+            <!-- Language Toggle (Admin) -->
+            <div class="dropdown">
+                <button class="header-btn dropdown-toggle" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-globe me-1"></i>
+                    <span id="current-lang-text">EN</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
+                    <li><button class="dropdown-item" type="button" onclick="changeLanguage('en')">English</button></li>
+                    <li><button class="dropdown-item" type="button" onclick="changeLanguage('vi')">Tiếng Việt</button></li>
+                </ul>
         <div class="navbar-nav">
              <div class="nav-item text-nowrap d-flex align-items-center px-3">
                  <!-- Language Toggle -->
@@ -113,9 +56,10 @@
                     <button type="submit" class="btn btn-outline-light btn-sm" data-i18n="nav.sign_out">Sign out</button>
                 </form>
             </div>
-        </div>
-    </header>
 
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-shield"></i>
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
@@ -235,16 +179,191 @@
                         </li>
                     </ul>
                 </div>
-            </nav>
+                <span>Welcome, Admin</span>
+            </div>
 
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-               @RenderBody()
-            </main>
+            <a class="header-btn" asp-area="" asp-controller="Home" asp-action="Index" target="_blank">
+                <i class="fas fa-external-link-alt me-1"></i>
+                <span class="d-none d-md-inline">Go to Site</span>
+            </a>
+
+            <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="d-inline">
+                <button type="submit" class="header-btn">
+                    <i class="fas fa-sign-out-alt me-1"></i>
+                    <span class="d-none d-md-inline">Sign Out</span>
+                </button>
+            </form>
         </div>
-    </div>
+    </header>
 
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-chevron-left"></i>
+        </div>
+
+        <ul class="sidebar-nav nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                    <i class="fas fa-tachometer-alt nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
+
+            <h6 class="sidebar-heading">ACADEMIC</h6>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Categories" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Categories" asp-action="Index">
+                    <i class="fas fa-list-alt nav-icon"></i>
+                    <span class="nav-text">Categories</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ClassCategories" ? "active" : "")"
+                   asp-area="Admin" asp-controller="ClassCategories" asp-action="Index">
+                    <i class="fas fa-tags nav-icon"></i>
+                    <span class="nav-text">Class Categories</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Courses" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Courses" asp-action="Index">
+                    <i class="fas fa-graduation-cap nav-icon"></i>
+                    <span class="nav-text">Courses</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Subjects" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Subjects" asp-action="Index">
+                    <i class="fas fa-book nav-icon"></i>
+                    <span class="nav-text">Subjects</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ManagePayments" ? "active" : "")"
+                   asp-area="Admin" asp-controller="ManagePayments" asp-action="Index">
+                    <i class="fa-solid fa-bag-shopping nav-icon"></i>
+                    <span class="nav-text">Manage Payments</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Classes" asp-action="Index">
+                    <i class="fas fa-users nav-icon"></i>
+                    <span class="nav-text">Classes</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ClassSchedules" ? "active" : "")"
+                   href="/admin/class-schedules">
+                    <i class="fas fa-calendar-alt nav-icon"></i>
+                    <span class="nav-text">Class Schedules</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Assignments" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Assignments" asp-action="Index">
+                    <i class="fas fa-tasks nav-icon"></i>
+                    <span class="nav-text">Task Assignments</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AssignClassrooms" ? "active" : "")"
+                   asp-area="Admin" asp-controller="AssignClassrooms" asp-action="Index">
+                    <i class="fas fa-layer-group nav-icon"></i>
+                    <span class="nav-text">Assign Classrooms</span>
+                </a>
+            </li>
+
+            <h6 class="sidebar-heading">ADMISSIONS & USERS</h6>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "EntranceExams" ? "active" : "")"
+                   asp-area="Admin" asp-controller="EntranceExams" asp-action="Index">
+                    <i class="fas fa-file-signature nav-icon"></i>
+                    <span class="nav-text">Entrance Exams</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "StudentRegistration" ? "active" : "")"
+                   asp-area="Admin" asp-controller="StudentRegistration" asp-action="Index">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <span class="nav-text">Registrations</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Guests" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Guests" asp-action="Index">
+                    <i class="fas fa-user-clock nav-icon"></i>
+                    <span class="nav-text">Guest Registrations</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Users" asp-action="Index">
+                    <i class="fas fa-users-cog nav-icon"></i>
+                    <span class="nav-text">Manage Users</span>
+                </a>
+            </li>
+
+            <h6 class="sidebar-heading">SYSTEM</h6>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CMS" ? "active" : "")"
+                   asp-area="Admin" asp-controller="CMS" asp-action="Index">
+                    <i class="fas fa-laptop-code nav-icon"></i>
+                    <span class="nav-text">CMS</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CourseReviews" ? "active" : "")"
+                   asp-area="Admin" asp-controller="CourseReviews" asp-action="Index">
+                    <i class="fas fa-star-half-alt nav-icon"></i>
+                    <span class="nav-text">Reviews</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Certificates" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Certificates" asp-action="Index">
+                    <i class="fas fa-certificate nav-icon"></i>
+                    <span class="nav-text">Certificates</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Chat" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Chat" asp-action="Index">
+                    <i class="fas fa-comments nav-icon"></i>
+                    <span class="nav-text">Chat Support</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/js/system-notifications.js"></script>
     
     <!-- i18next -->
@@ -253,21 +372,72 @@
     <script src="https://unpkg.com/i18next-browser-languagedetector@6.1.3/i18nextBrowserLanguageDetector.min.js"></script>
 
     <script>
+        // Show notifications
         document.addEventListener("DOMContentLoaded", function () {
-            // Initialize Notifications
             SystemNotification.showMessages(
-                '@Html.Raw(TempData["Success"])', 
+                '@Html.Raw(TempData["Success"])',
                 '@Html.Raw(TempData["Error"])'
             );
-
-            // Initialize Delete Confirmations
             SystemNotification.setupDeleteConfirmations();
+        });
 
-            // Initialize i18next
+        // Toggle sidebar collapse (lưu state riêng cho Admin)
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+
+            const icon = sidebar.querySelector('.sidebar-toggle i');
+            icon.classList.toggle('fa-chevron-left');
+            icon.classList.toggle('fa-chevron-right');
+
+            localStorage.setItem('adminSidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+
+        // Toggle mobile sidebar
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        // Close mobile sidebar when clicking outside
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(event.target) &&
+                !toggle.contains(event.target) &&
+                sidebar.classList.contains('mobile-open')) {
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+
+        // Restore sidebar state
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.getElementById('sidebar');
+            const isCollapsed = localStorage.getItem('adminSidebarCollapsed') === 'true';
+
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+                const icon = sidebar.querySelector('.sidebar-toggle i');
+                icon.classList.remove('fa-chevron-left');
+                icon.classList.add('fa-chevron-right');
+            }
+        });
+    </script>
+
+    <!-- i18next -->
+    <script src="https://unpkg.com/i18next@21.6.10/dist/umd/i18next.min.js"></script>
+    <script src="https://unpkg.com/i18next-http-backend@1.3.1/i18nextHttpBackend.min.js"></script>
+    <script src="https://unpkg.com/i18next-browser-languagedetector@6.1.3/i18nextBrowserLanguageDetector.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
             i18next
                 .use(i18nextHttpBackend)
                 .use(i18nextBrowserLanguageDetector)
                 .init({
+                    backend: { loadPath: '/locales/{{lng}}/translation.json' },
                     backend: {
                         loadPath: '/locales/{{lng}}/translation.json?v=1.0.3'
                     },
@@ -277,17 +447,17 @@
                         order: ['querystring', 'cookie', 'localStorage', 'navigator', 'htmlTag'],
                         caches: ['localStorage', 'cookie']
                     }
-                }, function(err, t) {
+                }, function (err, t) {
                     if (err) return console.error('i18next init error:', err);
                     updateContent();
                 });
 
             function updateContent() {
-                // Update text content for elements with data-i18n
-                document.querySelectorAll('[data-i18n]').forEach(function(element) {
+                document.querySelectorAll('[data-i18n]').forEach(function (element) {
                     const key = element.getAttribute('data-i18n');
                     const options = element.getAttribute('data-i18n-options');
                     const jsonOptions = options ? JSON.parse(options) : {};
+
                     
                     const translatedText = i18next.t(key, jsonOptions);
                     
@@ -311,23 +481,24 @@
                         }
                     }
                 });
+
+                const currentLng = i18next.language.substring(0, 2);
                 
                 // Update current language in toggle button if it exists
                 const currentLng = i18next.language ? i18next.language.substring(0, 2) : 'en';
                 const langBtnText = document.getElementById('current-lang-text');
-                if(langBtnText) langBtnText.textContent = currentLng.toUpperCase();
+                if (langBtnText) langBtnText.textContent = currentLng.toUpperCase();
             }
 
-            // Expose function globally to change language
-            window.changeLanguage = function(lng) {
-                i18next.changeLanguage(lng, function() {
+            window.changeLanguage = function (lng) {
+                i18next.changeLanguage(lng, function () {
                     updateContent();
                 });
             };
         });
     </script>
+
     
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-

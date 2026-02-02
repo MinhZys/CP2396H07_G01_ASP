@@ -69,6 +69,14 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "TeachingSchedule" ? "active" : "")"
+                   href="/instructor/teaching-schedule">
+                    <i class="fas fa-calendar-alt nav-icon"></i>
+                    <span class="nav-text">Teaching Schedule</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Lessons" ? "active" : "")"
                    asp-area="Instructor" asp-controller="Lessons" asp-action="Index">
                     <i class="fas fa-book-open nav-icon"></i>
