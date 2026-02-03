@@ -3,7 +3,8 @@ namespace Symphony.Portal.Web.Models.Enums
     public enum ClassStatus
     {
         Active,
-        Inactive
+        Inactive,
+        Open
     }
 
     public enum AssignmentType

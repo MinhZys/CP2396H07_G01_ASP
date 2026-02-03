@@ -29,9 +29,11 @@ public class VNPayController : Controller
         {
             PaymentPurpose.EntranceExam => $"Le phi du thi - {payment.Guest?.FullName}",
             PaymentPurpose.Course => $"Hoc phi khoa hoc - {payment.Guest?.FullName}",
-            PaymentPurpose.Subject => $"Hoc phi mon hoc - {payment.Guest?.FullName}",
+            PaymentPurpose.Revision => $"Hoc phi mon hoc - {payment.Guest?.FullName}",
+            PaymentPurpose.Lab => $"Hoc phi phong Lab - {payment.Guest?.FullName}", // ✅ thêm
             _ => $"Thanh toan - {payment.Guest?.FullName}"
         };
+
 
         var txn = new VNPayTransaction
         {
@@ -109,20 +111,25 @@ public class VNPayController : Controller
             if (txn.Payment.Guest != null)
                 txn.Payment.Guest.Status = GuestRegistrationStatus.PaidPendingApproval;
 
-            // ✅ Nếu thanh toán COURSE (hoặc SUBJECT) thành công -> nâng role Guest -> Student
-            // LƯU Ý: Tạm thời giữ logic này theo thiết kế hiện tại, nhưng nên được Admin duyệt hoặc dựa trên kết quả thi.
-            if (txn.Payment.Purpose == PaymentPurpose.Course || txn.Payment.Purpose == PaymentPurpose.Subject)
+            if (txn.Payment.Purpose == PaymentPurpose.Course || txn.Payment.Purpose == PaymentPurpose.Lab)
             {
-                var studentRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == RoleNames.Student);
-                if (studentRole != null && txn.Payment.Guest?.UserId != null)
+                var studentRole = await _context.Roles
+                    .FirstOrDefaultAsync(r => r.Name == RoleNames.Student);
+
+                var userId = txn.Payment.Guest?.UserId;
+
+                if (studentRole != null && !string.IsNullOrWhiteSpace(userId))
                 {
-                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == txn.Payment.Guest.UserId);
-                    if (user != null && user.RoleId != studentRole.Id)
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                    if (user != null)
                     {
                         user.RoleId = studentRole.Id;
+                        txn.Payment.StudentId = user.Id;
+                        txn.Payment.GuestId = null;
                     }
                 }
             }
+
         }
         else
         {

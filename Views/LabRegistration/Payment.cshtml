@@ -1,0 +1,66 @@
+﻿@using Symphony.Portal.Web.Models.Enums
+@model Symphony.Portal.Web.Models.LabRegisterPageVm
+
+@{
+    Layout = "_Layout";
+    var guestId = ViewBag.GuestId as string;
+    var labClass = ViewBag.LabClass as Symphony.Portal.Web.Models.Class;
+}
+
+<section class="max-w-[900px] mx-auto px-6 py-10">
+    <div class="bg-surface-dark border border-slate-800 rounded-xl p-8">
+        <h1 class="font-display text-3xl font-bold mb-2">Thanh toán lớp Lab</h1>
+        <p class="text-slate-400 mb-8">Chọn phương thức thanh toán để hoàn tất đăng ký lớp Lab.</p>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-10">
+            <div class="bg-[#0b0f16] border border-slate-800 rounded-xl p-6">
+                <p class="text-xs font-bold uppercase text-slate-500 mb-2">Lớp Lab</p>
+                <h2 class="text-xl font-bold text-white mb-2">@labClass?.ClassName</h2>
+                <p class="text-2xl font-bold text-primary">@((labClass?.Fee ?? 0m).ToString("N0"))đ</p>
+            </div>
+
+            <div class="bg-[#0b0f16] border border-slate-800 rounded-xl p-6">
+                <p class="text-xs font-bold uppercase text-slate-500 mb-2">Học viên</p>
+                <p class="text-slate-300 text-sm"><b>@Model.Guest.FullName</b></p>
+                <p class="text-slate-400 text-sm">@Model.Guest.Email</p>
+                <p class="text-slate-400 text-sm">@Model.Guest.PhoneNumber</p>
+            </div>
+        </div>
+
+        <form asp-action="ConfirmPayment" method="post" class="space-y-6">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@guestId" />
+
+            <div>
+                <label class="block text-slate-300 text-sm mb-3">Phương thức thanh toán</label>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <label class="bg-[#0b0f16] border border-slate-800 rounded-xl p-5 cursor-pointer hover:border-primary/50 transition">
+                        <input type="radio" name="paymentMethod" value="Cash" class="mr-2" />
+                        <span class="font-bold text-white">Tiền mặt</span>
+                        <p class="text-slate-400 text-sm mt-1">Thanh toán tại trung tâm.</p>
+                    </label>
+
+                    <label class="bg-[#0b0f16] border border-slate-800 rounded-xl p-5 cursor-pointer hover:border-primary/50 transition">
+                        <input type="radio" name="paymentMethod" value="Online" class="mr-2" checked />
+                        <span class="font-bold text-white">VNPay</span>
+                        <p class="text-slate-400 text-sm mt-1">Thanh toán online qua VNPay.</p>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-4">
+                <a asp-action="Register"
+                   class="px-6 py-3 rounded-lg border border-slate-700 text-slate-300 font-bold hover:text-white hover:border-slate-500 transition">
+                    Quay lại
+                </a>
+
+                <button type="submit"
+                        class="px-6 py-3 rounded-lg bg-primary text-background-dark font-bold hover:opacity-90 transition"
+                        onclick="this.disabled=true; this.form.submit();">
+                    Xác nhận thanh toán
+                </button>
+            </div>
+        </form>
+    </div>
+</section>

@@ -15,9 +15,6 @@ namespace Symphony.Portal.Web.Controllers
             _context = context;
         }
 
-        // =====================================================
-        // GET: RevisionGuests/Register
-        // =====================================================
         public async Task<IActionResult> Register()
         {
             ViewBag.RevisionPackages = await _context.RevisionPackages
@@ -27,9 +24,6 @@ namespace Symphony.Portal.Web.Controllers
             return View();
         }
 
-        // =====================================================
-        // POST: RevisionGuests/Register
-        // =====================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RevisionRegisterVM vm)
@@ -61,9 +55,6 @@ namespace Symphony.Portal.Web.Controllers
         }
 
 
-        // =====================================================
-        // GET: RevisionGuests/Payment/{id}
-        // =====================================================
         public async Task<IActionResult> Payment(string id)
         {
             if (id == null) return NotFound();
@@ -82,9 +73,6 @@ namespace Symphony.Portal.Web.Controllers
             return View(registration);
         }
 
-        // =====================================================
-        // POST: RevisionGuests/ConfirmPayment
-        // =====================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmPayment(string id, string paymentMethod)
@@ -109,44 +97,82 @@ namespace Symphony.Portal.Web.Controllers
 
             if (registration.RevisionPackage == null)
             {
-                var pkg = await _context.RevisionPackages
-                    .FindAsync(registration.RevisionPackageId);
-
-                if (pkg == null)
-                    return BadRequest("Revision package not found");
-
+                var pkg = await _context.RevisionPackages.FindAsync(registration.RevisionPackageId);
+                if (pkg == null) return BadRequest("Revision package not found");
                 amount = pkg.Fee;
+                registration.RevisionPackage = pkg; // để dùng update CurrentStudents bên dưới
             }
+
+            // ============================================================
+            // ✅ FIX #1: tạo/lấy Guest entity để Payment join ra đúng Payer
+            // ============================================================
+            // Lấy guest theo email (ưu tiên guest mới nhất)
+            var guestEntity = await _context.Guests
+                .Where(g => g.Email == registration.Email)
+                .OrderByDescending(g => g.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            if (guestEntity == null)
+            {
+                guestEntity = new Guest
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    FullName = registration.FullName,
+                    Email = registration.Email,
+                    PhoneNumber = registration.PhoneNumber,
+                    Status = GuestRegistrationStatus.PendingPayment,
+                    CreatedAt = DateTime.Now,
+                    // để trace đây là đăng ký ôn thi
+                    Description = $"REVISION:{registration.Id}"
+                };
+
+                _context.Guests.Add(guestEntity);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                // optional: sync lại info nếu cần
+                if (string.IsNullOrWhiteSpace(guestEntity.FullName))
+                    guestEntity.FullName = registration.FullName;
+
+                if (string.IsNullOrWhiteSpace(guestEntity.PhoneNumber))
+                    guestEntity.PhoneNumber = registration.PhoneNumber;
+            }
+
+            // ============================================================
+            // ✅ FIX #2: Purpose đúng cho ôn thi
+            // ============================================================
+            // Nếu bạn chưa muốn thêm PaymentPurpose.Revision thì dùng Subject
+            var purpose = PaymentPurpose.Revision;
 
             // ===== TẠO PAYMENT =====
             var payment = new Payment
             {
                 Id = Guid.NewGuid().ToString(),
+                GuestId = guestEntity.Id,                 // ✅ quan trọng để hiển thị payer
                 Amount = amount,
                 PaymentMethod = method,
-                PaymentDate = DateTime.Now,
+                PaymentDate = method == PaymentMethod.Cash ? DateTime.Now : DateTime.MinValue,
                 ReceiptNumber = "RCP" + DateTime.Now.Ticks,
-                Status = method == PaymentMethod.Cash
-                            ? PaymentStatus.Paid
-                            : PaymentStatus.Pending,
-                Purpose = PaymentPurpose.Course
+                Status = PaymentStatus.Pending,           // ✅ cash cũng Pending (đợi admin confirm)
+                Purpose = purpose
             };
 
             _context.Payments.Add(payment);
 
-            // =====================================================
-            // RẼ NHÁNH THANH TOÁN
-            // =====================================================
-
+            // ==================================================
+            // =============== RẼ NHÁNH TẠI ĐÂY =================
+            // ==================================================
             if (method == PaymentMethod.Cash)
             {
+                // Cash: đợi admin confirm
                 registration.Status = GuestRegistrationStatus.PaidPendingApproval;
 
-                // update số lượng
+                // update số lượng (nếu bạn muốn reserve slot ngay khi cash)
                 registration.RevisionPackage.CurrentStudents++;
 
-                if (registration.RevisionPackage.CurrentStudents >=
-                    registration.RevisionPackage.MaxStudents)
+                if (registration.RevisionPackage.MaxStudents > 0 &&
+                    registration.RevisionPackage.CurrentStudents >= registration.RevisionPackage.MaxStudents)
                 {
                     registration.RevisionPackage.Status = RevisionPackageStatus.Full;
                 }
@@ -160,7 +186,7 @@ namespace Symphony.Portal.Web.Controllers
             }
             else if (method == PaymentMethod.Online)
             {
-                // chưa update registration
+                // Online: chưa update registration/package, đợi VNPay callback xử lý Paid/Failed
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(
@@ -172,5 +198,6 @@ namespace Symphony.Portal.Web.Controllers
 
             return BadRequest("Unsupported payment method");
         }
+
     }
 }

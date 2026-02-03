@@ -7,29 +7,60 @@
 <h2>Payment Details</h2>
 
 <table class="table table-bordered">
-    <tr>
-        <th>Payment ID</th>
-        <td>@Model.Id</td>
-    </tr>
 
     <tr>
-        <th>Student ID</th>
-        <td>@(Model.StudentId ?? "N/A")</td>
-    </tr>
+        <th>Payer</th>
+        <td>
+            @{
+                var payerName = Model.Student?.FullName ?? Model.Guest?.FullName ?? "Guest";
+                var payerEmail = Model.Student?.Email ?? Model.Guest?.Email;
+                var payerRole = Model.Student != null ? "Student" : (Model.Guest != null ? "Guest" : "Guest");
+            }
 
-    <tr>
-        <th>Guest ID</th>
-        <td>@(Model.GuestId ?? "N/A")</td>
+            <div class="fw-bold">@payerName</div>
+            @if (!string.IsNullOrWhiteSpace(payerEmail))
+            {
+                <small class="text-muted">@payerEmail</small>
+            }
+            <div class="mt-1">
+                <span class="badge bg-secondary">@payerRole</span>
+            </div>
+        </td>
     </tr>
 
     <tr>
         <th>Amount</th>
-        <td>@Model.Amount</td>
+        <td>@Model.Amount.ToString("N0") đ</td>
     </tr>
 
     <tr>
         <th>Payment Method</th>
         <td>@Model.PaymentMethod</td>
+    </tr>
+
+    <tr>
+        <th>Purpose</th>
+        <td>
+            <span class="badge bg-info text-dark">
+                @Model.Purpose
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Registered Item</th>
+        <td>
+            @if (ViewBag.RegisteredTitle != null)
+            {
+                <strong>@ViewBag.RegisteredType</strong>
+                <br />
+                <span class="text-primary">@ViewBag.RegisteredTitle</span>
+            }
+            else
+            {
+                <span class="text-muted">N/A</span>
+            }
+        </td>
     </tr>
 
     <tr>
@@ -43,7 +74,9 @@
 
     <tr>
         <th>Payment Date</th>
-        <td>@Model.PaymentDate.ToString("dd/MM/yyyy HH:mm")</td>
+        <td>
+            @(Model.PaymentDate == default ? "-" : Model.PaymentDate.ToString("dd/MM/yyyy HH:mm"))
+        </td>
     </tr>
 
     <tr>

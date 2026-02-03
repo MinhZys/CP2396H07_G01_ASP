@@ -38,6 +38,114 @@
                 </ul>
             </div>
 
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        
+                        <h6 class="sidebar-heading">Academic</h6>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Categories" ? "active" : "")" asp-area="Admin" asp-controller="Categories" asp-action="Index">
+                                <i class="fas fa-list-alt"></i> Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ClassCategories" ? "active" : "")" asp-area="Admin" asp-controller="ClassCategories" asp-action="Index">
+                                <i class="fas fa-tags"></i> Class Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Courses" ? "active" : "")" asp-area="Admin" asp-controller="Courses" asp-action="Index">
+                                <i class="fas fa-graduation-cap"></i> Courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Subjects" ? "active" : "")" asp-area="Admin" asp-controller="Subjects" asp-action="Index">
+                                <i class="fas fa-book"></i> Subjects
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ManagePayments" ? "active" : "")" asp-area="Admin" asp-controller="ManagePayments" asp-action="Index">
+                                <i class="fa-solid fa-bag-shopping"></i> Manage Payments
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "active" : "")" asp-area="Admin" asp-controller="Classes" asp-action="Index">
+                                <i class="fas fa-users-class"></i> Classes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ExamPapers" ? "active" : "")" asp-area="Admin" asp-controller="ExamPapers" asp-action="Index">
+                                <i class="fas fa-tasks"></i> Manage Exam Paper
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Assignments" ? "active" : "")" asp-area="Admin" asp-controller="Assignments" asp-action="Index">
+                                <i class="fas fa-tasks"></i> Task Assignments
+                            </a>
+                        </li>
+                        <h6 class="sidebar-heading">Admissions & Users</h6>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "EntranceExams" ? "active" : "")" asp-area="Admin" asp-controller="EntranceExams" asp-action="Index">
+                                <i class="fas fa-file-signature"></i> Entrance Exams
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-area="Admin"
+                               asp-controller="RevisionPackages"
+                               asp-action="Index">
+                                <i class="fas fa-book"></i> Review Sessions
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "StudentRegistration" ? "active" : "")" asp-area="Admin" asp-controller="StudentRegistration" asp-action="Index">
+                                <i class="fas fa-user-plus"></i> Registrations
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Guests" ? "active" : "")" asp-area="Admin" asp-controller="Guests" asp-action="Index">
+                                <i class="fas fa-user-clock"></i> Guest Registrations
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "active" : "")" asp-area="Admin" asp-controller="Users" asp-action="Index">
+                                <i class="fas fa-users-cog"></i> Manage Users
+                            </a>
+                        </li>
+
+                        <h6 class="sidebar-heading">System</h6>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CMS" ? "active" : "")" asp-area="Admin" asp-controller="CMS" asp-action="Index">
+                                <i class="fas fa-laptop-code"></i> CMS
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CourseReviews" ? "active" : "")" asp-area="Admin" asp-controller="CourseReviews" asp-action="Index">
+                                <i class="fas fa-star-half-alt"></i> Reviews
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Certificates" ? "active" : "")" asp-area="Admin" asp-controller="Certificates" asp-action="Index">
+                                <i class="fas fa-certificate"></i> Certificates
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Chat" ? "active" : "")" asp-area="Admin" asp-controller="Chat" asp-action="Index">
+                                <i class="fas fa-comments"></i> Chat Support
+                            </a>
+                        </li>
+                    </ul>
             <div class="user-info">
                 <div class="user-avatar">
                     <i class="fas fa-user-shield"></i>

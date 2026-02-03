@@ -30,5 +30,14 @@ namespace Symphony.Portal.Web.Models
         public ICollection<ClassSchedule> ClassSchedules { get; set; }
                     = new List<ClassSchedule>();
 
+        public string? RoomName { get; set; }
+        public string? RoomLocation { get; set; }
+
+        public string? CenterId { get; set; }
+        public Center? Center { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Fee { get; set; } = 0m;
+
     }
 }

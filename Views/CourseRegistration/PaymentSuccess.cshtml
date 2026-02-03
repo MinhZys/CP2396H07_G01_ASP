@@ -1,17 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Thanh toán thành công";
-    var msg = ViewBag.SuccessMessage as string
-              ?? "Yêu cầu của bạn đã được ghi nhận và đang chờ Admin phê duyệt.";
 }
 
 <div class="min-h-screen flex items-center justify-center bg-background-dark">
-    <div class="bg-surface-dark border border-slate-800 rounded-xl p-8 text-center max-w-lg w-full">
+    <div class="bg-surface-dark border border-slate-800 rounded-xl p-8 text-center max-w-lg">
         <h2 class="text-2xl font-bold text-green-500 mb-4">
             Thanh toán thành công
         </h2>
-
         <p class="text-slate-300 mb-6">
-            @msg
+            Hồ sơ đăng ký lớp ôn của bạn đã được ghi nhận và đang chờ Admin phê duyệt.
         </p>
 
         <a href="/" class="btn btn-primary">

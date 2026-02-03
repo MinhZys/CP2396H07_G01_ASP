@@ -1,6 +1,7 @@
 ﻿public enum PaymentPurpose
 {
     EntranceExam,
-    Subject,
-    Course
+    Revision,
+    Course,
+    Lab
 }
