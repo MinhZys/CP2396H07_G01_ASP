@@ -53,7 +53,19 @@
         const guestNameField = document.getElementById('chat-guest-name');
 
         let isGuest = @(User.Identity.IsAuthenticated ? "false" : "true");
+        let currentUserId = "@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "Guest")";
+        
         let sessionId = getCookie("chat_session_id");
+        let lastUserId = getCookie("chat_last_user_id");
+
+        // If user changed (e.g. logged out or logged in as someone else), clear session
+        if (lastUserId && lastUserId !== currentUserId) {
+            deleteCookie("chat_session_id");
+            deleteCookie("chat_guest_name");
+            sessionId = null;
+        }
+        setCookie("chat_last_user_id", currentUserId, 1);
+
         if (!sessionId) {
             sessionId = crypto.randomUUID();
             setCookie("chat_session_id", sessionId, 1);
@@ -194,6 +206,9 @@
                 if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
             }
             return null;
+        }
+        function deleteCookie(name) {
+            document.cookie = name + '=; Max-Age=-99999999; path=/';
         }
     });
 </script>

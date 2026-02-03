@@ -321,7 +321,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "1",
-                            CreatedAt = new DateTime(2026, 1, 30, 12, 41, 31, 74, DateTimeKind.Local).AddTicks(7158),
+                            CreatedAt = new DateTime(2026, 2, 3, 19, 11, 56, 889, DateTimeKind.Local).AddTicks(9320),
                             Description = "Standard classrooms",
                             IsActive = true,
                             Name = "Theory"
@@ -329,7 +329,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "2",
-                            CreatedAt = new DateTime(2026, 1, 30, 12, 41, 31, 74, DateTimeKind.Local).AddTicks(7206),
+                            CreatedAt = new DateTime(2026, 2, 3, 19, 11, 56, 889, DateTimeKind.Local).AddTicks(9336),
                             Description = "Computer labs",
                             IsActive = true,
                             Name = "Lab"
@@ -337,7 +337,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "3",
-                            CreatedAt = new DateTime(2026, 1, 30, 12, 41, 31, 74, DateTimeKind.Local).AddTicks(7209),
+                            CreatedAt = new DateTime(2026, 2, 3, 19, 11, 56, 889, DateTimeKind.Local).AddTicks(9337),
                             Description = "Virtual classes",
                             IsActive = true,
                             Name = "Online"
@@ -2230,6 +2230,17 @@ namespace CP2396H07_G01.Migrations
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.PageImage", b =>
                 {
+                    b.HasOne("Symphony.Portal.Web.Models.PageContent", "PageContent")
+                        .WithMany("Images")
+                        .HasForeignKey("PageContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PageContent");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.Payment", b =>
+                {
                     b.HasOne("Symphony.Portal.Web.Models.Guest", "Guest")
                         .WithMany()
                         .HasForeignKey("GuestId");
@@ -2305,7 +2316,7 @@ namespace CP2396H07_G01.Migrations
                     b.HasOne("Symphony.Portal.Web.Models.Question", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Symphony.Portal.Web.Models.StudentExamSession", "Session")
@@ -2322,21 +2333,21 @@ namespace CP2396H07_G01.Migrations
             modelBuilder.Entity("Symphony.Portal.Web.Models.StudentExamSession", b =>
                 {
                     b.HasOne("Symphony.Portal.Web.Models.EntranceExam", "EntranceExam")
-                        .WithMany()
+                        .WithMany("StudentExamSessions")
                         .HasForeignKey("EntranceExamId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Symphony.Portal.Web.Models.ExamPaper", "ExamPaper")
-                        .WithMany()
+                        .WithMany("StudentExamSessions")
                         .HasForeignKey("ExamPaperId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Symphony.Portal.Web.Models.User", "Student")
-                        .WithMany()
+                        .WithMany("StudentExamSessions")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("EntranceExam");
@@ -2488,6 +2499,11 @@ namespace CP2396H07_G01.Migrations
             modelBuilder.Entity("Symphony.Portal.Web.Models.Subject", b =>
                 {
                     b.Navigation("CourseSubjects");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.User", b =>
+                {
+                    b.Navigation("StudentExamSessions");
                 });
 #pragma warning restore 612, 618
         }

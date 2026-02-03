@@ -26,12 +26,12 @@ DECLARE @ClsCat3 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
 DECLARE @ClsCat4 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
 DECLARE @ClsCat5 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
 
-INSERT INTO [ClassCategories] ([Id], [Name], [Description], [IsActive]) VALUES
-(@ClsCat1, N'Workshop', N'Short-term intensive practical sessions', 1),
-(@ClsCat2, N'Seminar', N'Academic discussion groups', 1),
-(@ClsCat3, N'Bootcamp', N'Accelerated learning programs', 1),
-(@ClsCat4, N'One-on-One', N'Private tutoring sessions', 1),
-(@ClsCat5, N'Evening Class', N'Classes scheduled after 6 PM', 1);
+INSERT INTO [ClassCategories] ([Id], [Name], [Description], [IsActive], [CreatedAt]) VALUES
+(@ClsCat1, N'Workshop', N'Short-term intensive practical sessions', 1, GETDATE()),
+(@ClsCat2, N'Seminar', N'Academic discussion groups', 1, GETDATE()),
+(@ClsCat3, N'Bootcamp', N'Accelerated learning programs', 1, GETDATE()),
+(@ClsCat4, N'One-on-One', N'Private tutoring sessions', 1, GETDATE()),
+(@ClsCat5, N'Evening Class', N'Classes scheduled after 6 PM', 1, GETDATE());
 
 -- 2. SUBJECTS & ROADMAPS (10 Subjects)
 DECLARE @Sub1 NVARCHAR(450) = CAST(NEWID() AS NVARCHAR(450));
@@ -122,20 +122,20 @@ BEGIN
 END
 
 -- 6. ENTRANCE EXAMS (5 Exams)
-INSERT INTO [EntranceExams] ([Id], [Title], [ExamDate], [Fee], [MaxCandidates], [Status], [IsRegistrationOpen], [IsActive]) VALUES
-(CAST(NEWID() AS NVARCHAR(36)), N'Spring 2026 Entrance - IT', DATEADD(DAY, 30, GETDATE()), 50, 100, 'NotStarted', 1, 1),
-(CAST(NEWID() AS NVARCHAR(36)), N'Summer 2026 Entrance - Music', DATEADD(DAY, 60, GETDATE()), 40, 50, 'NotStarted', 1, 1),
-(CAST(NEWID() AS NVARCHAR(36)), N'Fall 2026 Entrance - General', DATEADD(DAY, 90, GETDATE()), 30, 200, 'NotStarted', 1, 1),
-(CAST(NEWID() AS NVARCHAR(36)), N'Winter 2026 Scholarship', DATEADD(DAY, 120, GETDATE()), 0, 50, 'NotStarted', 1, 1),
-(CAST(NEWID() AS NVARCHAR(36)), N'Monthly Placement Test', DATEADD(DAY, 15, GETDATE()), 20, 30, 'Ongoing', 1, 1);
+INSERT INTO [EntranceExams] ([Id], [Title], [ExamDate], [Fee], [MaxCandidates], [Status], [IsRegistrationOpen], [IsActive], [Subjects]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), N'Spring 2026 Entrance - IT', DATEADD(DAY, 30, GETDATE()), 50, 100, 'NotStarted', 1, 1, N'Math, IT'),
+(CAST(NEWID() AS NVARCHAR(36)), N'Summer 2026 Entrance - Music', DATEADD(DAY, 60, GETDATE()), 40, 50, 'NotStarted', 1, 1, N'Music Theory'),
+(CAST(NEWID() AS NVARCHAR(36)), N'Fall 2026 Entrance - General', DATEADD(DAY, 90, GETDATE()), 30, 200, 'NotStarted', 1, 1, N'General Knowledge'),
+(CAST(NEWID() AS NVARCHAR(36)), N'Winter 2026 Scholarship', DATEADD(DAY, 120, GETDATE()), 0, 50, 'NotStarted', 1, 1, N'IQ, Logic'),
+(CAST(NEWID() AS NVARCHAR(36)), N'Monthly Placement Test', DATEADD(DAY, 15, GETDATE()), 20, 30, 'Ongoing', 1, 1, N'English');
 
 -- 7. CLASSES (5 Classes)
-INSERT INTO [Classes] ([Id], [ClassName], [ClassCategoryId], [NumberOfSeats], [Status], [CreatedAt]) VALUES
-(CAST(NEWID() AS NVARCHAR(36)), N'NET-CORE-001', @ClsCat1, 30, '1', GETDATE()),
-(CAST(NEWID() AS NVARCHAR(36)), N'REACT-JS-002', @ClsCat2, 20, '1', GETDATE()),
-(CAST(NEWID() AS NVARCHAR(36)), N'DATA-SCI-003', @ClsCat1, 50, '1', GETDATE()),
-(CAST(NEWID() AS NVARCHAR(36)), N'JAVA-ENT-004', @ClsCat3, 25, '1', GETDATE()),
-(CAST(NEWID() AS NVARCHAR(36)), N'CYBER-SEC-005', @ClsCat4, 40, '1', GETDATE());
+INSERT INTO [Classes] ([Id], [ClassName], [ClassCategoryId], [NumberOfSeats], [Status], [CreatedAt], [Fee]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), N'NET-CORE-001', @ClsCat1, 30, '1', GETDATE(), 100),
+(CAST(NEWID() AS NVARCHAR(36)), N'REACT-JS-002', @ClsCat2, 20, '1', GETDATE(), 120),
+(CAST(NEWID() AS NVARCHAR(36)), N'DATA-SCI-003', @ClsCat1, 50, '1', GETDATE(), 150),
+(CAST(NEWID() AS NVARCHAR(36)), N'JAVA-ENT-004', @ClsCat3, 25, '1', GETDATE(), 110),
+(CAST(NEWID() AS NVARCHAR(36)), N'CYBER-SEC-005', @ClsCat4, 40, '1', GETDATE(), 200);
 
 
 

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CP2396H07_G01.Migrations
 {
     /// <inheritdoc />
-    public partial class Neww : Migration
+    public partial class InitialFix : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,9 +31,14 @@ namespace CP2396H07_G01.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    OpenHours = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
+                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Latitude = table.Column<double>(type: "float", nullable: true),
+                    Longitude = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -85,6 +90,25 @@ namespace CP2396H07_G01.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Holidays",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
+                    IsRecurringAnnual = table.Column<bool>(type: "bit", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Holidays", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RevisionPackages",
                 columns: table => new
                 {
@@ -116,6 +140,25 @@ namespace CP2396H07_G01.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Rooms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    LocationNote = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rooms", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Subjects",
                 columns: table => new
                 {
@@ -129,6 +172,28 @@ namespace CP2396H07_G01.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Subjects", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ContactMessages",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    FullName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
+                    CenterId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: true),
+                    Message = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContactMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContactMessages_Centers_CenterId",
+                        column: x => x.CenterId,
+                        principalTable: "Centers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -172,11 +237,20 @@ namespace CP2396H07_G01.Migrations
                     ClassCategoryId = table.Column<string>(type: "nvarchar(36)", nullable: false),
                     NumberOfSeats = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RoomName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RoomLocation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CenterId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    Fee = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Classes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Classes_Centers_CenterId",
+                        column: x => x.CenterId,
+                        principalTable: "Centers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Classes_ClassCategories_ClassCategoryId",
                         column: x => x.ClassCategoryId,
@@ -217,7 +291,9 @@ namespace CP2396H07_G01.Migrations
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SubjectId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CenterId = table.Column<string>(type: "nvarchar(36)", nullable: true)
+                    CenterId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    FeaturedImage = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -339,6 +415,34 @@ namespace CP2396H07_G01.Migrations
                         name: "FK_StudentRegistrations_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClassSchedules",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClassId = table.Column<string>(type: "nvarchar(36)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    IsPublished = table.Column<bool>(type: "bit", nullable: false),
+                    IsLocked = table.Column<bool>(type: "bit", nullable: false),
+                    PublishedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PublishedByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClassSchedules", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClassSchedules_Classes_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Classes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -648,6 +752,28 @@ namespace CP2396H07_G01.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PageImages",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    PageContentId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SortOrder = table.Column<int>(type: "int", nullable: false),
+                    IsFeatured = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PageImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PageImages_PageContents_PageContentId",
+                        column: x => x.PageContentId,
+                        principalTable: "PageContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "QuestionOptions",
                 columns: table => new
                 {
@@ -733,6 +859,42 @@ namespace CP2396H07_G01.Migrations
                         principalTable: "StudentRegistrations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClassSessions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClassScheduleId = table.Column<int>(type: "int", nullable: false),
+                    SessionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    RoomId = table.Column<int>(type: "int", nullable: true),
+                    InstructorId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SessionType = table.Column<int>(type: "int", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    IsCancelled = table.Column<bool>(type: "bit", nullable: false),
+                    CancelReason = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    RescheduledFromSessionId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClassSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClassSessions_ClassSchedules_ClassScheduleId",
+                        column: x => x.ClassScheduleId,
+                        principalTable: "ClassSchedules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClassSessions_Rooms_RoomId",
+                        column: x => x.RoomId,
+                        principalTable: "Rooms",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -921,19 +1083,19 @@ namespace CP2396H07_G01.Migrations
                         column: x => x.EntranceExamId,
                         principalTable: "EntranceExams",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_StudentExamSessions_ExamPapers_ExamPaperId",
                         column: x => x.ExamPaperId,
                         principalTable: "ExamPapers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_StudentExamSessions_Users_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -987,7 +1149,7 @@ namespace CP2396H07_G01.Migrations
                         column: x => x.QuestionId,
                         principalTable: "Questions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_StudentAnswers_StudentExamSessions_SessionId",
                         column: x => x.SessionId,
@@ -1043,9 +1205,9 @@ namespace CP2396H07_G01.Migrations
                 columns: new[] { "Id", "CreatedAt", "Description", "IsActive", "Name" },
                 values: new object[,]
                 {
-                    { "1", new DateTime(2026, 1, 30, 11, 13, 43, 457, DateTimeKind.Local).AddTicks(4293), "Standard classrooms", true, "Theory" },
-                    { "2", new DateTime(2026, 1, 30, 11, 13, 43, 457, DateTimeKind.Local).AddTicks(4311), "Computer labs", true, "Lab" },
-                    { "3", new DateTime(2026, 1, 30, 11, 13, 43, 457, DateTimeKind.Local).AddTicks(4312), "Virtual classes", true, "Online" }
+                    { "1", new DateTime(2026, 2, 3, 19, 11, 56, 889, DateTimeKind.Local).AddTicks(9320), "Standard classrooms", true, "Theory" },
+                    { "2", new DateTime(2026, 2, 3, 19, 11, 56, 889, DateTimeKind.Local).AddTicks(9336), "Computer labs", true, "Lab" },
+                    { "3", new DateTime(2026, 2, 3, 19, 11, 56, 889, DateTimeKind.Local).AddTicks(9337), "Virtual classes", true, "Online" }
                 });
 
             migrationBuilder.InsertData(
@@ -1100,6 +1262,11 @@ namespace CP2396H07_G01.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Classes_CenterId",
+                table: "Classes",
+                column: "CenterId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Classes_ClassCategoryId",
                 table: "Classes",
                 column: "ClassCategoryId");
@@ -1114,6 +1281,26 @@ namespace CP2396H07_G01.Migrations
                 name: "IX_ClassLessons_LessonId",
                 table: "ClassLessons",
                 column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassSchedules_ClassId",
+                table: "ClassSchedules",
+                column: "ClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassSessions_ClassScheduleId",
+                table: "ClassSessions",
+                column: "ClassScheduleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassSessions_RoomId",
+                table: "ClassSessions",
+                column: "RoomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContactMessages_CenterId",
+                table: "ContactMessages",
+                column: "CenterId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CourseInstructors_InstructorId",
@@ -1252,6 +1439,11 @@ namespace CP2396H07_G01.Migrations
                 column: "SubjectId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PageImages_PageContentId",
+                table: "PageImages",
+                column: "PageContentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Payments_GuestId",
                 table: "Payments",
                 column: "GuestId");
@@ -1346,7 +1538,8 @@ namespace CP2396H07_G01.Migrations
                 table: "EntranceExams",
                 column: "ExamPaperId",
                 principalTable: "ExamPapers",
-                principalColumn: "Id");
+                principalColumn: "Id",
+                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />
@@ -1373,6 +1566,12 @@ namespace CP2396H07_G01.Migrations
                 name: "ClassLessons");
 
             migrationBuilder.DropTable(
+                name: "ClassSessions");
+
+            migrationBuilder.DropTable(
+                name: "ContactMessages");
+
+            migrationBuilder.DropTable(
                 name: "CourseInstructors");
 
             migrationBuilder.DropTable(
@@ -1397,6 +1596,9 @@ namespace CP2396H07_G01.Migrations
                 name: "FAQs");
 
             migrationBuilder.DropTable(
+                name: "Holidays");
+
+            migrationBuilder.DropTable(
                 name: "InstructorProfiles");
 
             migrationBuilder.DropTable(
@@ -1406,7 +1608,7 @@ namespace CP2396H07_G01.Migrations
                 name: "Notifications");
 
             migrationBuilder.DropTable(
-                name: "PageContents");
+                name: "PageImages");
 
             migrationBuilder.DropTable(
                 name: "QuestionOptions");
@@ -1427,7 +1629,16 @@ namespace CP2396H07_G01.Migrations
                 name: "VNPayTransactions");
 
             migrationBuilder.DropTable(
+                name: "ClassSchedules");
+
+            migrationBuilder.DropTable(
+                name: "Rooms");
+
+            migrationBuilder.DropTable(
                 name: "StudentRegistrations");
+
+            migrationBuilder.DropTable(
+                name: "PageContents");
 
             migrationBuilder.DropTable(
                 name: "Quizzes");
@@ -1443,9 +1654,6 @@ namespace CP2396H07_G01.Migrations
 
             migrationBuilder.DropTable(
                 name: "Payments");
-
-            migrationBuilder.DropTable(
-                name: "Centers");
 
             migrationBuilder.DropTable(
                 name: "Lessons");
@@ -1467,6 +1675,9 @@ namespace CP2396H07_G01.Migrations
 
             migrationBuilder.DropTable(
                 name: "Certificates");
+
+            migrationBuilder.DropTable(
+                name: "Centers");
 
             migrationBuilder.DropTable(
                 name: "ClassCategories");
