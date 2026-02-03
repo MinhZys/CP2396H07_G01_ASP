@@ -68,41 +68,16 @@ public class GuestRegistrationController : Controller
         // validate theo purpose
         if (vm.Purpose == PaymentPurpose.EntranceExam && string.IsNullOrWhiteSpace(vm.SelectedEntranceExamId))
         {
-            ModelState.AddModelError(nameof(vm.SelectedEntranceExamId), "Vui lòng chọn kỳ thi đầu vào.");
+            ModelState.AddModelError(nameof(vm.SelectedEntranceExamId), "Please select an entrance exam.");
             await LoadDropdowns();
             return View(vm);
         }
 
         if ((vm.Purpose == PaymentPurpose.Course || vm.Purpose == PaymentPurpose.Revision) && string.IsNullOrWhiteSpace(vm.ClassId))
         {
-            ModelState.AddModelError(nameof(vm.ClassId), "Vui lòng chọn lớp/môn học.");
+            ModelState.AddModelError(nameof(vm.ClassId), "Please select a class/subject.");
             await LoadDropdowns();
             return View(vm);
-        }
-
-        // Role Guest
-        var guestRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Guest");
-        if (guestRole == null) return BadRequest("Role 'Guest' chưa có trong DB.");
-
-        // Upsert User theo Email
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == vm.Email);
-        if (user == null)
-        {
-            user = new User
-            {
-                Id = Guid.NewGuid().ToString(),
-                FullName = vm.FullName,
-                Email = vm.Email,
-                Password = "123", // TODO hash
-                IsActive = true,
-                RoleId = guestRole.Id
-            };
-            _context.Users.Add(user);
-        }
-        else
-        {
-            user.FullName = vm.FullName;
-            if (user.RoleId == string.Empty) user.RoleId = guestRole.Id;
         }
 
         // Create Guest
@@ -116,7 +91,7 @@ public class GuestRegistrationController : Controller
             Address = vm.Address,
             SelectedEntranceExamId = vm.SelectedEntranceExamId,
             ClassId = vm.ClassId,
-            UserId = user.Id,
+            UserId = null,
             Status = GuestRegistrationStatus.PendingPayment,
             CreatedAt = DateTime.Now
         };
@@ -126,7 +101,7 @@ public class GuestRegistrationController : Controller
         var amount = await ResolveAmountAsync(vm);
         if (amount <= 0)
         {
-            ModelState.AddModelError(nameof(vm.ManualAmount), "Số tiền thanh toán không hợp lệ.");
+            ModelState.AddModelError(nameof(vm.ManualAmount), "Invalid payment amount.");
             await LoadDropdowns();
             return View(vm);
         }

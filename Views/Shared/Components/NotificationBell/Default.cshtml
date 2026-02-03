@@ -1,19 +1,233 @@
-@model int
+@model Symphony.Portal.Web.Models.ViewModels.NotificationBellVM
 
-<li class="nav-item dropdown">
-    <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-bell-fill" style="font-size: 1.2rem; position: relative;">
-            @if (Model > 0)
-            {
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
-                    @Model
-                    <span class="visually-hidden">unread messages</span>
+<div class="relative inline-block" id="notificationContainer">
+    <button class="flex items-center justify-center p-2 text-slate-600 dark:text-slate-400 hover:text-primary transition-all duration-300 relative group" 
+            onclick="toggleNotificationDropdown(event)"
+            title="Notifications"
+            data-i18n-attr="title:common.notifications">
+        <span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-110">notifications</span>
+        @if (Model.UnreadCount > 0)
+        {
+            <span class="absolute top-1.5 right-1.5 flex h-4 w-4" id="unread-badge">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-4 w-4 bg-primary text-[10px] items-center justify-center text-background-dark font-black">
+                    @Model.UnreadCount
                 </span>
+            </span>
+        }
+    </button>
+    
+    <div id="notificationMenu" class="hidden absolute right-0 top-full mt-2 w-80 md:w-96 bg-white dark:bg-[#0e121b]/95 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden z-[100] transform origin-top-right transition-all duration-300">
+        
+        <!-- Header -->
+        <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-white/5">
+            <h3 class="text-sm font-black uppercase tracking-wider text-slate-800 dark:text-white flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg text-primary">notifications_active</span>
+                <span data-i18n="common.notifications">Notifications</span>
+            </h3>
+            @if (Model.UnreadCount > 0)
+            {
+                <button onclick="markAllAsRead(event)" class="text-[10px] font-bold text-primary hover:underline uppercase tracking-tighter" data-i18n="common.mark_all_read">
+                    Mark all read
+                </button>
             }
-        </i>
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
-        <li><h6 class="dropdown-header">Thông báo</h6></li>
-        <li><a class="dropdown-item" href="/Notifications">Xem tất cả thông báo</a></li>
-    </ul>
-</li>
+        </div>
+
+        <!-- Notification List -->
+        <div class="max-h-[400px] overflow-y-auto custom-scrollbar" id="notification-list">
+            @if (Model.Notifications.Any())
+            {
+                @foreach (var note in Model.Notifications)
+                {
+                    <div class="notification-item group/item relative px-5 py-4 border-b border-slate-50 dark:border-slate-800/50 hover:bg-slate-100 dark:hover:bg-white/5 transition-all duration-200 cursor-pointer @(!note.IsRead ? "bg-primary/5 dark:bg-primary/[0.03]" : "")" 
+                         id="note-@note.Id"
+                         onclick="markAsNoteRead(@note.Id, this, event)">
+                        
+                        <div class="flex gap-3">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary text-xl">@(note.IsRead ? "mail_outline" : "mark_email_unread")</span>
+                            </div>
+                            <div class="flex-1 min-w-0 pr-6">
+                                <div class="flex justify-between items-start mb-0.5">
+                                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 truncate @(!note.IsRead ? "text-primary" : "")">@note.Title</h4>
+                                    <span class="text-[10px] text-slate-500 font-medium">@note.CreatedAt.ToString("MMM dd")</span>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">@note.Message</p>
+                            </div>
+                        </div>
+
+                        <!-- Delete Button -->
+                        <button onclick="deleteNotification(@note.Id, event)" 
+                                class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-500/10 opacity-0 group-hover/item:opacity-100 transition-all duration-200"
+                                title="Delete"
+                                data-i18n-attr="title:common.delete_btn">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                        </button>
+
+                        @if (!note.IsRead)
+                        {
+                            <div class="unread-dot absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(0,200,255,0.5)]"></div>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="py-12 text-center">
+                    <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-3xl text-slate-300 dark:text-slate-600">notifications_off</span>
+                    </div>
+                    <p class="text-sm text-slate-500 font-medium" data-i18n="common.no_notifications">No new notifications</p>
+                </div>
+            }
+        </div>
+
+        <!-- Footer -->
+        <a href="/Notifications" class="block py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-white bg-slate-50/50 dark:bg-white/5 transition-colors border-t border-slate-100 dark:border-slate-800" data-i18n="common.view_all">
+            View All Notifications
+        </a>
+    </div>
+</div>
+
+<script>
+    function toggleNotificationDropdown(event) {
+        event.stopPropagation();
+        const menu = document.getElementById('notificationMenu');
+        const isHidden = menu.classList.contains('hidden');
+        
+        // Close all other dropdowns if any (optional, keeping it simple for now)
+        
+        if (isHidden) {
+            menu.classList.remove('hidden');
+            menu.style.animation = 'dropdownIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+        } else {
+            menu.classList.add('hidden');
+        }
+    }
+
+    // Close when clicking outside
+    document.addEventListener('click', (event) => {
+        const container = document.getElementById('notificationContainer');
+        const menu = document.getElementById('notificationMenu');
+        if (container && !container.contains(event.target)) {
+            if (menu) menu.classList.add('hidden');
+        }
+    });
+
+    function markAsNoteRead(id, element, event) {
+        if (event.target.closest('button')) return; 
+        
+        if (element.classList.contains('bg-primary/5') || element.classList.contains('dark:bg-primary/[0.03]')) {
+            element.classList.remove('bg-primary/5', 'dark:bg-primary/[0.03]');
+            const dot = element.querySelector('.unread-dot');
+            if (dot) dot.remove();
+            
+            const icon = element.querySelector('.material-symbols-outlined');
+            if (icon) icon.textContent = 'mail_outline';
+
+            const title = element.querySelector('h4');
+             if (title) title.classList.remove('text-primary');
+
+            fetch('/Notifications/MarkAsRead?id=' + id, { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        updateBadge(-1);
+                    }
+                });
+        }
+    }
+
+    function deleteNotification(id, event) {
+        event.stopPropagation();
+        event.preventDefault();
+        
+        const item = document.getElementById('note-' + id);
+        if (!item) return;
+
+        item.style.transform = 'translateX(20px)';
+        item.style.opacity = '0';
+        
+        setTimeout(() => {
+            const isUnread = item.querySelector('.unread-dot') !== null;
+            item.remove();
+            
+            if (isUnread) updateBadge(-1);
+            
+            const list = document.getElementById('notification-list');
+            if (list && list.children.length === 0) {
+                list.innerHTML = `
+                    <div class="py-12 text-center">
+                        <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-4">
+                            <span class="material-symbols-outlined text-3xl text-slate-300 dark:text-slate-600">notifications_off</span>
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium" data-i18n="common.no_notifications">No new notifications</p>
+                    </div>`;
+                    // Re-run localization for the dynamically added element
+                    if (typeof updateContent === 'function') updateContent();
+            }
+
+            fetch('/Notifications/Delete?id=' + id, { method: 'POST' });
+        }, 200);
+    }
+
+    function markAllAsRead(event) {
+        event.stopPropagation();
+        
+        fetch('/Notifications/MarkAllAsRead', { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    const dots = document.querySelectorAll('.unread-dot');
+                    dots.forEach(d => d.remove());
+                    
+                    const unreadItems = document.querySelectorAll('.notification-item');
+                    unreadItems.forEach(i => {
+                        i.classList.remove('bg-primary/5', 'dark:bg-primary/[0.03]');
+                        const title = i.querySelector('h4');
+                        if (title) title.classList.remove('text-primary');
+                        const icon = i.querySelector('.material-symbols-outlined');
+                        if (icon) icon.textContent = 'mail_outline';
+                    });
+                    
+                    const badge = document.getElementById('unread-badge');
+                    if (badge) badge.remove();
+                }
+            });
+    }
+
+    function updateBadge(change) {
+        const badge = document.getElementById('unread-badge');
+        if (!badge) return;
+        
+        const countSpan = badge.querySelector('span:last-child');
+        if (!countSpan) return;
+        
+        let count = parseInt(countSpan.textContent.trim());
+        count += change;
+        
+        if (count <= 0) {
+            badge.remove();
+        } else {
+            countSpan.textContent = count;
+        }
+    }
+</script>
+
+<style>
+    @@keyframes dropdownIn {
+        from { opacity: 0; transform: translateY(10px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(0, 200, 255, 0.1);
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 200, 255, 0.3);
+    }
+</style>

@@ -1,5 +1,5 @@
 @using Symphony.Portal.Web.Models.Enums
-@model IEnumerable<Symphony.Portal.Web.Models.StudentRegistration>
+@model Symphony.Portal.Web.Models.ViewModels.PaginatedList<Symphony.Portal.Web.Models.StudentRegistration>
 
 @{
     ViewData["Title"] = "Student Registrations";
@@ -54,8 +54,8 @@
                         {
                             <a asp-action="Approve" asp-route-id="@item.Id" class="btn btn-sm btn-success" title="Approve"><i class="fa-solid fa-check"></i></a>
                             
-                             <form asp-action="Reject" asp-route-id="@item.Id" onsubmit="return confirm('Are you sure you want to reject this registration?');" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-danger" title="Reject"><i class="fa-solid fa-xmark"></i></button>
+                             <form asp-action="Reject" asp-route-id="@item.Id" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger btn-delete" title="Reject"><i class="fa-solid fa-xmark"></i></button>
                             </form>
                         }
                     </td>
@@ -64,3 +64,5 @@
         </tbody>
     </table>
 </div>
+
+<partial name="_Pagination" model="Model" />

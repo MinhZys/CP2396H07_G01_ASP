@@ -17,6 +17,7 @@ namespace Symphony.Portal.Web.Models.ViewModels
         public string Role { get; set; } = string.Empty;
 
         public bool IsInstructor { get; set; }
+        public bool IsGuest { get; set; }
 
         // Common Profile Fields
         [Display(Name = "Date of Birth")]

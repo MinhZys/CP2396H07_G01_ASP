@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -17,7 +18,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string searchString, int? pageNumber)
         {
             var certificates = from c in _context.Certificates
                              select c;
@@ -28,7 +29,9 @@ namespace Symphony.Portal.Web.Controllers.Admin
             }
 
             ViewData["CurrentFilter"] = searchString;
-            return View(await certificates.ToListAsync());
+
+            int pageSize = 10;
+            return View(await PaginatedList<Certificate>.CreateAsync(certificates.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         public IActionResult Create()
@@ -94,7 +97,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             {
                 if (await _context.Courses.AnyAsync(c => c.CertificateId == id))
                 {
-                     TempData["Error"] = "Không thể xóa chứng chỉ này vì nó đang được sử dụng cho một hoặc nhiều Khóa học.";
+                     TempData["Error"] = "Cannot delete this certificate because it is being used by one or more courses.";
                      return RedirectToAction(nameof(Index));
                 }
 

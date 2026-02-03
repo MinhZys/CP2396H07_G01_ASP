@@ -1,4 +1,4 @@
-@model IEnumerable<Symphony.Portal.Web.Models.Subject>
+@model Symphony.Portal.Web.Models.ViewModels.PaginatedList<Symphony.Portal.Web.Models.Subject>
 
 @{
     ViewData["Title"] = "Subjects";
@@ -27,10 +27,10 @@
         <thead class="table-dark">
             <tr>
                 <th>Image</th>
-                <th>@Html.DisplayNameFor(model => model.Id)</th>
-                <th>@Html.DisplayNameFor(model => model.Name)</th>
-                <th>@Html.DisplayNameFor(model => model.StudyTime)</th>
-                <th>@Html.DisplayNameFor(model => model.Description)</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Study Time</th>
+                <th>Description</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -65,6 +65,8 @@
         </tbody>
     </table>
 </div>
+
+<partial name="_Pagination" model="Model" />
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

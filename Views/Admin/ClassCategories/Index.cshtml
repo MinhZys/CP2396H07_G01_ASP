@@ -1,4 +1,4 @@
-@model IEnumerable<Symphony.Portal.Web.Models.ClassCategory>
+@model Symphony.Portal.Web.Models.ViewModels.PaginatedList<Symphony.Portal.Web.Models.ClassCategory>
 
 @{
     ViewData["Title"] = "Class Categories";
@@ -44,5 +44,6 @@
                 </tbody>
             </table>
         </div>
+        <partial name="_Pagination" model="Model" />
     </div>
 </div>

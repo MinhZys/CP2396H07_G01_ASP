@@ -10,10 +10,13 @@ namespace Symphony.Portal.Web.Services
     public interface INotificationService
     {
         Task CreateNotificationAsync(string userId, string title, string message);
+        Task BroadcastNotificationAsync(string title, string message);
         Task<List<Notification>> GetUserNotificationsAsync(string userId);
         Task<int> GetUnreadCountAsync(string userId);
         Task MarkAsReadAsync(int notificationId);
         Task MarkAllAsReadAsync(string userId);
+        Task SendNotificationToRolesAsync(List<string> roleNames, string title, string message);
+        Task DeleteNotificationAsync(int notificationId);
     }
 
     public class NotificationService : INotificationService
@@ -37,6 +40,22 @@ namespace Symphony.Portal.Web.Services
             };
 
             _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task BroadcastNotificationAsync(string title, string message)
+        {
+            var users = await _context.Users.Where(u => u.IsActive).ToListAsync();
+            var notifications = users.Select(u => new Notification
+            {
+                UserId = u.Id,
+                Title = title,
+                Message = message,
+                IsRead = false,
+                CreatedAt = DateTime.Now
+            }).ToList();
+
+            _context.Notifications.AddRange(notifications);
             await _context.SaveChangesAsync();
         }
 
@@ -77,6 +96,40 @@ namespace Symphony.Portal.Web.Services
                 {
                     n.IsRead = true;
                 }
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task SendNotificationToRolesAsync(List<string> roleNames, string title, string message)
+        {
+            if (roleNames == null || !roleNames.Any()) return;
+
+            var users = await _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.IsActive && u.Role != null && roleNames.Contains(u.Role.Name))
+                .ToListAsync();
+
+            if (!users.Any()) return;
+
+            var notifications = users.Select(u => new Notification
+            {
+                UserId = u.Id,
+                Title = title,
+                Message = message,
+                IsRead = false,
+                CreatedAt = DateTime.Now
+            }).ToList();
+
+            _context.Notifications.AddRange(notifications);
+            await _context.SaveChangesAsync();
+        }
+        
+        public async Task DeleteNotificationAsync(int notificationId)
+        {
+            var notification = await _context.Notifications.FindAsync(notificationId);
+            if (notification != null)
+            {
+                _context.Notifications.Remove(notification);
                 await _context.SaveChangesAsync();
             }
         }

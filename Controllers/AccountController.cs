@@ -14,10 +14,12 @@ namespace Symphony.Portal.Web.Controllers
     public class AccountController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly Services.EmailService _emailService;
 
-        public AccountController(AppDbContext context)
+        public AccountController(AppDbContext context, Services.EmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -43,7 +45,7 @@ namespace Symphony.Portal.Web.Controllers
                     // Check if active
                     if (!user.IsActive)
                     {
-                        ModelState.AddModelError(string.Empty, "Tài khoản của bạn đã bị vô hiệu hóa.");
+                        ModelState.AddModelError(string.Empty, "Your account has been disabled.");
                         return View(model);
                     }
 
@@ -75,12 +77,12 @@ namespace Symphony.Portal.Web.Controllers
                             new ClaimsPrincipal(claimsIdentity),
                             authProperties);
 
-                        TempData["Success"] = "Đăng nhập thành công! Chào mừng bạn quay trở lại.";
+                        TempData["Success"] = "Login successful! Welcome back.";
                         return RedirectToLocal(returnUrl, user);
                     }
                 }
 
-                ModelState.AddModelError(string.Empty, "Thông tin đăng nhập không hợp lệ.");
+                ModelState.AddModelError(string.Empty, "Invalid login credentials.");
             }
             return View(model);
         }
@@ -98,60 +100,35 @@ namespace Symphony.Portal.Web.Controllers
 
         public async Task<IActionResult> GoogleResponse()
         {
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            var claims = result.Principal?.Identities.FirstOrDefault()?.Claims;
+            // Try to authenticate against the Google/External provider
+            var result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var claims = result.Principal?.Claims;
             var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var fullName = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 
             if (email != null)
             {
                 var user = await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);
+                
                 if (user == null)
                 {
-                    var studentRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Student");
-                    user = new User
-                    {
-                        Id = Guid.NewGuid().ToString(), // Fix: Generate ID
-                        Email = email,
-                        FullName = fullName ?? email,
-                        Password = Guid.NewGuid().ToString(),
-                        RoleId = studentRole != null ? studentRole.Id.ToString() : "0",
-                        IsActive = true,
-                        Role = studentRole
-                    };
-                    _context.Users.Add(user);
-                    await _context.SaveChangesAsync();
+                    // Clear the session that was auto-signed in by the Google handler
+                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    TempData["Error"] = "Account does not exist. Please register and wait for administrator approval.";
+                    return RedirectToAction("Login");
                 }
-                else if (string.IsNullOrEmpty(user.Id))
+
+                if (!user.IsActive)
                 {
-                     // Self-heal: Fix missing ID by recreating the user
-                     // Cannot modify Key 'Id' on tracked entity, must delete and recreate
-                     var newId = Guid.NewGuid().ToString();
-                     var existingRoleId = user.RoleId;
-                     var existingFullName = user.FullName;
-                     var existingEmail = user.Email;
-                     var existingIsActive = user.IsActive;
-                     var existingPassword = user.Password;
-                     var existingRole = user.Role; // Keep reference to role to attach later if needed
-
-                     _context.Users.Remove(user);
-                     await _context.SaveChangesAsync();
-
-                     var newUser = new User 
-                     {
-                        Id = newId,
-                        Email = existingEmail,
-                        FullName = existingFullName,
-                        Password = existingPassword,
-                        RoleId = existingRoleId,
-                        IsActive = existingIsActive,
-                        Role = existingRole
-                     };
-                     
-                     _context.Users.Add(newUser);
-                     await _context.SaveChangesAsync();
-                     
-                     user = newUser; // Update reference for claims creation
+                    // Clear the session that was auto-signed in by the Google handler
+                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    TempData["Error"] = "Your account has not been approved or has been disabled.";
+                    return RedirectToAction("Login");
                 }
 
                 // Fix: Properly Sign In with App Claims (Role)
@@ -189,62 +166,15 @@ namespace Symphony.Portal.Web.Controllers
         [HttpGet]
         public IActionResult Register(string? returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return RedirectToAction("Create", "GuestRegistration", new { returnUrl });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterVM model, string? returnUrl = null)
+        public IActionResult Register(RegisterVM model, string? returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
-            {
-                // Check if user exists
-                if (await _context.Users.AnyAsync(u => u.Email == model.Email))
-                {
-                    ModelState.AddModelError(string.Empty, "Email này đã được sử dụng.");
-                    return View(model);
-                }
-
-                var studentRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Student");
-                if (studentRole == null)
-                {
-                     ModelState.AddModelError(string.Empty, "Lỗi hệ thống: Không tìm thấy quyền Học viên.");
-                     return View(model);
-                }
-
-                var user = new User
-                {
-                    Email = model.Email,
-                    FullName = model.FullName,
-                    Password = model.Password,
-                    RoleId = studentRole.Id,
-                    IsActive = true,
-                    Role = studentRole // Set navigation property for Redirect
-                };
-
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
-
-                // Auto Login
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id), // Fix: Add User ID claim
-                    new Claim(ClaimTypes.Name, user.Email),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim("FullName", user.FullName),
-                    new Claim(ClaimTypes.Role, "Student")
-                };
-
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity));
-
-                return RedirectToLocal(returnUrl, user);
-            }
-            return View(model);
+            // Redirect to unified guest registration flow
+            return RedirectToAction("Create", "GuestRegistration", new { returnUrl });
         }
 
         [HttpPost]
@@ -253,7 +183,7 @@ namespace Symphony.Portal.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            TempData["Success"] = "Đăng xuất thành công!";
+            TempData["Success"] = "Logged out successfully!";
             return RedirectToAction("Index", "Home");
         }
 
@@ -289,5 +219,130 @@ namespace Symphony.Portal.Web.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+                if (user == null)
+                {
+                    // Don't reveal that the user does not exist
+                    ModelState.AddModelError(string.Empty, "If the email exists, a verification code has been sent.");
+                    return View(model); 
+                }
+
+                // Generate OTP
+                var otp = new Random().Next(100000, 999999).ToString();
+
+                // Store in Session
+                HttpContext.Session.SetString("ResetEmail", model.Email);
+                HttpContext.Session.SetString("ResetCode", otp);
+
+                // Send Email
+                var subject = "Password reset verification code";
+                var body = $"Your verification code is: {otp}";
+                
+                try 
+                {
+                    await _emailService.SendEmailAsync(model.Email, subject, body);
+                } 
+                catch(Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, "Failed to send email: " + ex.Message);
+                    return View(model);
+                }
+
+                return RedirectToAction("VerifyCode");
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult VerifyCode()
+        {
+            var email = HttpContext.Session.GetString("ResetEmail");
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToAction("ForgotPassword");
+            }
+            return View(new VerifyCodeVM { Email = email });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult VerifyCode(VerifyCodeVM model)
+        {
+            var email = HttpContext.Session.GetString("ResetEmail");
+            var code = HttpContext.Session.GetString("ResetCode");
+
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(code))
+            {
+                 return RedirectToAction("ForgotPassword");
+            }
+
+            if (model.Code == code)
+            {
+                HttpContext.Session.SetString("IsVerified", "true");
+                return RedirectToAction("ResetPassword");
+            }
+
+            ModelState.AddModelError(string.Empty, "Incorrect verification code.");
+            model.Email = email;
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword()
+        {
+            var email = HttpContext.Session.GetString("ResetEmail");
+            var isVerified = HttpContext.Session.GetString("IsVerified");
+
+            if (string.IsNullOrEmpty(email) || isVerified != "true")
+            {
+                return RedirectToAction("ForgotPassword");
+            }
+
+            return View(new ResetPasswordVM { Email = email });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordVM model)
+        {
+             var email = HttpContext.Session.GetString("ResetEmail");
+            var isVerified = HttpContext.Session.GetString("IsVerified");
+
+            if (string.IsNullOrEmpty(email) || isVerified != "true")
+            {
+                return RedirectToAction("ForgotPassword");
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                if (user != null)
+                {
+                    user.Password = model.NewPassword; // Ideally hash this
+                    _context.Update(user);
+                    await _context.SaveChangesAsync();
+
+                    // Clear Session
+                    HttpContext.Session.Clear();
+
+                    TempData["Success"] = "Password reset successful. Please login.";
+                    return RedirectToAction("Login");
+                }
+            }
+            return View(model);
+        }
+
     }
 }

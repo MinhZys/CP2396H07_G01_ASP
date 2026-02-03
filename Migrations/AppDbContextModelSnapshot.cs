@@ -117,15 +117,35 @@ namespace CP2396H07_G01.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("OpenHours")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -349,6 +369,148 @@ namespace CP2396H07_G01.Migrations
                         .IsUnique();
 
                     b.ToTable("ClassLessons");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.ClassSchedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClassId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PublishedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.ToTable("ClassSchedules");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.ClassSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<int>("ClassScheduleId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("InstructorId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("RescheduledFromSessionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SessionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SessionType")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassScheduleId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("ClassSessions");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.ContactMessage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("CenterId")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CenterId");
+
+                    b.ToTable("ContactMessages");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Course", b =>
@@ -758,6 +920,43 @@ namespace CP2396H07_G01.Migrations
                     b.ToTable("Guests");
                 });
 
+            modelBuilder.Entity("Symphony.Portal.Web.Models.Holiday", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRecurringAnnual")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Holidays");
+                });
+
             modelBuilder.Entity("Symphony.Portal.Web.Models.InstructorProfile", b =>
                 {
                     b.Property<string>("Id")
@@ -941,6 +1140,12 @@ namespace CP2396H07_G01.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FeaturedImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -963,6 +1168,37 @@ namespace CP2396H07_G01.Migrations
                     b.HasIndex("SubjectId");
 
                     b.ToTable("PageContents");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.PageImage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsFeatured")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PageContentId")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PageContentId");
+
+                    b.ToTable("PageImages");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Payment", b =>
@@ -1253,6 +1489,43 @@ namespace CP2396H07_G01.Migrations
                             Description = "Prospective Student",
                             Name = "Guest"
                         });
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.Room", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LocationNote")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.StudentAnswer", b =>
@@ -1657,6 +1930,43 @@ namespace CP2396H07_G01.Migrations
                     b.Navigation("Lesson");
                 });
 
+            modelBuilder.Entity("Symphony.Portal.Web.Models.ClassSchedule", b =>
+                {
+                    b.HasOne("Symphony.Portal.Web.Models.Class", "Class")
+                        .WithMany("ClassSchedules")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.ClassSession", b =>
+                {
+                    b.HasOne("Symphony.Portal.Web.Models.ClassSchedule", "ClassSchedule")
+                        .WithMany("Sessions")
+                        .HasForeignKey("ClassScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Symphony.Portal.Web.Models.Room", "Room")
+                        .WithMany("Sessions")
+                        .HasForeignKey("RoomId");
+
+                    b.Navigation("ClassSchedule");
+
+                    b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.ContactMessage", b =>
+                {
+                    b.HasOne("Symphony.Portal.Web.Models.Center", "Center")
+                        .WithMany()
+                        .HasForeignKey("CenterId");
+
+                    b.Navigation("Center");
+                });
+
             modelBuilder.Entity("Symphony.Portal.Web.Models.Course", b =>
                 {
                     b.HasOne("Symphony.Portal.Web.Models.Category", "Category")
@@ -1761,8 +2071,9 @@ namespace CP2396H07_G01.Migrations
             modelBuilder.Entity("Symphony.Portal.Web.Models.EntranceExam", b =>
                 {
                     b.HasOne("Symphony.Portal.Web.Models.ExamPaper", "ExamPaper")
-                        .WithMany()
-                        .HasForeignKey("ExamPaperId");
+                        .WithMany("EntranceExams")
+                        .HasForeignKey("ExamPaperId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("ExamPaper");
                 });
@@ -1917,7 +2228,7 @@ namespace CP2396H07_G01.Migrations
                     b.Navigation("Subject");
                 });
 
-            modelBuilder.Entity("Symphony.Portal.Web.Models.Payment", b =>
+            modelBuilder.Entity("Symphony.Portal.Web.Models.PageImage", b =>
                 {
                     b.HasOne("Symphony.Portal.Web.Models.Guest", "Guest")
                         .WithMany()
@@ -2099,7 +2410,14 @@ namespace CP2396H07_G01.Migrations
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Class", b =>
                 {
+                    b.Navigation("ClassSchedules");
+
                     b.Navigation("RevisionRegistrations");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.ClassSchedule", b =>
+                {
+                    b.Navigation("Sessions");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Course", b =>
@@ -2114,11 +2432,22 @@ namespace CP2396H07_G01.Migrations
             modelBuilder.Entity("Symphony.Portal.Web.Models.EntranceExam", b =>
                 {
                     b.Navigation("ExamPapers");
+
+                    b.Navigation("StudentExamSessions");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.ExamPaper", b =>
                 {
+                    b.Navigation("EntranceExams");
+
                     b.Navigation("ExamPaperQuestions");
+
+                    b.Navigation("StudentExamSessions");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.PageContent", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Question", b =>
@@ -2139,6 +2468,11 @@ namespace CP2396H07_G01.Migrations
             modelBuilder.Entity("Symphony.Portal.Web.Models.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Symphony.Portal.Web.Models.Room", b =>
+                {
+                    b.Navigation("Sessions");
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.StudentExamSession", b =>

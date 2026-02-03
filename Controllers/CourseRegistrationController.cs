@@ -91,7 +91,7 @@ namespace Symphony.Portal.Web.Controllers
 
             // Role Guest phải có trong DB
             var guestRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Guest");
-            if (guestRole == null) return BadRequest("Role 'Guest' chưa có trong DB.");
+            if (guestRole == null) return BadRequest("Role 'Guest' does not exist in the database.");
 
             // tạo / cập nhật user theo email
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == guest.Email);
@@ -154,7 +154,7 @@ namespace Symphony.Portal.Web.Controllers
 
             var courseId = ExtractCourseId(guest.Description);
             if (string.IsNullOrWhiteSpace(courseId))
-                return BadRequest("Guest không chứa COURSE id.");
+                return BadRequest("Guest does not contain a COURSE id.");
 
             var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == courseId);
             if (course == null) return NotFound();
@@ -190,7 +190,7 @@ namespace Symphony.Portal.Web.Controllers
 
             var courseId = ExtractCourseId(guest.Description);
             if (string.IsNullOrWhiteSpace(courseId))
-                return BadRequest("Guest không chứa COURSE id.");
+                return BadRequest("Guest does not contain a COURSE id.");
 
             var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == courseId);
             if (course == null) return NotFound();

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -18,7 +19,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // GET: Admin/ClassCategories (with Search)
-        public async Task<IActionResult> Index(string? searchString)
+        public async Task<IActionResult> Index(string? searchString, int? pageNumber)
         {
             var categories = from c in _context.ClassCategories
                              select c;
@@ -33,9 +34,11 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
             ViewData["CurrentFilter"] = searchString;
 
-            return View(await categories
-                .OrderByDescending(c => c.CreatedAt)
-                .ToListAsync());
+            int pageSize = 10;
+            return View(await PaginatedList<ClassCategory>.CreateAsync(
+                categories.OrderByDescending(c => c.CreatedAt).AsNoTracking(), 
+                pageNumber ?? 1, 
+                pageSize));
         }
 
         // GET: Admin/ClassCategories/Create

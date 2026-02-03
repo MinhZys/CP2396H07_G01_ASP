@@ -23,14 +23,18 @@ namespace Symphony.Portal.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId))
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userEmail = User.Identity?.Name;
+
+            var user = await _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == userId || u.Email == userEmail);
+
+            if (user == null)
             {
+                // If user is authenticated but not in DB, something is wrong
                 return RedirectToAction("Login", "Account");
             }
-
-            var user = await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == userId);
-            if (user == null) return NotFound();
 
             var model = new ProfileVM
             {
@@ -38,7 +42,8 @@ namespace Symphony.Portal.Web.Controllers
                 FullName = user.FullName,
                 Email = user.Email,
                 Role = user.Role?.Name ?? "User",
-                IsInstructor = user.Role?.Name == RoleNames.Instructor
+                IsInstructor = user.Role?.Name == RoleNames.Instructor,
+                IsGuest = user.Role?.Name == RoleNames.Guest
             };
 
             if (model.IsInstructor)
@@ -63,6 +68,16 @@ namespace Symphony.Portal.Web.Controllers
                 model.Bio = profile.Bio;
                 model.Certifications = profile.Certifications;
                 model.GithubUrl = profile.GithubUrl;
+            }
+            else if (model.IsGuest)
+            {
+                var guest = await _context.Guests.FirstOrDefaultAsync(g => g.UserId == userId || g.Email == user.Email);
+                if (guest != null)
+                {
+                    model.DateOfBirth = guest.Dob;
+                    model.PhoneNumber = guest.PhoneNumber;
+                    model.AddressLine = guest.Address;
+                }
             }
             else
             {
@@ -100,8 +115,9 @@ namespace Symphony.Portal.Web.Controllers
             if (user == null) return NotFound();
 
             bool isInstructor = user.Role?.Name == RoleNames.Instructor;
+            bool isGuest = user.Role?.Name == RoleNames.Guest;
 
-            if (!isInstructor)
+            if (!isInstructor && !isGuest)
             {
                 ModelState.Remove("GithubUrl");
                 ModelState.Remove("Specialization");
@@ -143,27 +159,18 @@ namespace Symphony.Portal.Web.Controllers
                 user.FullName = model.FullName;
             }
 
-            if (isInstructor)
+            else if (isGuest)
             {
-                var profile = await _context.InstructorProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
-                if (profile == null) return NotFound();
-
-                profile.FullName = model.FullName;
-                profile.DateOfBirth = model.DateOfBirth;
-                profile.Gender = model.Gender;
-                profile.PhoneNumber = model.PhoneNumber;
-                profile.AddressLine = model.AddressLine;
-                if (!string.IsNullOrEmpty(model.AvatarUrl))
+                var guest = await _context.Guests.FirstOrDefaultAsync(g => g.UserId == userId || g.Email == user.Email);
+                if (guest != null)
                 {
-                    profile.AvatarUrl = model.AvatarUrl;
+                    guest.FullName = model.FullName;
+                    if (model.DateOfBirth.HasValue) guest.Dob = model.DateOfBirth.Value;
+                    guest.PhoneNumber = model.PhoneNumber;
+                    guest.Address = model.AddressLine;
+                    
+                    _context.Guests.Update(guest);
                 }
-                profile.YearsOfExperience = model.YearsOfExperience;
-                profile.Specialization = model.Specialization;
-                profile.Bio = model.Bio;
-                profile.Certifications = model.Certifications;
-                profile.GithubUrl = model.GithubUrl;
-                
-                _context.InstructorProfiles.Update(profile);
             }
             else
             {

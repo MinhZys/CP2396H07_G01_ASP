@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace CP2396H07_G01.Controllers.Admin
 {
@@ -19,9 +20,11 @@ namespace CP2396H07_G01.Controllers.Admin
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-            return View(await _context.EntranceExams.ToListAsync());
+            var query = _context.EntranceExams.AsNoTracking();
+            int pageSize = 10;
+            return View(await PaginatedList<EntranceExam>.CreateAsync(query, pageNumber ?? 1, pageSize));
         }
 
         public IActionResult Create()
@@ -37,9 +40,9 @@ namespace CP2396H07_G01.Controllers.Admin
             if (ModelState.IsValid)
             {
                 entranceExam.Id = Guid.NewGuid().ToString();
-                _context.Add(entranceExam);
+                _context.EntranceExams.Add(entranceExam);
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Tạo kỳ thi tuyển sinh thành công!";
+                TempData["Success"] = "Entrance exam created successfully!";
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.ExamPapers = _context.ExamPapers.Select(p => new { p.Id, p.Title }).ToList();
@@ -69,7 +72,7 @@ namespace CP2396H07_G01.Controllers.Admin
                 {
                     _context.Update(entranceExam);
                     await _context.SaveChangesAsync();
-                    TempData["Success"] = "Cập nhật kỳ thi thành công!";
+                    TempData["Success"] = "Entrance exam updated successfully!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -89,13 +92,19 @@ namespace CP2396H07_G01.Controllers.Admin
             var entranceExam = await _context.EntranceExams.FindAsync(id);
             if (entranceExam != null)
             {
+                if (entranceExam.IsActive || entranceExam.IsRegistrationOpen)
+                {
+                    TempData["Error"] = "Cannot delete an active or open entrance exam!";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.EntranceExams.Remove(entranceExam);
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Xóa kỳ thi thành công!";
+                TempData["Success"] = "Entrance exam deleted successfully!";
             }
             else
             {
-                TempData["Error"] = "Không tìm thấy kỳ thi để xóa.";
+                TempData["Error"] = "Entrance exam not found.";
             }
             return RedirectToAction(nameof(Index));
         }

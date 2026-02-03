@@ -28,6 +28,20 @@ namespace Symphony.Portal.Web.Controllers
         {
             if (string.IsNullOrEmpty(id)) return NotFound();
 
+            var userEmail = User.Identity?.Name;
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            // Check if user has already taken this exam
+            var existingResult = await _context.ExamResults
+                .AnyAsync(r => r.StudentId == user.Id && r.EntranceExamId == id);
+
+            if (existingResult)
+            {
+                TempData["ErrorMessage"] = "You have already completed this exam.";
+                return RedirectToAction("Dashboard", "Guests");
+            }
+
             var entranceExam = await _context.EntranceExams
                 .Include(e => e.ExamPaper)
                 .ThenInclude(p => p.ExamPaperQuestions)
@@ -40,16 +54,48 @@ namespace Symphony.Portal.Web.Controllers
                 return NotFound();
             }
 
-            // In a real scenario, we would check if the user is registered and allowed to take the exam here.
-            
+            // Time-based entry check (5-minute window)
+            // Allow if within first 5 mins OR if they have already started (session flag)
+            var now = DateTime.Now;
+            var sessionKey = $"ExamStarted_{user.Id}_{id}";
+            var alreadyStarted = HttpContext.Session.GetString(sessionKey) == "true";
+
+            if (!alreadyStarted)
+            {
+                if (now < entranceExam.ExamDate)
+                {
+                    TempData["ErrorMessage"] = "The exam has not started yet.";
+                    return RedirectToAction("Dashboard", "Guests");
+                }
+                
+                if (now > entranceExam.ExamDate.AddMinutes(5))
+                {
+                    TempData["ErrorMessage"] = "The entry window for this exam is closed. You can only join within 5 minutes of the start time.";
+                    return RedirectToAction("Dashboard", "Guests");
+                }
+
+                // First time entering, set flag
+                HttpContext.Session.SetString(sessionKey, "true");
+            }
+
             return View(entranceExam);
         }
 
         [HttpPost]
         public async Task<IActionResult> SubmitExam(string id, Dictionary<string, string> answers)
         {
-            var userId = _context.Users.FirstOrDefault(u => u.Email == User.Identity.Name)?.Id;
-            if (userId == null) return RedirectToAction("Login", "Account");
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            // Prevent resubmission
+            var existingResult = await _context.ExamResults
+                .AnyAsync(r => r.StudentId == user.Id && r.EntranceExamId == id);
+
+            if (existingResult)
+            {
+                TempData["ErrorMessage"] = "Exam already submitted.";
+                return RedirectToAction("Dashboard", "Guests");
+            }
 
             var entranceExam = await _context.EntranceExams
                 .Include(e => e.ExamPaper)
@@ -84,7 +130,7 @@ namespace Symphony.Portal.Web.Controllers
             var result = new ExamResult
             {
                 Id = Guid.NewGuid().ToString(),
-                StudentId = userId,
+                StudentId = user.Id,
                 EntranceExamId = id,
                 Score = earnedScore,
                 IsPassed = isPassed,

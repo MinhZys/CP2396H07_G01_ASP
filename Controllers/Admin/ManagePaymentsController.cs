@@ -5,6 +5,7 @@ using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -61,9 +62,11 @@ namespace Symphony.Portal.Web.Controllers.Admin
             ViewData["CurrentMethod"] = method;
             ViewData["CurrentPurpose"] = purpose;
 
-            return View(await query
-                .OrderByDescending(p => p.PaymentDate)
-                .ToListAsync());
+            int pageSize = 10;
+            return View(await PaginatedList<Payment>.CreateAsync(
+                query.OrderByDescending(p => p.PaymentDate).AsNoTracking(), 
+                pageNumber ?? 1, 
+                pageSize));
         }
         public async Task<IActionResult> Details(string id)
         {
@@ -193,7 +196,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             payment.Status = PaymentStatus.Failed;
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Đã cập nhật trạng thái: Thất bại.";
+            TempData["Success"] = "Payment status updated: Failed.";
             return RedirectToAction(nameof(Index));
         }
         [HttpPost]
@@ -206,7 +209,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             payment.Status = PaymentStatus.Cancelled;
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Đã hủy thanh toán.";
+            TempData["Success"] = "Payment cancelled successfully.";
             return RedirectToAction(nameof(Index));
         }
         [HttpPost]
@@ -218,14 +221,14 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
             if (payment.Status != PaymentStatus.Paid)
             {
-                TempData["Error"] = "Chỉ hoàn tiền cho Payment đã thanh toán.";
+                TempData["Error"] = "Refund is only available for paid payments.";
                 return RedirectToAction(nameof(Index));
             }
 
             payment.Status = PaymentStatus.Refunded;
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Hoàn tiền thành công.";
+            TempData["Success"] = "Payment refunded successfully.";
             return RedirectToAction(nameof(Index));
         }
 

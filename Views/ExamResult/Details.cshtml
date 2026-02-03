@@ -1,20 +1,20 @@
 @model Symphony.Portal.Web.Models.StudentExamSession
 
 @{
-    ViewData["Title"] = "Chi tiết kết quả thi";
+    ViewData["Title"] = "Exam Result Details";
 }
 
 <div class="container py-4">
     <div class="mb-4">
         <a asp-action="MyExams" class="btn btn-outline-secondary btn-sm mb-3">
-            <i class="fas fa-arrow-left"></i> Quay lại
+            <i class="fas fa-arrow-left"></i> Back
         </a>
         <div class="card bg-primary text-white shadow">
             <div class="card-body p-4">
                 <div class="row align-items-center">
                     <div class="col-md-8">
-                        <h2 class="mb-1">Kết quả: @Model.EntranceExam?.Title</h2>
-                        <p class="mb-0 opacity-75">Đề thi: @Model.ExamPaper?.Title | Ngày thi: @Model.EndTime?.ToString("dd/MM/yyyy HH:mm")</p>
+                        <h2 class="mb-1">Result: @Model.EntranceExam?.Title</h2>
+                        <p class="mb-0 opacity-75">Exam Paper: @Model.ExamPaper?.Title | Exam Date: @Model.EndTime?.ToString("dd/MM/yyyy HH:mm")</p>
                     </div>
                     <div class="col-md-4 text-md-end mt-3 mt-md-0">
                         <div class="h1 mb-0">@Model.TotalScore.ToString("0.##")</div>
@@ -29,14 +29,14 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <h4 class="mb-4"><i class="fas fa-list-check text-muted"></i> Chi tiết điểm từng câu</h4>
+            <h4 class="mb-4"><i class="fas fa-list-check text-muted"></i> Question Details</h4>
             
             @foreach (var answer in Model.Answers.OrderBy(a => a.Id))
             {
                 <div class="card mb-3 shadow-sm @(answer.EarnedScore > 0 ? "border-success-subtle" : "border-danger-subtle")">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="fw-bold mb-0">Câu hỏi: @answer.Question?.Content</h6>
+                            <h6 class="fw-bold mb-0">Question: @answer.Question?.Content</h6>
                             <span class="badge @(answer.EarnedScore >= (answer.Question?.Score ?? 0) / 2 ? "bg-success" : "bg-danger")">
                                 @answer.EarnedScore / @answer.Question?.Score
                             </span>
@@ -59,7 +59,7 @@
                         else
                         {
                             <div class="bg-light p-2 rounded small mb-2">
-                                <strong>Bài làm:</strong><br/>
+                                <strong>Answer:</strong><br/>
                                 @answer.EssayContent
                             </div>
                         }
@@ -67,7 +67,7 @@
                         @if (!string.IsNullOrEmpty(answer.ExaminerNote))
                         {
                             <div class="alert alert-info py-2 px-3 mb-0 mt-3 small">
-                                <i class="fas fa-comment-dots"></i> <strong>Giám khảo nhận xét:</strong> @answer.ExaminerNote
+                                <i class="fas fa-comment-dots"></i> <strong>Examiner Note:</strong> @answer.ExaminerNote
                             </div>
                         }
                     </div>

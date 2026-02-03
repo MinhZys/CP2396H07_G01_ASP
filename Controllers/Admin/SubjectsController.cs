@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Models.ViewModels;
 using System.Linq;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         // GET: Admin/Subjects
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string searchString, int? pageNumber)
         {
             var subjects = from s in _context.Subjects
                            select s;
@@ -35,7 +36,9 @@ namespace Symphony.Portal.Web.Controllers.Admin
             }
 
             ViewData["CurrentFilter"] = searchString;
-            return View(await subjects.ToListAsync());
+            
+            int pageSize = 10;
+            return View(await PaginatedList<Subject>.CreateAsync(subjects.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Admin/Subjects/Create
@@ -212,7 +215,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             {
                 if (await _context.CourseSubjects.AnyAsync(cs => cs.SubjectId == id))
                 {
-                     TempData["Error"] = "Không thể xóa môn học này vì nó đang thuộc về một hoặc nhiều Khóa học.";
+                     TempData["Error"] = "Cannot delete this subject because it is linked to one or more courses.";
                      return RedirectToAction(nameof(Index));
                 }
 

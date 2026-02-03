@@ -29,12 +29,18 @@ namespace Symphony.Portal.Web.Controllers
             return Ok();
         }
 
-        [HttpPost]
         public async Task<IActionResult> MarkAllAsRead()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await _notificationService.MarkAllAsReadAsync(userId);
-            return RedirectToAction(nameof(Index));
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _notificationService.DeleteNotificationAsync(id);
+            return Ok();
         }
     }
 }

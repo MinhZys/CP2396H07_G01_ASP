@@ -1,31 +1,61 @@
 {
   "nav": {
     "home": "Trang chủ",
+    "subjects": "Môn học",
     "entranceExam": "Đăng ký kỳ thi đầu vào",
     "courses": "Khóa học",
+    "revisionCourses": "Khoá học ôn tập",
     "mentors": "Giảng viên",
     "contact": "Liên hệ",
-    "about": "Giới thiệu",
+    "about": "Giới thiệu chúng tôi",
     "faq": "Câu hỏi thường gặp",
     "login": "Đăng nhập",
     "logout": "Đăng xuất",
     "profile": "Hồ sơ cá nhân",
     "admin_dashboard": "Trang quản trị",
-    "my_classroom": "Lớp học của tôi"
+    "my_classroom": "Lớp học của tôi",
+    "my_schedule": "Lịch học của tôi",
+    "manage_exams": "Quản lý kỳ thi",
+    "exam_papers": "Đề thi",
+    "system_notifications": "Thông báo hệ thống",
+    "grading_queue": "Danh sách chấm điểm",
+    "my_exam_schedule": "Lịch thi của tôi",
+    "my_exam_results": "Kết quả thi của tôi",
+    "categories": "Danh mục",
+    "class_categories": "Danh mục lớp học",
+    "manage_payments": "Quản lý thanh toán",
+    "classes": "Lớp học",
+    "task_assignments": "Giao bài tập",
+    "entrance_exams": "Kỳ thi đầu vào",
+    "exam_results": "Kết quả thi",
+    "revision_packages": "Gói ôn tập",
+    "registrations": "Đăng ký",
+    "guest_registrations": "Đăng ký khách",
+    "manage_users": "Quản lý người dùng",
+    "cms": "Quản lý nội dung (CMS)",
+    "reviews": "Đánh giá",
+    "certificates": "Chứng chỉ",
+    "chat_support": "Hỗ trợ trực tuyến",
+    "go_to_site": "Về trang chủ",
+    "sign_out": "Đăng xuất"
   },
-    "hero": {
-        "title": "Chinh phục Công nghệ Hôm nay",
-        "subtitle": "Khai phá tiềm năng của bạn với các chứng chỉ CNTT hàng đầu và sự hướng dẫn từ chuyên gia.",
-        "explore_btn": "Khám phá Khóa học",
-        "view_mentors_btn": "Xem Giảng viên"
-    },
-    "common": {
-        "search": "Tìm kiếm",
-        "success": "Thành công!",
-        "error": "Lỗi!",
-        "confirm_title": "Bạn có chắc chắn không?",
-        "confirm_text": "Hành động này không thể hoàn tác!",
-        "delete_btn": "Vâng, xóa đi!",
-        "cancel_btn": "Hủy"
-    }
+  "hero": {
+    "title": "Chinh phục Công nghệ Hôm nay",
+    "subtitle": "Khai phá tiềm năng của bạn với các chứng chỉ CNTT hàng đầu và sự hướng dẫn từ chuyên gia.",
+    "explore_btn": "Khám phá Khóa học",
+    "view_mentors_btn": "Xem Giảng viên"
+  },
+  "common": {
+    "search": "Tìm kiếm",
+    "success": "Thành công!",
+    "error": "Lỗi!",
+    "confirm_title": "Bạn có chắc chắn không?",
+    "confirm_text": "Hành động này không thể hoàn tác!",
+    "delete_btn": "Vâng, xóa đi!",
+    "cancel_btn": "Hủy",
+    "notifications": "Thông báo",
+    "mark_all_read": "Đánh dấu tất cả đã đọc",
+    "view_all": "Xem tất cả thông báo",
+    "no_notifications": "Không có thông báo mới"
+  }
 }

@@ -1,23 +1,23 @@
-@model IEnumerable<Symphony.Portal.Web.Models.ExamPaper>
+@model Symphony.Portal.Web.Models.ViewModels.PaginatedList<Symphony.Portal.Web.Models.ExamPaper>
 
 @{
-    ViewData["Title"] = "Quản lý Đề thi";
+    ViewData["Title"] = "Manage Exam Papers";
 }
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold text-slate-800 mb-1">Quản lý Đề thi</h2>
-            <p class="text-slate-500 mb-0">Tạo và quản lý các đề thi tuyển sinh của hệ thống.</p>
+            <h2 class="fw-bold text-slate-800 mb-1">Manage Exam Papers</h2>
+            <p class="text-slate-500 mb-0">Create and manage entrance exam papers for the system.</p>
         </div>
         <div class="d-flex gap-2">
             <a asp-action="Questions" class="btn btn-outline-primary d-flex align-items-center gap-2 px-4 rounded-pill shadow-sm">
                 <span class="material-symbols-outlined">database</span>
-                Ngân hàng câu hỏi
+                Question Bank
             </a>
             <a asp-action="CreatePaper" class="btn btn-primary d-flex align-items-center gap-2 px-4 rounded-pill shadow-sm">
                 <span class="material-symbols-outlined">add</span>
-                Tạo đề thi mới
+                Create New Exam Paper
             </a>
         </div>
     </div>
@@ -61,8 +61,8 @@
                                     <span class="material-symbols-outlined text-slate-500">schedule</span>
                                 </div>
                                 <div>
-                                    <div class="small text-slate-400">Thời gian làm bài</div>
-                                    <div class="fw-bold text-slate-700">@item.Duration phút</div>
+                                    <div class="small text-slate-400">Duration</div>
+                                    <div class="fw-bold text-slate-700">@item.Duration minutes</div>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center gap-3">
@@ -70,8 +70,8 @@
                                     <span class="material-symbols-outlined text-slate-500">quiz</span>
                                 </div>
                                 <div>
-                                    <div class="small text-slate-400">Số lượng câu hỏi</div>
-                                    <div class="fw-bold text-slate-700">@item.ExamPaperQuestions.Count câu</div>
+                                    <div class="small text-slate-400">Number of Questions</div>
+                                    <div class="fw-bold text-slate-700">@item.ExamPaperQuestions.Count questions</div>
                                 </div>
                             </div>
                         </div>
@@ -80,15 +80,15 @@
                         <div class="d-flex justify-content-between align-items-center gap-2">
                             <div class="d-flex gap-2">
                                 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-white border rounded-pill px-3 fw-bold text-slate-600 hover-primary">
-                                    Chi tiết
+                                    Details
                                 </a>
                                 <a asp-action="EditPaper" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
-                                    Sửa
+                                    Edit
                                 </a>
                             </div>
-                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đề thi này không?')">
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post">
                                 <button type="submit" class="btn btn-sm btn-link text-danger text-decoration-none fw-bold hover-bg-danger-subtle rounded-pill px-3">
-                                    Xóa đề
+                                    Delete Paper
                                 </button>
                             </form>
                         </div>
@@ -102,10 +102,11 @@
                 <div class="text-slate-200 mb-3">
                     <span class="material-symbols-outlined display-1">description</span>
                 </div>
-                <h4 class="text-slate-400 fw-bold">Chưa có đề thi nào</h4>
-                <p class="text-slate-400 mb-4">Hãy bắt đầu bằng cách tạo một đề thi mới.</p>
-                <a asp-action="CreatePaper" class="btn btn-primary rounded-pill px-4">Tạo đề thi ngay</a>
+                <h4 class="text-slate-400 fw-bold">No exam papers found</h4>
+                <p class="text-slate-400 mb-4">Start by creating a new exam paper.</p>
+                <a asp-action="CreatePaper" class="btn btn-primary rounded-pill px-4">Create Paper Now</a>
             </div>
         }
     </div>
+    <partial name="_Pagination" model="Model" />
 </div>

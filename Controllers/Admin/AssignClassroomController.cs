@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
+using Symphony.Portal.Web.Models.ViewModels;
 
 namespace Symphony.Portal.Web.Controllers.Admin
 {
@@ -21,7 +22,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         // =========================
         // INDEX (LIST)
         // =========================
-        public async Task<IActionResult> Index(string? classId)
+        public async Task<IActionResult> Index(string? classId, int? pageNumber)
         {
             var query = _context.ClassAssignments
                 .Include(a => a.Student).ThenInclude(u => u.Role)
@@ -34,8 +35,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 ViewBag.FilterClassId = classId;
             }
 
-            var data = await query.ToListAsync();
-            return View(data);
+            int pageSize = 10;
+            return View(await PaginatedList<ClassAssignment>.CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
 
@@ -128,9 +129,19 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 var oldClass = await _context.Classes.FindAsync(assignment.ClassId);
                 var newClass = await _context.Classes.FindAsync(classId);
 
-                if (newClass == null || newClass.NumberOfSeats <= 0)
+                if (newClass == null)
                 {
-                    TempData["Error"] = "Target class is full or invalid.";
+                    TempData["Error"] = "Target class is invalid.";
+                    return RedirectToAction(nameof(Edit), new { id });
+                }
+
+                // Calculate occupied seats for the new class
+                var totalOccupied = await _context.ClassAssignments.CountAsync(a => a.ClassId == newClass.Id);
+                var newClassCapacity = newClass.NumberOfSeats + totalOccupied; // Total capacity is current seats + occupied
+
+                if (newClassCapacity <= totalOccupied) // If total capacity is less than or equal to current occupied, it's full
+                {
+                    TempData["Error"] = $"Class {newClass.ClassName} is full (Capacity: {newClassCapacity}, Occupied: {totalOccupied}). Please choose another class.";
                     return RedirectToAction(nameof(Edit), new { id });
                 }
 
@@ -191,9 +202,9 @@ namespace Symphony.Portal.Web.Controllers.Admin
         // =========================
         public async Task<IActionResult> AssignByScore(string level)
         {
-            ViewBag.Level = level; // Lưu level đã chọn để hiển thị lại ở View
+            ViewBag.Level = level; // Save selected level to display back in View
 
-            // Lấy danh sách học sinh đã được xếp lớp để loại trừ
+            // Get list of already assigned students to exclude them
             var assignedIds = await _context.ClassAssignments
                 .Select(a => a.StudentId)
                 .ToListAsync();
@@ -204,10 +215,10 @@ namespace Symphony.Portal.Web.Controllers.Admin
             }
             else
             {
-                // Logic lọc điểm theo Level
+                // Score filtering logic by Level
                 // Level A: 70 - 100
-                // Level B: 40 - dưới 70
-                // Level C: Dưới 40
+                // Level B: 40 - under 70
+                // Level C: Under 40
 
                 var query = _context.ExamResults
                     .Include(e => e.Student)
@@ -217,7 +228,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                         e.Student.Role != null &&
                         e.Student.Role.Name == "Student" &&
                         !assignedIds.Contains(e.StudentId)
-                        // Lưu ý: Nếu Level C là rớt, bạn có thể cần bỏ check e.IsPassed tùy nghiệp vụ
+                        // Note: If Level C is fail, you might need to remove e.IsPassed check depending on business logic
                         && e.IsPassed
                     );
 
@@ -262,12 +273,12 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 return RedirectToAction(nameof(AssignByScore), new { level });
             }
 
-            // Lấy lại danh sách ID đã xếp lớp
+            // Get list of already assigned IDs again
             var assignedIds = await _context.ClassAssignments
                 .Select(a => a.StudentId)
                 .ToListAsync();
 
-            // Tái tạo logic query giống hệt bên trên để lấy danh sách cần add
+            // Replicate exactly the same query logic as above to get the list of candidates to add
             var query = _context.ExamResults
                 .Include(e => e.Student)
                     .ThenInclude(s => s.Role)

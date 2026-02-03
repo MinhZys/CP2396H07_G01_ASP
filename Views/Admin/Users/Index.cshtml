@@ -1,4 +1,4 @@
-@model IEnumerable<Symphony.Portal.Web.Models.User>
+@model Symphony.Portal.Web.Models.ViewModels.PaginatedList<Symphony.Portal.Web.Models.User>
 
 @{
     ViewData["Title"] = "Manage Users";
@@ -72,6 +72,8 @@
         }
     </tbody>
 </table>
+
+<partial name="_Pagination" model="Model" />
 
 @section Scripts {
     <script>

@@ -1,4 +1,4 @@
-@model IEnumerable<Symphony.Portal.Web.Models.QuizQuestion>
+@model Symphony.Portal.Web.Models.ViewModels.PaginatedList<Symphony.Portal.Web.Models.QuizQuestion>
 
 @{
     ViewData["Title"] = "Quiz Questions";
@@ -52,6 +52,7 @@
                 </tbody>
             </table>
         </div>
+        <partial name="_Pagination" model="Model" />
     </div>
 </div>
 </div>
