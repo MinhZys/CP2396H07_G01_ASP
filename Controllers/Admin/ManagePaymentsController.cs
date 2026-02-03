@@ -24,7 +24,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
     string? searchString,
     PaymentStatus? status,
     PaymentMethod? method,
-    PaymentPurpose? purpose)
+    PaymentPurpose? purpose,
+    int? pageNumber)
         {
             var query = _context.Payments
                 .Include(p => p.Student)

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CP2396H07_G01.Migrations
 {
     /// <inheritdoc />
-    public partial class neww : Migration
+    public partial class Neww : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

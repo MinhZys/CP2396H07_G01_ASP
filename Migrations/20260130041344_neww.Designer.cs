@@ -13,7 +13,7 @@ namespace CP2396H07_G01.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20260130041344_neww")]
-    partial class neww
+    partial class Neww
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
