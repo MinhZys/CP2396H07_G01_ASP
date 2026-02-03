@@ -19,6 +19,6 @@ namespace Symphony.Portal.Web.Models
 
         public DateTime CreatedAt { get; set; }
 
-        public ICollection<RevisionRegistration> Registrations { get; set; }
+        public ICollection<RevisionRegistration>? Registrations { get; set; } = new List<RevisionRegistration>();
     }
 }

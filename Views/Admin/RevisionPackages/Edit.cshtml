@@ -1,0 +1,83 @@
+﻿@model Symphony.Portal.Web.Models.RevisionPackage
+@using Symphony.Portal.Web.Models.Enums
+
+@{
+    ViewData["Title"] = "Edit Revision Package";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Edit Revision Package</h1>
+    <a asp-area="Admin" asp-controller="RevisionPackages" asp-action="Index"
+       class="btn btn-sm btn-secondary">Back to List</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+
+        <form asp-area="Admin"
+              asp-controller="RevisionPackages"
+              asp-action="Edit"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <!-- HIỆN TẤT CẢ LỖI -->
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Fee" class="form-label"></label>
+                    <input asp-for="Fee" type="number" step="0.01" class="form-control" />
+                    <span asp-validation-for="Fee" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="MaxStudents" class="form-label"></label>
+                    <input asp-for="MaxStudents" type="number" class="form-control" />
+                    <span asp-validation-for="MaxStudents" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="CurrentStudents" class="form-label"></label>
+                    <input asp-for="CurrentStudents" type="number" class="form-control" />
+                    <span asp-validation-for="CurrentStudents" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Status" class="form-label"></label>
+                    <select asp-for="Status"
+                            class="form-select"
+                            asp-items="Html.GetEnumSelectList<RevisionPackageStatus>()">
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

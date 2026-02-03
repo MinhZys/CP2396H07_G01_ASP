@@ -73,7 +73,7 @@ public class GuestRegistrationController : Controller
             return View(vm);
         }
 
-        if ((vm.Purpose == PaymentPurpose.Course || vm.Purpose == PaymentPurpose.Subject) && string.IsNullOrWhiteSpace(vm.ClassId))
+        if ((vm.Purpose == PaymentPurpose.Course || vm.Purpose == PaymentPurpose.Revision) && string.IsNullOrWhiteSpace(vm.ClassId))
         {
             ModelState.AddModelError(nameof(vm.ClassId), "Vui lòng chọn lớp/môn học.");
             await LoadDropdowns();

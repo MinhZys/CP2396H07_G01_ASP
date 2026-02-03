@@ -1,21 +1,32 @@
 ﻿@model Symphony.Portal.Web.Models.VNPayTransaction
+
 @{
     ViewData["Title"] = "Thanh toán thành công";
 }
 
-<div class="container py-5 text-center">
-    <div class="alert alert-success shadow-lg rounded-3 p-5">
-        <h2 class="mb-3">🎉 Thanh toán thành công</h2>
-        <p class="text-muted">Mã giao dịch: <strong>@Model.VnpTransactionNo</strong></p>
-        <p>Số tiền: <strong>@(Model.VnpAmount / 100).ToString("N0") đ</strong></p>
-        <p>Ngân hàng: <strong>@Model.VnpBankCode</strong></p>
+<div class="min-h-screen flex items-center justify-center bg-background-dark">
+    <div class="bg-surface-dark border border-slate-800 rounded-xl p-8 text-center max-w-lg w-full">
+        <h2 class="text-2xl font-bold text-green-500 mb-4">
+            🎉 Thanh toán thành công
+        </h2>
 
-        <hr />
+        <div class="text-slate-300 space-y-2 mb-6">
+            <p>
+                <strong>Mã giao dịch:</strong>
+                <span class="text-slate-100">@Model.VnpTxnRef</span>
+            </p>
 
-        <p>Hồ sơ dự thi của bạn đang <b>chờ Admin phê duyệt</b>.</p>
+            <p>
+                <strong>Số tiền:</strong>
+                <span class="text-slate-100">
+                    @Model.Payment.Amount.ToString("N0") đ
+                </span>
+            </p>
 
-        <a href="/" class="btn btn-primary mt-3">
-            Quay về trang chủ
+        </div>
+
+        <a href="/" class="btn btn-primary">
+            Về trang chủ
         </a>
     </div>
 </div>

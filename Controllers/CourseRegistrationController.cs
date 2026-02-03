@@ -41,8 +41,35 @@ namespace Symphony.Portal.Web.Controllers
                 }
             };
 
+            // ================== 🔥 AUTO FILL USER INFO ==================
+            var email = User?.Identity?.Name;
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                if (user != null)
+                {
+                    vm.Guest.FullName = user.FullName;
+                    vm.Guest.Email = user.Email;
+
+                    // lấy Guest gần nhất để fill thêm thông tin
+                    var lastGuest = await _context.Guests
+                        .Where(g => g.UserId == user.Id)
+                        .OrderByDescending(g => g.CreatedAt)
+                        .FirstOrDefaultAsync();
+
+                    if (lastGuest != null)
+                    {
+                        vm.Guest.PhoneNumber = lastGuest.PhoneNumber;
+                        vm.Guest.Dob = lastGuest.Dob;
+                        vm.Guest.Address = lastGuest.Address;
+                    }
+                }
+            }
+            // ============================================================
+
             return View(vm);
         }
+
 
         // =====================================================
         // POST: CourseRegistration/Confirm
@@ -151,9 +178,6 @@ namespace Symphony.Portal.Web.Controllers
             return View(vm);
         }
 
-        // =====================================================
-        // POST: CourseRegistration/ConfirmPayment
-        // =====================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmPayment(string id, string paymentMethod)
@@ -171,34 +195,33 @@ namespace Symphony.Portal.Web.Controllers
             var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == courseId);
             if (course == null) return NotFound();
 
-            // Parse method giống RevisionGuestsController
             var method = Enum.TryParse<PaymentMethod>(paymentMethod, true, out var pm)
                 ? pm
                 : PaymentMethod.Online;
 
-            // Tạo payment
             var payment = new Payment
             {
                 Id = Guid.NewGuid().ToString(),
                 GuestId = guest.Id,
                 Amount = course.TuitionFee,
                 PaymentMethod = method,
-                PaymentDate = method == PaymentMethod.Cash ? DateTime.Now : DateTime.MinValue,
+                PaymentDate = DateTime.Now,
+
                 ReceiptNumber = "RCP" + DateTime.Now.Ticks,
-                Status = method == PaymentMethod.Cash ? PaymentStatus.Paid : PaymentStatus.Pending,
+                Status = PaymentStatus.Pending,
+
                 Purpose = PaymentPurpose.Course
             };
 
             _context.Payments.Add(payment);
 
-            // rẽ nhánh
             if (method == PaymentMethod.Cash)
             {
-                guest.Status = GuestRegistrationStatus.PaidPendingApproval;
+                guest.Status = GuestRegistrationStatus.PendingPayment;
                 _context.Update(guest);
 
                 await _context.SaveChangesAsync();
-                return View("PaymentSuccess"); // bạn tạo view này hoặc đổi tên tuỳ bạn
+                return View("~/Views/CourseRegistration/PaymentSuccess.cshtml");
             }
             else if (method == PaymentMethod.Online)
             {
@@ -208,6 +231,7 @@ namespace Symphony.Portal.Web.Controllers
 
             return BadRequest("Unsupported payment method");
         }
+
 
         private static string? ExtractCourseId(string? description)
         {

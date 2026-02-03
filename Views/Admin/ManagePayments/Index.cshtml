@@ -7,14 +7,48 @@
 }
 
 <div class="card shadow mb-4">
+    @{
+        var currentPurpose = ViewBag.CurrentPurpose as PaymentPurpose?;
+    }
+
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h6 class="m-0 font-weight-bold text-primary">Payments</h6>
-        <div>
-            <a href="@Url.Action("Index", new { status = "Pending" })" class="btn btn-sm btn-secondary">Pending</a>
-            <a href="@Url.Action("Index", new { status = "Paid" })" class="btn btn-sm btn-success">Paid</a>
-            <a href="@Url.Action("Index", new { status = "Cancelled" })" class="btn btn-sm btn-outline-secondary">Cancelled</a>
-            <a href="@Url.Action("Index")" class="btn btn-sm btn-outline-dark">All</a>
+
+        <div class="d-flex gap-2 flex-wrap">
+            <!-- STATUS FILTER -->
+            <a href="@Url.Action("Index", new { status = "Pending", purpose = currentPurpose })"
+               class="btn btn-sm btn-secondary">Pending</a>
+
+            <a href="@Url.Action("Index", new { status = "Paid", purpose = currentPurpose })"
+               class="btn btn-sm btn-success">Paid</a>
+
+            <a href="@Url.Action("Index", new { status = "Cancelled", purpose = currentPurpose })"
+               class="btn btn-sm btn-outline-secondary">Cancelled</a>
+
+            <a href="@Url.Action("Index", new { purpose = currentPurpose })"
+               class="btn btn-sm btn-outline-dark">All Status</a>
+
+            <span class="mx-2">|</span>
+
+            <!-- PURPOSE FILTER -->
+            <a href="@Url.Action("Index", new { purpose = PaymentPurpose.EntranceExam })"
+               class="btn btn-sm btn-primary">Entrance Exam</a>
+
+            <a href="@Url.Action("Index", new { purpose = PaymentPurpose.Revision })"
+               class="btn btn-sm btn-warning text-dark">Revision</a>
+
+            <a href="@Url.Action("Index", new { purpose = PaymentPurpose.Course })"
+               class="btn btn-sm btn-success">Course</a>
+
+            <a href="@Url.Action("Index", new { purpose = PaymentPurpose.Lab })"
+               class="btn btn-sm btn-info text-dark">Lab</a>
+
+            <a href="@Url.Action("Index")"
+               class="btn btn-sm btn-outline-dark">All</a>
         </div>
+    </div>
+
+
     </div>
 
     <div class="card-body">
@@ -36,6 +70,7 @@
                         <th>Receipt</th>
                         <th>Amount</th>
                         <th>Method</th>
+                        <th>Purpose</th>
                         <th>Status</th>
                         <th width="180">Actions</th>
                     </tr>
@@ -72,6 +107,30 @@
                                     @item.PaymentMethod
                                 </span>
                             </td>
+                            <td>
+                                @* Badge màu theo purpose cho dễ nhìn *@
+                            @if (item.Purpose == PaymentPurpose.EntranceExam)
+                                {
+                                    <span class="badge bg-primary">Entrance Exam</span>
+                                }
+                                else if (item.Purpose == PaymentPurpose.Course)
+                                {
+                                    <span class="badge bg-success">Course</span>
+                                }
+                                else if (item.Purpose == PaymentPurpose.Revision)
+                                {
+                                    <span class="badge bg-warning text-dark">Revision</span>
+                                }
+                                else if (item.Purpose == PaymentPurpose.Lab)
+                                {
+                                    <span class="badge bg-info text-dark">Lab</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@item.Purpose</span>
+                                }
+                            </td>
+
 
                             <td>
                             @if (item.Status == PaymentStatus.Pending)
@@ -96,36 +155,49 @@
                                 }
                             </td>
 
-                            <td>
-                                @if (item.Status == PaymentStatus.Pending)
-                                {
-                                    <button type="button"
-                                            class="btn btn-success btn-sm"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#confirmPaymentModal"
-                                            data-id="@item.Id"
-                                            data-name="@(item.Student?.FullName ?? item.Guest?.FullName)"
-                                            data-amount="@item.Amount.ToString("N0")"
-                                            data-method="@item.PaymentMethod">
-                                        Confirm
-                                    </button>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id"
+                               class="btn btn-outline-info btn-sm">
+                                View
+                            </a>
 
-                                    <form asp-action="Cancel" asp-route-id="@item.Id"
-                                          method="post" style="display:inline">
-                                        <button class="btn btn-danger btn-sm"
-                                                onclick="return confirm('Cancel this payment?')">
-                                            Cancel
-                                        </button>
-                                    </form>
-                                }
-                                else
-                                {
-                                    <a asp-action="Details" asp-route-id="@item.Id"
-                                       class="btn btn-outline-info btn-sm">
-                                        View
-                                    </a>
-                                }
-                            </td>
+                            @if (item.Status == PaymentStatus.Pending)
+                            {
+                                <button type="button"
+                                        class="btn btn-success btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#confirmPaymentModal"
+                                        data-id="@item.Id"
+                                        data-name="@(item.Student?.FullName ?? item.Guest?.FullName)"
+                                        data-amount="@item.Amount.ToString("N0")"
+                                        data-method="@item.PaymentMethod">
+                                    Confirm
+                                </button>
+
+                                <form asp-action="Cancel" asp-route-id="@item.Id"
+                                      method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Cancel this payment?')">
+                                        Cancel
+                                    </button>
+                                </form>
+
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="searchString" value="@ViewData["CurrentSearch"]" />
+                                    <input type="hidden" name="status" value="@ViewData["CurrentStatus"]" />
+                                    <input type="hidden" name="method" value="@ViewData["CurrentMethod"]" />
+                                    <input type="hidden" name="purpose" value="@ViewData["CurrentPurpose"]" />
+
+                                    <button type="submit" class="btn btn-outline-danger btn-sm"
+                                            onclick="return confirm('Delete this payment? This action cannot be undone.')">
+                                        Delete
+                                    </button>
+                                </form>
+                            }
+                        </td>
+
                         </tr>
                     }
                 </tbody>

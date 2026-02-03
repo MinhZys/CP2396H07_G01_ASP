@@ -27,5 +27,14 @@ namespace Symphony.Portal.Web.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public ICollection<RevisionRegistration> RevisionRegistrations { get; set; }
 
+        public string? RoomName { get; set; }
+        public string? RoomLocation { get; set; }
+
+        public string? CenterId { get; set; }
+        public Center? Center { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Fee { get; set; } = 0m;
+
     }
 }

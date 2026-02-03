@@ -1,0 +1,79 @@
+﻿@model IEnumerable<Symphony.Portal.Web.Models.RevisionPackage>
+
+@{
+    ViewData["Title"] = "Manage Revision Packages";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Manage Review Sessions</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a asp-action="Create" class="btn btn-sm btn-primary">
+            <i class="bi bi-plus-lg"></i> Create New Package
+        </a>
+    </div>
+</div>
+
+<form asp-action="Index" method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="searchString" class="form-control" placeholder="Search by title"
+               value="@ViewData["CurrentFilter"]" />
+        <button type="submit" class="btn btn-outline-secondary">Search</button>
+        <a asp-action="Index" class="btn btn-outline-danger">Reset</a>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Fee</th>
+                <th>Students</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th style="width:180px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="fw-semibold">@item.Title</div>
+                        <div class="text-muted small text-truncate" style="max-width:520px;">
+                            @item.Description
+                        </div>
+                    </td>
+                    <td>@item.Fee.ToString("N0")</td>
+                    <td>
+                        <span class="badge bg-info text-dark">
+                            @item.CurrentStudents / @item.MaxStudents
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge bg-secondary">@item.Status</span>
+                    </td>
+                    <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning">Edit</a>
+
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post"
+                                  style="display:inline;" class="d-inline form-delete">
+                                <button type="button" class="btn btn-sm btn-outline-danger btn-delete">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // System Notifications handled by global script system-notifications.js
+    </script>
+}

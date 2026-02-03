@@ -101,7 +101,6 @@ namespace Symphony.Portal.Web.Controllers
                 amount = exam.Fee;
             }
 
-            // ===== TẠO PAYMENT (CHUNG CHO CẢ 2) =====
             var payment = new Payment
             {
                 Id = Guid.NewGuid().ToString(),
@@ -110,36 +109,26 @@ namespace Symphony.Portal.Web.Controllers
                 PaymentMethod = method,
                 PaymentDate = DateTime.Now,
                 ReceiptNumber = "RCP" + DateTime.Now.Ticks,
-                Status = method == PaymentMethod.Cash
-                            ? PaymentStatus.Paid
-                            : PaymentStatus.Pending,
+                Status = PaymentStatus.Pending,
                 Purpose = PaymentPurpose.EntranceExam
             };
 
-            _context.Payments.Add(payment);
 
-            // ==================================================
-            // =============== RẼ NHÁNH TẠI ĐÂY =================
-            // ==================================================
+            _context.Payments.Add(payment);
 
             if (method == PaymentMethod.Cash)
             {
-                // 👉 LOGIC CŨ – GIỮ NGUYÊN
-                guest.Status = GuestRegistrationStatus.PaidPendingApproval;
+                guest.Status = GuestRegistrationStatus.PendingPayment;
 
                 _context.Update(guest);
                 await _context.SaveChangesAsync();
-
+                ViewBag.SuccessMessage = "Hồ sơ dự thi của bạn đã được ghi nhận và đang chờ Admin phê duyệt.";
                 return View("PaymentSuccess");
             }
+
             else if (method == PaymentMethod.Online)
             {
-                // 👉 KHÔNG update guest status vội
-                // 👉 ĐỢI VNPay callback
-
                 await _context.SaveChangesAsync();
-
-                // Redirect sang trang VNPay riêng
                 return RedirectToAction(
                     "Create",
                     "VNPay",

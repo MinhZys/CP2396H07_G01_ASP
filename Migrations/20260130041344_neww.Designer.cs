@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Symphony.Portal.Web.Data;
 
@@ -11,9 +12,11 @@ using Symphony.Portal.Web.Data;
 namespace CP2396H07_G01.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260130041344_neww")]
+    partial class neww
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -209,9 +212,6 @@ namespace CP2396H07_G01.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("nvarchar(36)");
 
-                    b.Property<string>("CenterId")
-                        .HasColumnType("nvarchar(36)");
-
                     b.Property<string>("ClassCategoryId")
                         .IsRequired()
                         .HasColumnType("nvarchar(36)");
@@ -223,25 +223,14 @@ namespace CP2396H07_G01.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Fee")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
-
-                    b.Property<string>("RoomLocation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RoomName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CenterId");
 
                     b.HasIndex("ClassCategoryId");
 
@@ -301,7 +290,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "1",
-                            CreatedAt = new DateTime(2026, 1, 30, 12, 41, 31, 74, DateTimeKind.Local).AddTicks(7158),
+                            CreatedAt = new DateTime(2026, 1, 30, 11, 13, 43, 457, DateTimeKind.Local).AddTicks(4293),
                             Description = "Standard classrooms",
                             IsActive = true,
                             Name = "Theory"
@@ -309,7 +298,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "2",
-                            CreatedAt = new DateTime(2026, 1, 30, 12, 41, 31, 74, DateTimeKind.Local).AddTicks(7206),
+                            CreatedAt = new DateTime(2026, 1, 30, 11, 13, 43, 457, DateTimeKind.Local).AddTicks(4311),
                             Description = "Computer labs",
                             IsActive = true,
                             Name = "Lab"
@@ -317,7 +306,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "3",
-                            CreatedAt = new DateTime(2026, 1, 30, 12, 41, 31, 74, DateTimeKind.Local).AddTicks(7209),
+                            CreatedAt = new DateTime(2026, 1, 30, 11, 13, 43, 457, DateTimeKind.Local).AddTicks(4312),
                             Description = "Virtual classes",
                             IsActive = true,
                             Name = "Online"
@@ -1604,17 +1593,11 @@ namespace CP2396H07_G01.Migrations
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.Class", b =>
                 {
-                    b.HasOne("Symphony.Portal.Web.Models.Center", "Center")
-                        .WithMany()
-                        .HasForeignKey("CenterId");
-
                     b.HasOne("Symphony.Portal.Web.Models.ClassCategory", "ClassCategory")
                         .WithMany()
                         .HasForeignKey("ClassCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Center");
 
                     b.Navigation("ClassCategory");
                 });
