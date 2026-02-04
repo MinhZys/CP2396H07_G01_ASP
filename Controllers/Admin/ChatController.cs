@@ -32,7 +32,20 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
             var chatSessions = recentMessages
                 .GroupBy(m => m.SessionId ?? m.SenderId ?? "Unknown")
-                .Select(g => g.First())
+                .Select(g => 
+                {
+                    var latest = g.First();
+                    // Attempt to find the actual user in the conversation (not AI, not Admin)
+                    // AI has SenderId = null, Admin is filtered out of recentMessages ideally, but safe to check
+                    var originalUser = g.FirstOrDefault(m => m.SenderId != null && m.SenderValidName != "AI Assistant");
+                    
+                    if (originalUser != null)
+                    {
+                        // Use the User's name for the conversation title in the sidebar
+                        latest.SenderValidName = originalUser.SenderValidName;
+                    }
+                    return latest;
+                })
                 .Where(m => m.SenderId != adminId) // Double check to remove Admin's own thread
                 .ToList();
 

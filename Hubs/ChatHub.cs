@@ -4,6 +4,7 @@ using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Services;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace Symphony.Portal.Web.Hubs
 {
@@ -11,6 +12,9 @@ namespace Symphony.Portal.Web.Hubs
     {
         private readonly AppDbContext _context;
         private readonly IOllamaService _ollamaService;
+        
+        // Track sessions where Admin has intervened to stop AI auto-reply
+        private static readonly ConcurrentDictionary<string, bool> _humanSupportSessions = new();
 
         public ChatHub(AppDbContext context, IOllamaService ollamaService)
         {
@@ -41,6 +45,12 @@ namespace Symphony.Portal.Web.Hubs
             _context.ChatMessages.Add(message);
             await _context.SaveChangesAsync();
 
+            // Logic: STOP AI if Admin replies
+            if (Context.User.IsInRole(RoleNames.Admin) && !string.IsNullOrEmpty(sessionId))
+            {
+                _humanSupportSessions.TryAdd(sessionId, true);
+            }
+
             // Broadcast to Receiver
             if (!string.IsNullOrEmpty(receiverId))
             {
@@ -70,6 +80,12 @@ namespace Symphony.Portal.Web.Hubs
         {
             try
             {
+                // Check if Admin has taken over this session
+                if (!string.IsNullOrEmpty(sessionId) && _humanSupportSessions.ContainsKey(sessionId))
+                {
+                    return; // Stop AI, human is here
+                }
+
                 // Notify client that AI is thinking
                 await Clients.Caller.SendAsync("AITyping", true);
 
