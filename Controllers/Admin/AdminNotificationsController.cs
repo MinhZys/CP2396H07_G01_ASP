@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Services;
 using System.Threading.Tasks;
 
@@ -11,10 +12,12 @@ namespace Symphony.Portal.Web.Controllers.Admin
     public class AdminNotificationsController : Controller
     {
         private readonly INotificationService _notificationService;
+        private readonly Symphony.Portal.Web.Data.AppDbContext _context;
 
-        public AdminNotificationsController(INotificationService notificationService)
+        public AdminNotificationsController(INotificationService notificationService, Symphony.Portal.Web.Data.AppDbContext context)
         {
             _notificationService = notificationService;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -23,8 +26,16 @@ namespace Symphony.Portal.Web.Controllers.Admin
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var history = await _context.Notifications
+                .OrderByDescending(n => n.CreatedAt)
+                .Select(n => new { n.Title, n.Message })
+                .Distinct()
+                .Take(10)
+                .ToListAsync();
+
+            ViewBag.History = history;
             return View();
         }
 

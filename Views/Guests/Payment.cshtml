@@ -1,6 +1,6 @@
 @model Symphony.Portal.Web.Models.Guest
 @{
-    ViewData["Title"] = "Thanh toán phí thi";
+    ViewData["Title"] = "Entrance Exam Fee Payment";
     var examFee = Model.SelectedEntranceExam?.Fee ?? 0;
 }
 
@@ -11,16 +11,16 @@
         <div class="bg-surface-dark border border-slate-800 rounded-2xl p-8 shadow-2xl h-fit">
             <h3 class="font-display text-xl font-bold text-white mb-6 flex items-center gap-3">
                 <span class="material-symbols-outlined text-primary">receipt_long</span>
-                Thông tin đăng ký
+                Registration Information
             </h3>
             
             <div class="space-y-4 mb-8">
                 <div class="flex justify-between p-4 bg-background-dark rounded-xl border border-slate-800">
-                    <span class="text-slate-400">Mã hồ sơ</span>
+                    <span class="text-slate-400">Profile ID</span>
                     <span class="font-mono text-white font-bold">#@Model.Id.Substring(0, 8)</span>
                 </div>
                 <div class="flex justify-between items-center text-sm">
-                    <span class="text-slate-400">Họ và tên</span>
+                    <span class="text-slate-400">Full Name</span>
                     <span class="text-white font-medium">@Model.FullName</span>
                 </div>
                 <div class="flex justify-between items-center text-sm">
@@ -28,15 +28,15 @@
                     <span class="text-white font-medium">@Model.Email</span>
                 </div>
                 <div class="flex justify-between items-center text-sm">
-                    <span class="text-slate-400">Kỳ thi</span>
+                    <span class="text-slate-400">Exam</span>
                     <span class="text-primary font-bold">@Model.SelectedEntranceExam?.Title</span>
                 </div>
             </div>
 
             <div class="border-t border-slate-700 pt-6">
                 <div class="flex justify-between items-end">
-                    <span class="text-slate-400 mb-1">Tổng thanh toán</span>
-                    <span class="text-4xl font-bold text-white">@examFee.ToString("N0")<span class="text-xl text-slate-500">đ</span></span>
+                    <span class="text-slate-400 mb-1">Total Payment</span>
+                    <span class="text-4xl font-bold text-white">@examFee.ToString("N0")<span class="text-xl text-slate-500">$</span></span>
                 </div>
             </div>
         </div>
@@ -45,7 +45,7 @@
         <div class="bg-surface-dark border border-slate-800 rounded-2xl p-8 shadow-2xl">
             <h3 class="font-display text-xl font-bold text-white mb-6 flex items-center gap-3">
                 <span class="material-symbols-outlined text-primary">credit_card</span>
-                Phương thức thanh toán
+                Payment Method
             </h3>
 
             <form asp-action="ConfirmPayment" method="post">
@@ -60,8 +60,8 @@
                                 <img src="https://img.icons8.com/color/48/qr-code.png" alt="QR" class="w-full h-full object-contain">
                             </div>
                             <div class="flex-1">
-                                <h4 class="font-bold text-white group-hover:text-primary transition-colors">Chuyển khoản QR Code</h4>
-                                <p class="text-xs text-slate-500">Quét mã VietQR (Tự động xác nhận)</p>
+                                <h4 class="font-bold text-white group-hover:text-primary transition-colors">QR Code Transfer</h4>
+                                <p class="text-xs text-slate-500">Scan VietQR (Auto-confirm)</p>
                             </div>
                             <div class="w-6 h-6 rounded-full border-2 border-slate-600 peer-checked:border-primary peer-checked:bg-primary peer-checked:after:content-[''] peer-checked:after:block peer-checked:after:w-2 peer-checked:after:h-2 peer-checked:after:bg-white peer-checked:after:rounded-full peer-checked:after:mx-auto peer-checked:after:mt-1"></div>
                         </div>
@@ -75,8 +75,8 @@
                                 <span class="material-symbols-outlined">payments</span>
                             </div>
                             <div class="flex-1">
-                                <h4 class="font-bold text-white group-hover:text-primary transition-colors">Tiền mặt tại trung tâm</h4>
-                                <p class="text-xs text-slate-500">Thanh toán trực tiếp tại quầy lễ tân</p>
+                                <h4 class="font-bold text-white group-hover:text-primary transition-colors">Cash at center</h4>
+                                <p class="text-xs text-slate-500">Pay directly at the front desk</p>
                             </div>
                              <div class="w-6 h-6 rounded-full border-2 border-slate-600 peer-checked:border-primary peer-checked:bg-primary peer-checked:after:content-[''] peer-checked:after:block peer-checked:after:w-2 peer-checked:after:h-2 peer-checked:after:bg-white peer-checked:after:rounded-full peer-checked:after:mx-auto peer-checked:after:mt-1"></div>
                         </div>
@@ -85,12 +85,12 @@
 
                 <div class="alert alert-info bg-primary/10 border border-primary/20 rounded-lg p-4 mb-6 flex gap-3">
                     <span class="material-symbols-outlined text-primary">info</span>
-                    <p class="text-sm text-slate-300">Sau khi thanh toán, hồ sơ của bạn sẽ được gửi đến Admin để phê duyệt. Kết quả sẽ được gửi qua email.</p>
+                    <p class="text-sm text-slate-300">After payment, your profile will be sent to Admin for approval. Results will be sent via email.</p>
                 </div>
 
                 <button type="submit" class="w-full bg-primary text-background-dark font-bold py-4 rounded-lg hover:opacity-90 transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined">check_circle</span>
-                    Xác nhận thanh toán
+                    Confirm Payment
                 </button>
             </form>
         </div>

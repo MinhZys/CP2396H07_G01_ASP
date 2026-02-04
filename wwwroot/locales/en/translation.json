@@ -57,5 +57,36 @@
     "mark_all_read": "Mark all read",
     "view_all": "View All Notifications",
     "no_notifications": "No new notifications"
+  },
+  "payment": {
+    "title": "Payment",
+    "exam_fee_title": "Entrance Exam Fee Payment",
+    "registration_info": "Registration Information",
+    "profile_id": "Profile ID",
+    "total_amount": "Total Payment",
+    "method": "Payment Method",
+    "cash": "Cash",
+    "online": "Online / VNPay",
+    "confirm": "Confirm Payment",
+    "qr_title": "QR Code Transfer",
+    "cash_title": "Cash at Center",
+    "success_title": "Payment Successful",
+    "receipt": "Receipt",
+    "customer": "Customer",
+    "date": "Date",
+    "print": "Print Receipt",
+    "return_home": "Return to Homepage"
+  },
+  "lab_registration": {
+    "title": "Lab Class Registration",
+    "select_class": "Select Lab Class",
+    "full_name": "Full Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "dob": "Date of Birth",
+    "address": "Address",
+    "continue_payment": "Continue to Payment",
+    "back": "Back",
+    "payment_title": "Lab Class Payment"
   }
 }

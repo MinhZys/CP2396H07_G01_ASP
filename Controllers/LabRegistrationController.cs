@@ -248,7 +248,8 @@ namespace Symphony.Portal.Web.Controllers
                 guest.Status = GuestRegistrationStatus.PendingPayment;
                 _context.Update(guest);
                 await _context.SaveChangesAsync();
-                return View("~/Views/LabRegistration/PaymentSuccess.cshtml");
+                ViewBag.SuccessMessage = "Your lab registration has been recorded and is pending Admin approval.";
+                return View("~/Views/LabRegistration/PaymentSuccess.cshtml", guest);
             }
             else if (method == PaymentMethod.Online)
             {

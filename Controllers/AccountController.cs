@@ -77,6 +77,10 @@ namespace Symphony.Portal.Web.Controllers
                             new ClaimsPrincipal(claimsIdentity),
                             authProperties);
 
+                        // Clear old Chat cookies to start a fresh session for the logged-in user
+                        Response.Cookies.Delete("chat_session_id");
+                        Response.Cookies.Delete("chat_guest_name");
+
                         TempData["Success"] = "Login successful! Welcome back.";
                         return RedirectToLocal(returnUrl, user);
                     }
@@ -156,6 +160,10 @@ namespace Symphony.Portal.Web.Controllers
                     new ClaimsPrincipal(claimsIdentity),
                     authProperties);
 
+                // Clear old Chat cookies to start a fresh session
+                Response.Cookies.Delete("chat_session_id");
+                Response.Cookies.Delete("chat_guest_name");
+
                 return RedirectToLocal(null, user);
             }
             return RedirectToAction("Login");
@@ -183,6 +191,11 @@ namespace Symphony.Portal.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            
+            // Clear Chat cookies to prevent history leak
+            Response.Cookies.Delete("chat_session_id");
+            Response.Cookies.Delete("chat_guest_name");
+
             TempData["Success"] = "Logged out successfully!";
             return RedirectToAction("Index", "Home");
         }

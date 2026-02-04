@@ -19,11 +19,15 @@ namespace Symphony.Portal.Web.Hubs
         {
             var senderId = Context.UserIdentifier;
             
+            // Normalize IDs to handle empty strings from client
+            var dbSenderId = string.IsNullOrEmpty(senderId) ? null : senderId;
+            var dbReceiverId = string.IsNullOrEmpty(receiverId) ? null : receiverId;
+
             // Save to DB
             var message = new ChatMessage
             {
-                SenderId = senderId,
-                ReceiverId = receiverId,
+                SenderId = dbSenderId,
+                ReceiverId = dbReceiverId,
                 Content = content,
                 Timestamp = DateTime.Now,
                 IsRead = false,

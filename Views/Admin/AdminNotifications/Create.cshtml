@@ -1,11 +1,14 @@
+@using System.Text.Encodings.Web
 @{
     ViewData["Title"] = "Send System Notification";
+    var history = ViewBag.History as dynamic;
 }
 
 <div class="container-fluid py-4">
-    <div class="row justify-content-center">
-        <div class="col-12 col-lg-8">
-            <div class="card shadow-sm border-0">
+    <div class="row">
+        <!-- Main Form -->
+        <div class="col-12 col-xl-7">
+            <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3 border-bottom">
                     <div class="d-flex align-items-center">
                         <div class="p-2 bg-primary bg-opacity-10 rounded-3 me-3">
@@ -18,84 +21,94 @@
                     </div>
                 </div>
                 <div class="card-body p-4">
-                    <form asp-action="Create" method="post">
+                    <form asp-action="Create" method="post" id="notificationForm">
                         @Html.AntiForgeryToken()
                         
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Recipients</label>
-                            <div class="d-flex flex-wrap gap-3">
-                                <div class="form-check form-check-inline p-3 border rounded bg-light">
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="form-check form-check-inline p-2 border rounded bg-light transition-all shadow-sm">
                                     <input class="form-check-input" type="checkbox" name="selectedRoles" id="roleAll" value="All" checked onchange="toggleRoles(this)">
                                     <label class="form-check-label fw-bold" for="roleAll">All Users</label>
                                 </div>
-                                <div class="form-check form-check-inline p-3 border rounded">
+                                <div class="form-check form-check-inline p-2 border rounded transition-all shadow-sm">
                                     <input class="form-check-input role-item" type="checkbox" name="selectedRoles" id="roleInstructor" value="Instructor" onchange="checkCustom(this)">
                                     <label class="form-check-label" for="roleInstructor">Instructor</label>
                                 </div>
-                                <div class="form-check form-check-inline p-3 border rounded">
+                                <div class="form-check form-check-inline p-2 border rounded transition-all shadow-sm">
                                     <input class="form-check-input role-item" type="checkbox" name="selectedRoles" id="roleStudent" value="Student" onchange="checkCustom(this)">
                                     <label class="form-check-label" for="roleStudent">Student</label>
                                 </div>
-                                <div class="form-check form-check-inline p-3 border rounded">
+                                <div class="form-check form-check-inline p-2 border rounded transition-all shadow-sm">
                                     <input class="form-check-input role-item" type="checkbox" name="selectedRoles" id="roleGuest" value="Guest" onchange="checkCustom(this)">
                                     <label class="form-check-label" for="roleGuest">Guest</label>
                                 </div>
                             </div>
                         </div>
 
-                        <script>
-                            function toggleRoles(source) {
-                                const checkboxes = document.querySelectorAll('.role-item');
-                                if (source.checked) {
-                                    checkboxes.forEach(cb => {
-                                        cb.checked = false;
-                                        cb.disabled = true;
-                                        cb.parentElement.classList.add('opacity-50');
-                                    });
-                                } else {
-                                    checkboxes.forEach(cb => {
-                                        cb.disabled = false;
-                                        cb.parentElement.classList.remove('opacity-50');
-                                    });
-                                }
-                            }
-
-                            function checkCustom(source) {
-                                const allCb = document.getElementById('roleAll');
-                                if (source.checked) {
-                                    allCb.checked = false;
-                                }
-                            }
-                            
-                            // Initialize state
-                            document.addEventListener('DOMContentLoaded', () => {
-                                toggleRoles(document.getElementById('roleAll'));
-                            });
-                        </script>
                         <div class="mb-4">
                             <label for="title" class="form-label fw-semibold">Notification Title</label>
                             <input type="text" name="title" id="title" required
-                                   class="form-control form-control-lg border-2"
+                                   class="form-control form-control-lg border-2 shadow-sm"
                                    placeholder="Enter notification title...">
                         </div>
 
                         <div class="mb-4">
                             <label for="message" class="form-label fw-semibold">Message Content</label>
-                            <textarea name="message" id="message" rows="6" required
-                                      class="form-control border-2"
+                            <textarea name="message" id="message" rows="8" required
+                                      class="form-control border-2 shadow-sm"
                                       placeholder="Enter notification message..."></textarea>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2 pt-2">
-                            <a asp-action="Index" asp-controller="Dashboard" 
-                               class="btn btn-light px-4 py-2 fw-semibold text-secondary">
-                                Cancel
+                        <div class="d-flex justify-content-between align-items-center pt-2">
+                             <a asp-action="Index" asp-controller="Dashboard" 
+                               class="btn btn-outline-secondary px-4 py-2 fw-semibold">
+                                <i class="fas fa-times me-1"></i> Cancel
                             </a>
-                            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold">
+                            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow-lg">
                                 <i class="fas fa-paper-plane me-2"></i> Send Now
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Sidebar -->
+        <div class="col-12 col-xl-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <div class="p-2 bg-info bg-opacity-10 rounded-3 me-3">
+                            <i class="fas fa-history text-info fs-5"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">Recent History</h5>
+                    </div>
+                </div>
+                <div class="card-body p-0 overflow-auto" style="max-height: 600px;">
+                    @if (history != null && history.Count > 0)
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var item in history)
+                            {
+                                <button type="button" class="list-group-item list-group-item-action p-3 border-bottom hover-history" 
+                                        onclick="reuseNotification('@JavaScriptEncoder.Default.Encode(item.Title)', '@JavaScriptEncoder.Default.Encode(item.Message)')">
+                                    <div class="d-flex w-100 justify-content-between mb-1">
+                                        <h6 class="mb-1 fw-bold text-primary">@item.Title</h6>
+                                        <small class="text-info"><i class="fas fa-copy"></i> Reuse</small>
+                                    </div>
+                                    <p class="mb-1 text-muted small text-truncate-2">@item.Message</p>
+                                </button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-5 text-center text-muted">
+                            <i class="fas fa-info-circle fs-1 mb-3 opacity-25"></i>
+                            <p>No previous notifications found.</p>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -113,10 +126,67 @@
     .btn-primary {
         border-radius: 0.75rem;
     }
-    .btn-light {
-        border-radius: 0.75rem;
-    }
     .bg-opacity-10 {
         --bs-bg-opacity: 0.1;
     }
+    .text-truncate-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .hover-history:hover {
+        background-color: rgba(13, 110, 253, 0.02);
+    }
+    .transition-all {
+        transition: all 0.2s ease-in-out;
+    }
 </style>
+
+@section Scripts {
+    <script>
+        function toggleRoles(source) {
+            const checkboxes = document.querySelectorAll('.role-item');
+            if (source.checked) {
+                checkboxes.forEach(cb => {
+                    cb.checked = false;
+                    cb.disabled = true;
+                    cb.parentElement.classList.add('opacity-50', 'bg-light');
+                });
+            } else {
+                checkboxes.forEach(cb => {
+                    cb.disabled = false;
+                    cb.parentElement.classList.remove('opacity-50', 'bg-light');
+                });
+            }
+        }
+
+        function checkCustom(source) {
+            const allCb = document.getElementById('roleAll');
+            if (source.checked) {
+                allCb.checked = false;
+                toggleRoles(allCb);
+            }
+        }
+
+        function reuseNotification(title, message) {
+            document.getElementById('title').value = title;
+            document.getElementById('message').value = message;
+            
+            // Scroll to top of form smoothly
+            document.querySelector('.card').scrollIntoView({ behavior: 'smooth' });
+            
+            // Subtle highlight effect
+            const inputs = [document.getElementById('title'), document.getElementById('message')];
+            inputs.forEach(el => {
+                el.style.backgroundColor = '#f0f7ff';
+                setTimeout(() => el.style.backgroundColor = '', 1000);
+            });
+        }
+        
+        // Initialize state
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleRoles(document.getElementById('roleAll'));
+        });
+    </script>
+}

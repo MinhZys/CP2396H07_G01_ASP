@@ -71,22 +71,38 @@
                 <!-- DesktopNav Links -->
                 <div class="hidden md:flex items-center gap-6 text-sm font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 mr-4">
                     <a class="hover:text-primary transition-colors" asp-controller="Home" asp-action="Index" data-i18n="nav.home">Home</a>
-                    <a class="hover:text-primary transition-colors"
-                       asp-controller="Guests"
-                       asp-action="Register"
-                       data-i18n="nav.entranceExam">
-                        Entrance Exam
-                    </a>
-                    <a class="hover:text-primary transition-colors"
-                       asp-controller="RevisionGuests"
-                       asp-action="Register">
-                        Revision Courses
-                    </a>
-                    <a class="hover:text-primary transition-colors"
-                       asp-controller="LabRegistration"
-                       asp-action="Register">
-                        Lab Registration
-                    </a>
+                    
+                    @* Entrance Exam: Chỉ hiện cho người chưa đăng nhập hoặc vai trò khác Student/Guest (nếu có) *@
+                    @if (!(User.Identity?.IsAuthenticated == true && (User.IsInRole("Student") || User.IsInRole("Guest"))))
+                    {
+                        <a class="hover:text-primary transition-colors"
+                           asp-controller="Guests"
+                           asp-action="Register"
+                           data-i18n="nav.entranceExam">
+                            Entrance Exam
+                        </a>
+                    }
+
+                    @* Revision Courses: Không hiện cho Student *@
+                    @if (!(User.Identity?.IsAuthenticated == true && User.IsInRole("Student")))
+                    {
+                        <a class="hover:text-primary transition-colors"
+                           asp-controller="RevisionGuests"
+                           asp-action="Register">
+                            Revision Courses
+                        </a>
+                    }
+
+                    @* Lab Registration: Không hiện cho Guest *@
+                    @if (!(User.Identity?.IsAuthenticated == true && User.IsInRole("Guest")))
+                    {
+                        <a class="hover:text-primary transition-colors"
+                           asp-controller="LabRegistration"
+                           asp-action="Register">
+                            Lab Registration
+                        </a>
+                    }
+
                     <a class="hover:text-primary transition-colors" asp-controller="Mentors" asp-action="Index" data-i18n="nav.mentors">Mentors</a>
                     <a class="hover:text-primary transition-colors" asp-controller="Contact" asp-action="Index" data-i18n="nav.contact">Contact</a>
 

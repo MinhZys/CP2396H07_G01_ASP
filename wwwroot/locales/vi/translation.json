@@ -57,5 +57,36 @@
     "mark_all_read": "Đánh dấu tất cả đã đọc",
     "view_all": "Xem tất cả thông báo",
     "no_notifications": "Không có thông báo mới"
+  },
+  "payment": {
+    "title": "Thanh toán",
+    "exam_fee_title": "Thanh toán Lệ phí Thi đầu vào",
+    "registration_info": "Thông tin Đăng ký",
+    "profile_id": "Mã Hồ sơ",
+    "total_amount": "Tổng Thanh toán",
+    "method": "Phương thức Thanh toán",
+    "cash": "Tiền mặt",
+    "online": "Trực tuyến / VNPay",
+    "confirm": "Xác nhận Thanh toán",
+    "qr_title": "Chuyển khoản QR",
+    "cash_title": "Tiền mặt tại Trung tâm",
+    "success_title": "Thanh toán Thành công",
+    "receipt": "Biên lai",
+    "customer": "Khách hàng",
+    "date": "Ngày",
+    "print": "In Biên lai",
+    "return_home": "Về Trang chủ"
+  },
+  "lab_registration": {
+    "title": "Đăng ký Lớp Lab",
+    "select_class": "Chọn Lớp Lab",
+    "full_name": "Họ và Tên",
+    "email": "Email",
+    "phone": "Số Điện thoại",
+    "dob": "Ngày sinh",
+    "address": "Địa chỉ",
+    "continue_payment": "Tiếp tục thanh toán",
+    "back": "Quay lại",
+    "payment_title": "Thanh toán Lớp Lab"
   }
 }
