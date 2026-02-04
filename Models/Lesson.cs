@@ -29,5 +29,9 @@ namespace Symphony.Portal.Web.Models
         
         [ForeignKey("SubjectId")]
         public Subject? Subject { get; set; }
+        public string ClassId { get; set; } = string.Empty;
+
+        [ForeignKey("ClassId")]
+        public Class? Class { get; set; }
     }
 }

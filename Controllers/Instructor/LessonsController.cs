@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Symphony.Portal.Web.Controllers.Instructor
 {
@@ -19,11 +22,12 @@ namespace Symphony.Portal.Web.Controllers.Instructor
         }
 
         // GET: Admin/Lessons
-        public async Task<IActionResult> Index(string searchString, string courseId, string subjectId)
+        public async Task<IActionResult> Index(string searchString, string courseId, string subjectId, string classId)
         {
             var query = _context.Lessons
                 .Include(l => l.Course)
                 .Include(l => l.Subject)
+                .Include(l => l.Class)  // Include the Class in the query
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
@@ -41,8 +45,14 @@ namespace Symphony.Portal.Web.Controllers.Instructor
                 query = query.Where(l => l.SubjectId == subjectId);
             }
 
-            ViewData["Courses"] = new SelectList(_context.Courses, "Id", "Title", courseId);
-            ViewData["Subjects"] = new SelectList(_context.Subjects, "Id", "Name", subjectId);
+            if (!string.IsNullOrEmpty(classId))
+            {
+                query = query.Where(l => l.ClassId == classId);
+            }
+
+            ViewData["Courses"] = new SelectList(await _context.Courses.ToListAsync(), "Id", "Title", courseId);
+            ViewData["Subjects"] = new SelectList(await _context.Subjects.ToListAsync(), "Id", "Name", subjectId);
+            ViewData["Classes"] = new SelectList(await _context.Classes.ToListAsync(), "Id", "ClassName", classId);  // Add Class filter
             ViewData["CurrentFilter"] = searchString;
 
             return View(await query.ToListAsync());
@@ -56,6 +66,7 @@ namespace Symphony.Portal.Web.Controllers.Instructor
             var lesson = await _context.Lessons
                 .Include(l => l.Course)
                 .Include(l => l.Subject)
+                .Include(l => l.Class)  // Include Class in details view
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (lesson == null) return NotFound();
@@ -68,6 +79,7 @@ namespace Symphony.Portal.Web.Controllers.Instructor
         {
             ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Title");
             ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name");
+            ViewData["ClassId"] = new SelectList(_context.Classes, "Id", "ClassName");  // Add Class selection
             return View();
         }
 
@@ -98,6 +110,7 @@ namespace Symphony.Portal.Web.Controllers.Instructor
             }
             ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Title", lesson.CourseId);
             ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", lesson.SubjectId);
+            ViewData["ClassId"] = new SelectList(_context.Classes, "Id", "ClassName", lesson.ClassId);  // Add ClassId for the form
             return View(lesson);
         }
 
@@ -111,6 +124,7 @@ namespace Symphony.Portal.Web.Controllers.Instructor
 
             ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Title", lesson.CourseId);
             ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", lesson.SubjectId);
+            ViewData["ClassId"] = new SelectList(_context.Classes, "Id", "ClassName", lesson.ClassId);  // Add ClassId for the form
             return View(lesson);
         }
 
@@ -126,7 +140,7 @@ namespace Symphony.Portal.Web.Controllers.Instructor
                 try
                 {
                     var existingLesson = await _context.Lessons.AsNoTracking().FirstOrDefaultAsync(l => l.Id == id);
-                    
+
                     // Handle Image Upload (Replace if new one provided)
                     if (imageFile != null && imageFile.Length > 0)
                     {
@@ -159,6 +173,7 @@ namespace Symphony.Portal.Web.Controllers.Instructor
             }
             ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Title", lesson.CourseId);
             ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", lesson.SubjectId);
+            ViewData["ClassId"] = new SelectList(_context.Classes, "Id", "ClassName", lesson.ClassId);  // Add ClassId for the form
             return View(lesson);
         }
 
@@ -170,6 +185,7 @@ namespace Symphony.Portal.Web.Controllers.Instructor
             var lesson = await _context.Lessons
                 .Include(l => l.Course)
                 .Include(l => l.Subject)
+                .Include(l => l.Class)  // Include Class for Delete view
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (lesson == null) return NotFound();

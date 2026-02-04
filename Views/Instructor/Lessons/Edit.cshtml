@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Edit Lesson";
-
 }
 
 <div class="row justify-content-center">
@@ -59,6 +58,13 @@
                             <input asp-for="DurationMinutes" class="form-control" type="number" />
                             <span asp-validation-for="DurationMinutes" class="text-danger"></span>
                         </div>
+                        <div class="col-md-6">
+                            <label asp-for="ClassId" class="form-label fw-bold">Class</label>
+                            <select asp-for="ClassId" class="form-select" asp-items="ViewBag.ClassId">
+                                <option value="">-- Select Class --</option>
+                            </select>
+                            <span asp-validation-for="ClassId" class="text-danger"></span>
+                        </div>
 
                         <div class="col-md-12">
                             <label asp-for="Description" class="form-label fw-bold">Description</label>
@@ -92,5 +98,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
