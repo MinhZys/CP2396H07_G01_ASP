@@ -6,26 +6,26 @@
 
 <section class="max-w-[900px] mx-auto px-6 py-10">
     <div class="bg-surface-dark border border-slate-800 rounded-xl p-8">
-        <h1 class="font-display text-3xl font-bold mb-2">Đăng ký lớp Lab</h1>
-        <p class="text-slate-400 mb-8">Kiểm tra thông tin và chọn lớp Lab để đăng ký.</p>
+        <h1 class="font-display text-3xl font-bold mb-2">Lab Class Registration</h1>
+        <p class="text-slate-400 mb-8">Check your information and choose a Lab class to register.</p>
 
         <form asp-action="Register" method="post">
             @Html.AntiForgeryToken()
 
             <div class="bg-[#0b0f16] border border-slate-800 rounded-xl p-6 mb-6">
-                <p class="text-xs font-bold uppercase text-slate-500 mb-3">Chọn lớp Lab</p>
+                <p class="text-xs font-bold uppercase text-slate-500 mb-3">Select Lab Class</p>
 
                 <select asp-for="SelectedClassId"
                         asp-items="labClasses"
                         class="w-full bg-background-dark border border-slate-700 rounded-lg p-3 text-white">
-                    <option value="">-- Chọn lớp Lab --</option>
+                    <option value="">-- Select Lab Class --</option>
                 </select>
                 <span asp-validation-for="SelectedClassId" class="text-red-400 text-sm"></span>
             </div>
 
             <div class="grid md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-slate-300 text-sm mb-2">Họ và tên</label>
+                    <label class="block text-slate-300 text-sm mb-2">Full Name</label>
                     <input asp-for="Guest.FullName" class="w-full bg-background-dark border border-slate-700 rounded-lg p-3 text-white" />
                     <span asp-validation-for="Guest.FullName" class="text-red-400 text-sm"></span>
                 </div>
@@ -37,20 +37,20 @@
                 </div>
 
                 <div>
-                    <label class="block text-slate-300 text-sm mb-2">Số điện thoại</label>
+                    <label class="block text-slate-300 text-sm mb-2">Phone Number</label>
                     <input asp-for="Guest.PhoneNumber" class="w-full bg-background-dark border border-slate-700 rounded-lg p-3 text-white" />
                     <span asp-validation-for="Guest.PhoneNumber" class="text-red-400 text-sm"></span>
                 </div>
 
                 <div>
-                    <label class="block text-slate-300 text-sm mb-2">Ngày sinh</label>
+                    <label class="block text-slate-300 text-sm mb-2">Date of Birth</label>
                     <input asp-for="Guest.Dob" type="date" class="w-full bg-background-dark border border-slate-700 rounded-lg p-3 text-white" />
                     <span asp-validation-for="Guest.Dob" class="text-red-400 text-sm"></span>
                 </div>
             </div>
 
             <div class="mt-4">
-                <label class="block text-slate-300 text-sm mb-2">Địa chỉ</label>
+                <label class="block text-slate-300 text-sm mb-2">Address</label>
                 <input asp-for="Guest.Address" class="w-full bg-background-dark border border-slate-700 rounded-lg p-3 text-white" />
                 <span asp-validation-for="Guest.Address" class="text-red-400 text-sm"></span>
             </div>
@@ -58,11 +58,11 @@
             <div class="flex gap-3 pt-6">
                 <a asp-controller="Home" asp-action="Index"
                    class="px-6 py-3 rounded-lg border border-slate-700 text-slate-300 font-bold hover:text-white hover:border-slate-500 transition">
-                    Quay lại
+                    Back
                 </a>
                 <button type="submit"
                         class="px-6 py-3 rounded-lg bg-primary text-background-dark font-bold hover:opacity-90 transition">
-                    Tiếp tục thanh toán
+                    Continue to Payment
                 </button>
             </div>
         </form>

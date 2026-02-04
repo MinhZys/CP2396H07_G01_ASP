@@ -122,8 +122,8 @@ namespace Symphony.Portal.Web.Controllers
 
                 _context.Update(guest);
                 await _context.SaveChangesAsync();
-                ViewBag.SuccessMessage = "Hồ sơ dự thi của bạn đã được ghi nhận và đang chờ Admin phê duyệt.";
-                return View("PaymentSuccess");
+                ViewBag.SuccessMessage = "Your entrance exam profile has been recorded and is pending Admin approval.";
+                return View("PaymentSuccess", guest);
             }
 
             else if (method == PaymentMethod.Online)

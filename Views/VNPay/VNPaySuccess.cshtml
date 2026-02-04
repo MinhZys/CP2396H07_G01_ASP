@@ -1,32 +1,118 @@
 ﻿@model Symphony.Portal.Web.Models.VNPayTransaction
-
 @{
     ViewData["Title"] = "Payment Success";
+    var guest = Model.Payment?.Guest;
 }
 
-<div class="min-h-screen flex items-center justify-center bg-background-dark">
-    <div class="bg-surface-dark border border-slate-800 rounded-xl p-8 text-center max-w-lg w-full">
-        <h2 class="text-2xl font-bold text-green-500 mb-4">
-            🎉 Thanh toán thành công
-        </h2>
-
-        <div class="text-slate-300 space-y-2 mb-6">
-            <p>
-                <strong>Mã giao dịch:</strong>
-                <span class="text-slate-100">@Model.VnpTxnRef</span>
-            </p>
-
-            <p>
-                <strong>Số tiền:</strong>
-                <span class="text-slate-100">
-                    @Model.Payment.Amount.ToString("N0") đ
-                </span>
-            </p>
-
+<div class="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark py-12 px-4">
+    <div class="max-w-md w-full">
+        <!-- Success Header -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-500/10 mb-4 relative">
+                <span class="material-symbols-outlined text-5xl text-green-500 animate-pulse">check_circle</span>
+                <div class="absolute inset-0 rounded-full border-4 border-green-500/20 animate-ping"></div>
+            </div>
+            <h2 class="text-3xl font-display font-bold text-white mb-2">Payment Successful</h2>
+            <p class="text-slate-400">Your online transaction has been completed successfully.</p>
         </div>
 
-        <a href="/" class="btn btn-primary">
-            Về trang chủ
-        </a>
+        <!-- Receipt Card -->
+        <div class="bg-surface-dark border border-slate-800 rounded-3xl overflow-hidden shadow-2xl relative">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-secondary"></div>
+            
+            <div class="p-8">
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-primary mb-1">Online Receipt</p>
+                        <h3 class="text-xl font-bold text-white">Symphony Academy</h3>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-slate-500">Date</p>
+                        <p class="text-sm font-medium text-white">@DateTime.Now.ToString("MMM dd, yyyy")</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Transaction Ref -->
+                    <div class="flex justify-between items-center p-4 bg-background-dark rounded-2xl border border-slate-800/50">
+                        <span class="text-sm text-slate-400">Transaction ID</span>
+                        <span class="font-mono text-sm font-bold text-white">#@Model.VnpTxnRef</span>
+                    </div>
+
+                    <!-- Details List -->
+                    <div class="space-y-4">
+                        @if (guest != null) {
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-400">Customer</span>
+                                <span class="text-white font-medium text-right">@guest.FullName</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-400">Email</span>
+                                <span class="text-white font-medium text-right">@guest.Email</span>
+                            </div>
+                        }
+                        <div class="flex justify-between text-sm border-t border-slate-800 pt-4">
+                            <span class="text-slate-400">Payment Status</span>
+                            <span class="text-green-500 font-bold text-right">Paid (Online)</span>
+                        </div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="bg-primary/5 rounded-2xl p-6 border border-primary/20 mt-8">
+                        <div class="flex justify-between items-end">
+                            <span class="text-sm text-slate-400">Amount Paid</span>
+                            <div class="text-right">
+                                <span class="text-3xl font-bold text-white">@Model.Payment.Amount.ToString("N0")</span>
+                                <span class="text-lg text-primary font-bold ms-1">$</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Info -->
+                <div class="mt-8 pt-6 border-t border-dashed border-slate-700 text-center">
+                    <p class="text-xs text-slate-500 mb-4">
+                        Thank you for your payment. A digital record of this transaction has been saved to your account.
+                    </p>
+                    
+                    <div class="flex flex-col gap-3">
+                        <button onclick="window.print()" class="w-full py-3 px-4 rounded-xl border border-slate-700 text-white font-bold text-sm hover:bg-slate-800 transition-all flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">print</span>
+                            Print Receipt
+                        </button>
+                        <a href="/" class="w-full py-4 px-6 rounded-xl bg-primary text-background-dark font-bold text-sm hover:opacity-90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined">home</span>
+                            Return to Homepage
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receipt "Cut" Effect -->
+            <div class="absolute -bottom-3 left-0 w-full flex justify-around px-2">
+                @for(int i=0; i<15; i++) {
+                    <div class="w-4 h-4 rounded-full bg-background-light dark:bg-background-dark"></div>
+                }
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+@@media print {
+    body * { visibility: hidden; }
+    .max-w-md, .max-w-md * { visibility: visible; }
+    .max-w-md { position: absolute; left: 0; top: 0; width: 100% !important; max-width: 100% !important; }
+    button, a { display: none !important; }
+    .min-h-screen { background: white !important; padding: 0 !important; }
+    .bg-surface-dark { background: white !important; border: 1px solid #ddd !important; box-shadow: none !important; color: black !important; }
+    .text-white { color: black !important; }
+    .text-slate-400, .text-slate-500 { color: #666 !important; }
+    .border-slate-800 { border-color: #eee !important; }
+    .bg-background-dark { background: #f9f9f9 !important; border-color: #eee !important; }
+    .bg-primary\/5 { background: #f0f7ff !important; border-color: #cce4ff !important; }
+    .text-primary { color: #0066cc !important; }
+    .absolute { display: none !important; }
+}
+</style>
