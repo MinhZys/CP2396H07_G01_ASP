@@ -167,8 +167,8 @@
             @foreach (var chat in Model)
             {
                 var identifier = chat.SenderId ?? chat.SessionId;
-                var isSession = chat.SenderId == null;
-                var targetId = isSession ? $"Session_{chat.SessionId}" : chat.SenderId;
+                // Always use Session Group if SessionId is available (robust delivery)
+                var targetId = !string.IsNullOrEmpty(chat.SessionId) ? $"Session_{chat.SessionId}" : chat.SenderId;
                 var initial = !string.IsNullOrEmpty(chat.SenderValidName) ? chat.SenderValidName[0].ToString().ToUpper() : "?";
                 
                 <div class="chat-item" onclick="selectChat(this, '@targetId', '@chat.SenderValidName', '@chat.SessionId', '@chat.SenderId')">
@@ -263,8 +263,12 @@
                 
                 msgContainer.innerHTML = '';
                 messages.forEach(m => {
-                    // Logic: If sender name matches current chat user name, it's 'other', else 'self' (Admin)
-                    const type = m.senderValidName === name ? 'other' : 'self'; 
+                    // Logic: If sender name matches current chat user name, it's 'other', else 'self' (Admin/AI)
+                    // FORCE AI to be self (Right side)
+                    let type = 'self';
+                    if (m.senderValidName === name && m.senderValidName !== 'AI Assistant') {
+                         type = 'other';
+                    }
                     appendAdminMessage(m.content, type, m.time);
                 });
             } catch (err) {

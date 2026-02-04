@@ -36,8 +36,9 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 {
                     var latest = g.First();
                     // Attempt to find the actual user in the conversation (not AI, not Admin)
-                    // AI has SenderId = null, Admin is filtered out of recentMessages ideally, but safe to check
-                    var originalUser = g.FirstOrDefault(m => m.SenderId != null && m.SenderValidName != "AI Assistant");
+                    // AI has SenderValidName = "AI Assistant". Admin has SenderId = adminId.
+                    // Guest has SenderId = null but valid SenderValidName.
+                    var originalUser = g.FirstOrDefault(m => m.SenderValidName != "AI Assistant" && m.SenderId != adminId);
                     
                     if (originalUser != null)
                     {

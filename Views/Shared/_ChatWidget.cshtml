@@ -1,323 +1,194 @@
-<!-- Chat Widget Floating Button -->
-<div id="chat-widget-container" class="fixed bottom-6 right-6 z-50">
-    <button id="chat-toggle-btn" class="bg-primary text-background-dark p-4 rounded-full shadow-lg hover:scale-105 transition-transform">
-        <span class="material-symbols-outlined text-2xl">chat</span>
+<!-- Chat Widget Floating Button Group -->
+<div id="chat-widget-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
+    
+    <!-- AI Chat Button -->
+    <button id="ai-toggle-btn" class="bg-purple-600 text-white p-3 rounded-full shadow-lg hover:rotate-12 transition-all group relative">
+        <span class="material-symbols-outlined text-2xl">smart_toy</span>
+        <span class="absolute right-full mr-2 top-1/2 -translate-y-1/2 bg-purple-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            Hỏi trợ lý AI
+        </span>
     </button>
 
-    <!-- Chat Box (Hidden by default) -->
-    <div id="chat-box" class="hidden absolute bottom-16 right-0 w-96 bg-surface-dark border border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col" style="height: 500px;">
-        <!-- Header -->
-        <div class="bg-primary/10 p-4 border-b border-slate-700">
-            <div class="flex justify-between items-center">
-                <h3 class="font-bold text-white">Online Support</h3>
-                <button id="chat-close-btn" class="text-slate-400 hover:text-white">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-            </div>
-            <!-- AI Mode Toggle -->
-            <div class="flex items-center gap-2 mt-2">
-                <button id="ai-mode-btn" class="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all bg-slate-700 text-slate-300 hover:bg-purple-600 hover:text-white">
-                    <span class="material-symbols-outlined text-sm">smart_toy</span>
-                    <span id="ai-mode-text">Chat với AI</span>
-                </button>
-                <span id="ai-status" class="text-xs text-slate-500 hidden">
-                    <span class="inline-block w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span>
-                    AI Online
-                </span>
-            </div>
-        </div>
+    <!-- Support Chat Button -->
+    <button id="support-toggle-btn" class="bg-primary text-background-dark p-4 rounded-full shadow-lg hover:scale-105 transition-all group relative">
+        <span class="material-symbols-outlined text-2xl">support_agent</span>
+        <span class="absolute right-full mr-2 top-1/2 -translate-y-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            Chat với Admin
+        </span>
+    </button>
 
-        <!-- Messages Area -->
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar bg-background-dark/50">
-            <!-- Messages will start here -->
-            <div class="text-center text-xs text-slate-500 my-2">Start a conversation</div>
-        </div>
-
-        <!-- AI Typing Indicator -->
-        <div id="ai-typing-indicator" class="hidden px-4 py-2 bg-purple-900/20 border-t border-purple-500/30">
-            <div class="flex items-center gap-2 text-purple-300 text-sm">
-                <span class="material-symbols-outlined animate-pulse">smart_toy</span>
-                <span>AI đang suy nghĩ</span>
-                <span class="flex gap-1">
-                    <span class="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0ms;"></span>
-                    <span class="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 150ms;"></span>
-                    <span class="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 300ms;"></span>
-                </span>
+    <!-- AI Chat Box -->
+    <div id="ai-chat-box" class="hidden absolute bottom-20 right-0 w-80 sm:w-96 bg-surface-dark border border-purple-500/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col" style="height: 450px;">
+        <div class="bg-purple-900/40 p-3 border-b border-purple-500/30 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-purple-400">smart_toy</span>
+                <span class="font-bold text-white text-sm">AI Assistant</span>
             </div>
+            <button onclick="document.getElementById('ai-chat-box').classList.add('hidden')" class="text-slate-400 hover:text-white">
+                <span class="material-symbols-outlined">close</span>
+            </button>
         </div>
-
-        <!-- Input Area -->
+        <div id="ai-messages" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar bg-purple-900/10">
+            <div class="text-center text-[10px] text-slate-500 my-2">AI sẽ hỗ trợ bạn thông tin và lời khuyên</div>
+        </div>
+        <div id="ai-typing" class="hidden px-4 py-1 text-[10px] text-purple-400 italic">AI đang trả lời...</div>
         <div class="p-3 border-t border-slate-700 bg-surface-dark">
-            <!-- Guest Name Input (Only shown if guest and name not set) -->
-            <div id="guest-name-input" class="mb-2 hidden">
-                <input type="text" id="chat-guest-name" placeholder="Enter your name..." class="w-full bg-background-dark border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary">
-            </div>
-
             <div class="flex gap-2">
-                <input type="text" id="chat-input" placeholder="Type a message..." class="flex-1 bg-background-dark border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary">
-                <button id="chat-send-btn" class="bg-primary text-background-dark p-2 rounded-lg hover:bg-primary/90">
-                    <span class="material-symbols-outlined">send</span>
+                <input type="text" id="ai-input" placeholder="Hỏi AI..." class="flex-1 bg-background-dark border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-purple-500">
+                <button id="ai-send-btn" class="bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-500 transition-colors">
+                    <span class="material-symbols-outlined text-sm">send</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Chat Box -->
+    <div id="support-chat-box" class="hidden absolute bottom-20 right-0 w-80 sm:w-96 bg-surface-dark border border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col" style="height: 450px;">
+        <div class="bg-primary/10 p-3 border-b border-slate-700 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">support_agent</span>
+                <span class="font-bold text-white text-sm">Support Chat</span>
+            </div>
+            <button onclick="document.getElementById('support-chat-box').classList.add('hidden')" class="text-slate-400 hover:text-white">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div id="support-messages" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar bg-background-dark/50">
+            <div class="text-center text-[10px] text-slate-500 my-2">Nói chuyện trực tiếp với Admin</div>
+        </div>
+        <div class="p-3 border-t border-slate-700 bg-surface-dark">
+            <div id="guest-name-area" class="mb-2 hidden">
+                <input type="text" id="support-guest-name" placeholder="Tên của bạn..." class="w-full bg-background-dark border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white">
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="support-input" placeholder="Aa..." class="flex-1 bg-background-dark border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-primary">
+                <button id="support-send-btn" class="bg-primary text-background-dark p-2 rounded-lg hover:bg-primary/90 transition-colors">
+                    <span class="material-symbols-outlined text-sm">send</span>
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SignalR Library (CDN) -->
+<!-- SignalR Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
 <script src="~/js/chat.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const toggleBtn = document.getElementById('chat-toggle-btn');
-        const closeBtn = document.getElementById('chat-close-btn');
-        const chatBox = document.getElementById('chat-box');
-        const sendBtn = document.getElementById('chat-send-btn');
-        const input = document.getElementById('chat-input');
-        const messagesDiv = document.getElementById('chat-messages');
-        const guestNameInput = document.getElementById('guest-name-input');
-        const guestNameField = document.getElementById('chat-guest-name');
-        const aiModeBtn = document.getElementById('ai-mode-btn');
-        const aiModeText = document.getElementById('ai-mode-text');
-        const aiStatus = document.getElementById('ai-status');
-        const aiTypingIndicator = document.getElementById('ai-typing-indicator');
-
+        // --- Setup ---
+        const aiBox = document.getElementById('ai-chat-box');
+        const supportBox = document.getElementById('support-chat-box');
         let isGuest = @(User.Identity.IsAuthenticated ? "false" : "true");
         let currentUserId = "@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "Guest")";
-        let isAIMode = false;
         
-        let sessionId = getCookie("chat_session_id");
-        let lastUserId = getCookie("chat_last_user_id");
+        // Separate Session IDs
+        let supportSid = getCookie("support_sid");
+        let aiSid = getCookie("ai_sid");
+        
+        if (!supportSid) { supportSid = crypto.randomUUID(); setCookie("support_sid", supportSid, 1); }
+        if (!aiSid) { aiSid = crypto.randomUUID(); setCookie("ai_sid", aiSid, 1); }
 
-        // If user changed (e.g. logged out or logged in as someone else), clear session
-        if (lastUserId && lastUserId !== currentUserId) {
-            deleteCookie("chat_session_id");
-            deleteCookie("chat_guest_name");
-            sessionId = null;
-        }
-        setCookie("chat_last_user_id", currentUserId, 1);
+        // --- Event Listeners ---
+        document.getElementById('ai-toggle-btn').addEventListener('click', () => {
+            aiBox.classList.toggle('hidden');
+            supportBox.classList.add('hidden');
+            loadHistory(aiSid, 'ai-messages');
+        });
+        document.getElementById('support-toggle-btn').addEventListener('click', () => {
+            supportBox.classList.toggle('hidden');
+            aiBox.classList.add('hidden');
+            if (isGuest && !getCookie("chat_guest_name")) document.getElementById('guest-name-area').classList.remove('hidden');
+            loadHistory(supportSid, 'support-messages');
+            if (window.connection && window.connection.state === "Connected") joinChatGroup("Session_" + supportSid);
+        });
 
-        if (!sessionId) {
-            sessionId = crypto.randomUUID();
-            setCookie("chat_session_id", sessionId, 1);
-        }
+        document.getElementById('ai-send-btn').addEventListener('click', () => sendMsg('ai'));
+        document.getElementById('support-send-btn').addEventListener('click', () => sendMsg('support'));
+        document.getElementById('ai-input').onkeypress = (e) => { if(e.key === 'Enter') sendMsg('ai'); };
+        document.getElementById('support-input').onkeypress = (e) => { if(e.key === 'Enter') sendMsg('support'); };
 
-        // Wait for connections and Load History
-        if (sessionId) {
-            loadHistory(sessionId);
-        }
-
+        // --- SignalR ---
         const waitForConn = setInterval(() => {
             if (window.connection && window.connection.state === "Connected") {
                 clearInterval(waitForConn);
-                console.log("Widget: SignalR Ready");
-                
-                // Setup AI message handlers
-                window.connection.on("ReceiveAIMessage", function(message, time) {
-                    appendMessage(message, 'ai', time);
-                });
+                joinChatGroup("Session_" + supportSid);
+                joinChatGroup("Session_" + aiSid);
 
-                window.connection.on("AITyping", function(isTyping) {
-                    if (isTyping) {
-                        aiTypingIndicator.classList.remove('hidden');
-                    } else {
-                        aiTypingIndicator.classList.add('hidden');
-                    }
+                window.connection.on("ReceiveAIMessage", (msg, time) => {
+                    appendUI('ai-messages', msg, 'ai', time);
                 });
-
-                if (isGuest && sessionId) {
-                    console.log("Joining Session: " + sessionId);
-                    joinChatGroup("Session_" + sessionId);
-                }
+                window.connection.on("AITyping", (t) => {
+                    document.getElementById('ai-typing').classList.toggle('hidden', !t);
+                });
+                window.connection.on("ReceiveMessage", (sId, name, msg, sid, time) => {
+                    // Route message to correct box
+                    if (sid === supportSid) appendUI('support-messages', msg, (sId === connection.connectionId) ? 'self' : 'other', time);
+                    if (sid === aiSid && name !== "AI Assistant") appendUI('ai-messages', msg, 'self', time);
+                });
             }
         }, 500);
 
-        // AI Mode Toggle
-        aiModeBtn.addEventListener('click', () => {
-            isAIMode = !isAIMode;
-            if (isAIMode) {
-                aiModeBtn.classList.remove('bg-slate-700', 'text-slate-300');
-                aiModeBtn.classList.add('bg-purple-600', 'text-white');
-                aiModeText.textContent = 'AI Mode ON';
-                aiStatus.classList.remove('hidden');
-                input.placeholder = 'Hỏi AI bất cứ điều gì...';
-            } else {
-                aiModeBtn.classList.add('bg-slate-700', 'text-slate-300');
-                aiModeBtn.classList.remove('bg-purple-600', 'text-white');
-                aiModeText.textContent = 'Chat với AI';
-                aiStatus.classList.add('hidden');
-                input.placeholder = 'Type a message...';
-            }
-        });
-
-        // Toggle Chat
-        toggleBtn.addEventListener('click', () => {
-            chatBox.classList.toggle('hidden');
-            if (isGuest && !getCookie("chat_guest_name")) {
-                guestNameInput.classList.remove('hidden');
-            } else {
-                guestNameInput.classList.add('hidden');
-            }
-        });
-
-        closeBtn.addEventListener('click', () => chatBox.classList.add('hidden'));
-
-        // Send Message
-        sendBtn.addEventListener('click', sendMessage);
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        async function loadHistory(sid) {
-             try {
-                const response = await fetch(`/Chat/GetHistory?sessionId=${sid}`);
-                if (!response.ok) return;
-                const messages = await response.json();
-                
-                // Clear initial placeholder if history exists
-                if(messages.length > 0) messagesDiv.innerHTML = '';
-                
+        // --- Helpers ---
+        async function loadHistory(sid, containerId) {
+            const div = document.getElementById(containerId);
+            try {
+                const res = await fetch(`/Chat/GetHistory?sessionId=${sid}`);
+                if (!res.ok) return;
+                const msgs = await res.json();
+                if (msgs.length > 0) div.innerHTML = '';
                 const myId = "@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "")";
-
-                messages.forEach(m => {
-                    // Check if it's an AI message
-                    if (m.senderValidName === 'AI Assistant' || m.senderId === 'AI_ASSISTANT') {
-                        appendMessage(m.content, 'ai', m.time);
-                        return;
-                    }
-                    
-                    let isSelf = false;
-                    if (isGuest) {
-                        isSelf = (m.senderId === null); 
-                    } else {
-                        isSelf = (m.senderId === myId);
-                    }
-                    
-                    appendMessage(m.content, isSelf ? 'self' : 'other', m.time);
+                msgs.forEach(m => {
+                    let type = 'other';
+                    if (m.senderValidName === 'AI Assistant') type = 'ai';
+                    else if (isGuest) {
+                        const gName = getCookie("chat_guest_name");
+                        if (m.senderId === null && gName && m.senderValidName === gName) type = 'self';
+                    } else if (m.senderId === myId) type = 'self';
+                    appendUI(containerId, m.content, type, m.time);
                 });
-            } catch (err) {
-                console.error("Error loading history", err);
-            }
+            } catch(e) {}
         }
 
-        function sendMessage() {
+        function sendMsg(mode) {
+            const input = document.getElementById(mode + '-input');
             const msg = input.value.trim();
             if (!msg) return;
 
-            let senderName = "@(User.Identity.Name ?? "")";
-            
+            let name = "@(User.Identity.Name ?? "")";
             if (isGuest) {
-                let storedName = getCookie("chat_guest_name");
-                if (!storedName) {
-                    const nameVal = guestNameField.value.trim();
-                    if (!nameVal) {
-                        alert("Please enter your name to start chatting!");
-                        return;
-                    }
-                    setCookie("chat_guest_name", nameVal, 1);
-                    senderName = nameVal;
-                    guestNameInput.classList.add('hidden');
-                } else {
-                    senderName = storedName;
-                }
+                name = getCookie("chat_guest_name") || document.getElementById('support-guest-name').value.trim();
+                if (!name) { alert("Vui lòng nhập tên!"); return; }
+                setCookie("chat_guest_name", name, 1);
+                document.getElementById('guest-name-area').classList.add('hidden');
             }
 
-            // Append local message
-            appendMessage(msg, 'self', 'Now');
+            appendUI(mode + '-messages', msg, 'self', 'Now');
             input.value = '';
 
-            if (isAIMode) {
-                // Send to AI via SignalR
-                if (window.connection && window.connection.state === "Connected") {
-                    window.connection.invoke("AskAI", msg, sessionId, senderName)
-                        .catch(err => {
-                            console.error("Error asking AI:", err);
-                            appendMessage("Không thể kết nối với AI. Vui lòng thử lại.", 'ai', 'Now');
-                        });
-                }
+            if (mode === 'ai') {
+                window.connection.invoke("AskAI", msg, aiSid, name);
             } else {
-                // Send to Admin via SignalR
-                sendMessageToHub("", msg, senderName, sessionId);
+                sendMessageToHub("", msg, name, supportSid);
             }
         }
 
-        // Listen for new messages
-        document.addEventListener('chatMessageReceived', (e) => {
-            const data = e.detail;
-            if (data.senderId !== connection.connectionId) { 
-                 appendMessage(data.message, 'other', data.time);
-            }
-        });
-
-        function appendMessage(text, type, time) {
+        function appendUI(cid, text, type, time) {
             const div = document.createElement('div');
-            
+            const cont = document.getElementById(cid);
             if (type === 'ai') {
-                // AI message style
                 div.className = 'flex flex-col items-start';
-                div.innerHTML = `
-                    <div class="flex items-start gap-2 max-w-[85%]">
-                        <div class="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined text-xs text-white">smart_toy</span>
-                        </div>
-                        <div class="px-3 py-2 rounded-xl text-sm bg-purple-900/40 text-purple-100 rounded-tl-none border border-purple-500/30">
-                            ${formatAIMessage(text)}
-                        </div>
-                    </div>
-                    <span class="text-[10px] text-slate-500 mt-1 ml-8">${time}</span>
-                `;
-            } else if (type === 'self') {
-                div.className = 'flex flex-col items-end';
-                div.innerHTML = `
-                    <div class="max-w-[80%] px-3 py-2 rounded-xl text-sm bg-primary text-background-dark rounded-tr-none">
-                        ${text}
-                    </div>
-                    <span class="text-[10px] text-slate-500 mt-1">${time}</span>
-                `;
+                div.innerHTML = `<div class="flex items-start gap-1 max-w-[85%]"><div class="w-5 h-5 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[8px] text-white">smart_toy</span></div><div class="px-2 py-1.5 rounded-lg text-xs bg-purple-900/40 text-purple-100 rounded-tl-none border border-purple-500/20">${text.replace(/\n/g, '<br>')}</div></div><span class="text-[8px] text-slate-500 mt-0.5 ml-6">${time}</span>`;
             } else {
-                div.className = 'flex flex-col items-start';
-                div.innerHTML = `
-                    <div class="max-w-[80%] px-3 py-2 rounded-xl text-sm bg-slate-700 text-white rounded-tl-none">
-                        ${text}
-                    </div>
-                    <span class="text-[10px] text-slate-500 mt-1">${time}</span>
-                `;
+                const isSelf = type === 'self';
+                div.className = isSelf ? 'flex flex-col items-end' : 'flex flex-col items-start';
+                div.innerHTML = `<div class="max-w-[80%] px-3 py-1.5 rounded-lg text-xs ${isSelf ? 'bg-primary text-background-dark rounded-tr-none' : 'bg-slate-700 text-white rounded-tl-none'}">${text}</div><span class="text-[8px] text-slate-500 mt-0.5">${time}</span>`;
             }
-            
-            messagesDiv.appendChild(div);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            cont.appendChild(div);
+            cont.scrollTop = cont.scrollHeight;
         }
 
-        function formatAIMessage(text) {
-            // Simple formatting for AI responses
-            return text
-                .replace(/\n/g, '<br>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>');
-        }
-
-        function setCookie(name, value, days) {
-            var expires = "";
-            if (days) {
-                var date = new Date();
-                date.setTime(date.getTime() + (days*24*60*60*1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-        }
-        function getCookie(name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for(var i=0;i < ca.length;i++) {
-                var c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1,c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-            }
-            return null;
-        }
-        function deleteCookie(name) {
-            document.cookie = name + '=; Max-Age=-99999999; path=/';
-        }
+        function setCookie(n,v,d){var e="";if(d){var t=new Date();t.setTime(t.getTime()+d*864e5);e="; expires="+t.toUTCString()}document.cookie=n+"="+(v||"")+e+"; path=/"}
+        function getCookie(n){var e=n+"=",t=document.cookie.split(";");for(var r=0;r<t.length;r++){for(var i=t[r];" "==i.charAt(0);)i=i.substring(1,i.length);if(0==i.indexOf(e))return i.substring(e.length,i.length)}return null}
     });
 </script>
-

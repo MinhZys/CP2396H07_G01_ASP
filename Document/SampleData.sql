@@ -157,3 +157,289 @@ FROM Users WHERE RoleId = '2' ORDER BY NEWID();
 
 PRINT 'Sample data insertion completed successfully.';
 GO
+
+/* =========================================================================================
+   ADDITIONAL SAMPLE DATA (Centers, Locations, Content, Exams, Classes, etc.)
+   ========================================================================================= */
+
+-- 0. Ensure Roles Exist (if not already seeded)
+IF NOT EXISTS (SELECT 1 FROM Roles WHERE Name = 'Admin')
+    INSERT INTO Roles (Id, Name, Description) VALUES ('1', 'Admin', 'System Administrator');
+IF NOT EXISTS (SELECT 1 FROM Roles WHERE Name = 'Instructor')
+    INSERT INTO Roles (Id, Name, Description) VALUES ('2', 'Instructor', 'Teacher/Instructor');
+IF NOT EXISTS (SELECT 1 FROM Roles WHERE Name = 'Student')
+    INSERT INTO Roles (Id, Name, Description) VALUES ('3', 'Student', 'Student/Learner');
+IF NOT EXISTS (SELECT 1 FROM Roles WHERE Name = 'Guest')
+    INSERT INTO Roles (Id, Name, Description) VALUES ('4', 'Guest', 'Guest User');
+
+-- 11. CENTERS (5 Centers)
+DECLARE @Center1 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @Center2 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @Center3 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @Center4 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @Center5 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+
+INSERT INTO [Centers] ([Id], [Name], [Address], [Phone]) VALUES
+(@Center1, N'Main Campus', N'123 Education Blvd, New York, NY', N'0212-333-4444'),
+(@Center2, N'North Branch', N'456 North Ave, Chicago, IL', N'0312-555-6666'),
+(@Center3, N'West Coast Hub', N'789 West St, San Francisco, CA', N'0415-777-8888'),
+(@Center4, N'Online Support Center', N'Virtual Headquarters', N'1800-555-0000'),
+(@Center5, N'South Campus', N'321 South Rd, Miami, FL', N'0305-999-0000');
+
+-- 12. ROOMS (5 Rooms)
+INSERT INTO [Rooms] ([Name], [Type], [Capacity], [IsActive], [LocationNote], [CreatedAt], [UpdatedAt]) VALUES
+(N'Room 101', 1, 30, 1, N'Building A, Ground Floor', GETDATE(), GETDATE()),
+(N'Room 102', 1, 30, 1, N'Building A, Ground Floor', GETDATE(), GETDATE()),
+(N'Lab 201', 2, 25, 1, N'Building B, 2nd Floor (Computer Lab)', GETDATE(), GETDATE()),
+(N'Hall A', 3, 100, 1, N'Main Hall', GETDATE(), GETDATE()),
+(N'Room 303', 1, 40, 1, N'Building C, 3rd Floor', GETDATE(), GETDATE());
+
+-- 13. HOLIDAYS (5 Holidays)
+INSERT INTO [Holidays] ([Date], [Name], [IsRecurringAnnual], [Note], [IsActive], [CreatedAt], [UpdatedAt]) VALUES
+('2026-01-01', N'New Year''s Day', 1, N'Happy New Year', 1, GETDATE(), GETDATE()),
+('2026-04-30', N'Liberty Day', 1, N'National Holiday', 1, GETDATE(), GETDATE()),
+('2026-05-01', N'Labor Day', 1, N'International Workers Day', 1, GETDATE(), GETDATE()),
+('2026-09-02', N'Independence Day', 1, N'National Day', 1, GETDATE(), GETDATE()),
+('2026-12-25', N'Christmas Day', 1, N'Merry Christmas', 1, GETDATE(), GETDATE());
+
+-- 14. FAQS (5 FAQs)
+INSERT INTO [FAQs] ([Id], [Question], [Answer], [DisplayOrder], [IsActive]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), N'How do I register for a course?', N'You can register online via the Courses page.', 1, 1),
+(CAST(NEWID() AS NVARCHAR(36)), N'What are the payment methods?', N'We accept Credit Cards and VNPay.', 2, 1),
+(CAST(NEWID() AS NVARCHAR(36)), N'Can I get a refund?', N'Yes, refunds are available within the first week of class.', 3, 1),
+(CAST(NEWID() AS NVARCHAR(36)), N'Do you offer online classes?', N'Yes, many of our courses are available online.', 4, 1),
+(CAST(NEWID() AS NVARCHAR(36)), N'How do I contact support?', N'Use the Contact Us form or call our hotline.', 5, 1);
+
+-- 15. PAGE CONTENTS (5 Pages)
+DECLARE @Page1 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @Page2 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @Page3 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @Page4 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @Page5 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+
+INSERT INTO [PageContents] ([Id], [Slug], [Title], [Content], [LastUpdated], [CenterId]) VALUES
+(@Page1, N'about-us', N'About Us', N'<p>Welcome to Symphony Portal...</p>', GETDATE(), @Center1),
+(@Page2, N'terms', N'Terms of Service', N'<p>These are our terms...</p>', GETDATE(), @Center1),
+(@Page3, N'privacy', N'Privacy Policy', N'<p>We respect your privacy...</p>', GETDATE(), @Center1),
+(@Page4, N'careers', N'Careers', N'<p>Join our team!</p>', GETDATE(), @Center2),
+(@Page5, N'events', N'Upcoming Events', N'<p>Check out our events...</p>', GETDATE(), @Center3);
+
+-- 16. PAGE IMAGES (5 Images - linked to pages)
+INSERT INTO [PageImages] ([Id], [PageContentId], [ImageUrl], [SortOrder], [IsFeatured], [CreatedAt]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), @Page1, N'about-banner.jpg', 1, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), @Page1, N'team-photo.jpg', 2, 0, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), @Page4, N'office-life.jpg', 1, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), @Page5, N'event-2026.jpg', 1, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), @Page5, N'workshop.jpg', 2, 0, GETDATE());
+
+-- 17. LESSONS (5 Lessons for a Course)
+-- Re-fetch a course and subject to link
+DECLARE @RefCourseId NVARCHAR(36); SELECT TOP 1 @RefCourseId = Id FROM Courses;
+DECLARE @RefSubjectId NVARCHAR(450); SELECT TOP 1 @RefSubjectId = Id FROM Subjects;
+
+DECLARE @L1 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @L2 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @L3 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @L4 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @L5 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+
+INSERT INTO [Lessons] ([Id], [Title], [Description], [ContentLink], [Image], [DurationMinutes], [CourseId], [SubjectId]) VALUES
+(@L1, N'Intro to C#', N'Variables and DataTypes', N'https://video.com/csharp1', N'csharp1.jpg', 45, @RefCourseId, @RefSubjectId),
+(@L2, N'Control Flow', N'If/Else and Loops', N'https://video.com/csharp2', N'csharp2.jpg', 50, @RefCourseId, @RefSubjectId),
+(@L3, N'Methods', N'Functions and Parameters', N'https://video.com/csharp3', N'csharp3.jpg', 55, @RefCourseId, @RefSubjectId),
+(@L4, N'OOP Basics', N'Classes and Objects', N'https://video.com/csharp4', N'csharp4.jpg', 60, @RefCourseId, @RefSubjectId),
+(@L5, N'Inheritance', N'Base and Derived Classes', N'https://video.com/csharp5', N'csharp5.jpg', 60, @RefCourseId, @RefSubjectId);
+
+-- 18. QUIZZES (5 Quizzes)
+DECLARE @Qz1 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @Qz2 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @Qz3 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @Qz4 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @Qz5 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+
+INSERT INTO [Quizzes] ([Id], [Name], [Description], [PassScore], [DateCreated], [LessonId]) VALUES
+(@Qz1, N'C# Basics Quiz', N'Test your knowledge on basics', 70, GETDATE(), @L1),
+(@Qz2, N'Control Flow Quiz', N'Test loops and conditions', 70, GETDATE(), @L2),
+(@Qz3, N'Methods Quiz', N'Test functions knowledge', 75, GETDATE(), @L3),
+(@Qz4, N'OOP Quiz', N'Classes and Objects test', 80, GETDATE(), @L4),
+(@Qz5, N'Inheritance Quiz', N'Polymorphism and Inheritance', 80, GETDATE(), @L5);
+
+-- 19. QUIZ QUESTIONS (5 Questions for Quiz 1)
+INSERT INTO [QuizQuestions] ([Id], [QuestionText], [OptionA], [OptionB], [OptionC], [OptionD], [CorrectOption], [Points], [QuizId]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), N'What is int?', N'Integer', N'String', N'Double', N'Boolean', N'A', 10, @Qz1),
+(CAST(NEWID() AS NVARCHAR(36)), N'What is var?', N'Explicit type', N'Implicit type', N'Loop', N'Class', N'B', 10, @Qz1),
+(CAST(NEWID() AS NVARCHAR(36)), N'C# is developed by?', N'Oracle', N'Microsoft', N'Google', N'Apple', N'B', 10, @Qz1),
+(CAST(NEWID() AS NVARCHAR(36)), N'Ends a statement?', N'Dot', N'Comma', N'Semicolon', N'Colon', N'C', 10, @Qz1),
+(CAST(NEWID() AS NVARCHAR(36)), N'Main method is?', N'Private', N'Static', N'Virtual', N'Abstract', N'B', 10, @Qz1);
+
+-- 20. QUESTIONS, OPTIONS & EXAM PAPERS (Bank)
+DECLARE @QP1 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @QP2 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @QP3 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @QP4 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @QP5 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+
+INSERT INTO [Questions] ([Id], [Content], [Type], [SubjectId], [Difficulty], [Score], [CreatedAt]) VALUES
+(@QP1, N'Explain DI', 1, @RefSubjectId, N'Hard', 5.0, GETDATE()),
+(@QP2, N'Explain MVC', 1, @RefSubjectId, N'Medium', 5.0, GETDATE()),
+(@QP3, N'What is Middleware?', 1, @RefSubjectId, N'Medium', 5.0, GETDATE()),
+(@QP4, N'What is EF Core?', 1, @RefSubjectId, N'Easy', 5.0, GETDATE()),
+(@QP5, N'What is Razor?', 1, @RefSubjectId, N'Easy', 5.0, GETDATE());
+
+-- Options for QP1
+INSERT INTO [QuestionOptions] ([Id], [QuestionId], [Content], [IsCorrect]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), @QP1, N'Dependency Injection', 1),
+(CAST(NEWID() AS NVARCHAR(36)), @QP1, N'Direct Injection', 0),
+(CAST(NEWID() AS NVARCHAR(36)), @QP2, N'Model View Controller', 1),
+(CAST(NEWID() AS NVARCHAR(36)), @QP2, N'Make View Code', 0),
+(CAST(NEWID() AS NVARCHAR(36)), @QP3, N'Pipeline component', 1);
+
+-- 21. EXAM PAPERS
+DECLARE @EP1 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @EP2 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @EP3 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @EP4 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+DECLARE @EP5 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+
+INSERT INTO [ExamPapers] ([Id], [Title], [Duration], [SubjectId], [CreatedAt]) VALUES
+(@EP1, N'Midterm Exam', 60, @RefSubjectId, GETDATE()),
+(@EP2, N'Final Exam', 90, @RefSubjectId, GETDATE()),
+(@EP3, N'Quiz 1', 15, @RefSubjectId, GETDATE()),
+(@EP4, N'Quiz 2', 15, @RefSubjectId, GETDATE()),
+(@EP5, N'Practice Test', 45, @RefSubjectId, GETDATE());
+
+INSERT INTO [ExamPaperQuestions] ([ExamPaperId], [QuestionId], [Order]) VALUES
+(@EP1, @QP1, 1), (@EP1, @QP2, 2),
+(@EP2, @QP3, 1), (@EP2, @QP4, 2), (@EP2, @QP5, 3);
+
+-- 22. ENROLLMENTS & REGISTRATIONS
+-- Get Students and Classes
+DECLARE @RefStudent1 NVARCHAR(36); SELECT TOP 1 @RefStudent1 = Id FROM Users WHERE RoleId = '3';
+DECLARE @RefClassId NVARCHAR(36); SELECT TOP 1 @RefClassId = Id FROM Classes;
+
+-- Enrollments
+INSERT INTO [Enrollments] ([Id], [ClassId], [StudentId], [CourseId], [EnrolledDate], [IsApproved], [IsPaid], [IsCompleted], [PaymentReference]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), @RefClassId, @RefStudent1, @RefCourseId, GETDATE(), 1, 1, 0, N'PAY-001'),
+(CAST(NEWID() AS NVARCHAR(36)), @RefClassId, @RefStudent1, @RefCourseId, GETDATE(), 1, 1, 0, N'PAY-002'),
+(CAST(NEWID() AS NVARCHAR(36)), @RefClassId, @RefStudent1, @RefCourseId, GETDATE(), 1, 0, 0, NULL),
+(CAST(NEWID() AS NVARCHAR(36)), @RefClassId, @RefStudent1, @RefCourseId, GETDATE(), 0, 0, 0, NULL),
+(CAST(NEWID() AS NVARCHAR(36)), @RefClassId, @RefStudent1, @RefCourseId, GETDATE(), 1, 1, 1, N'PAY-005');
+
+-- Student Registrations
+INSERT INTO [StudentRegistrations] ([Id], [FullName], [Email], [Gender], [DateOfBirth], [Phone], [CourseId], [CenterId], [HasExtraPractice], [RegisteredAt], [Status]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), N'New Student 1', N'ns1@test.com', 1, GETDATE(), N'0999888771', @RefCourseId, @Center1, 1, GETDATE(), 1),
+(CAST(NEWID() AS NVARCHAR(36)), N'New Student 2', N'ns2@test.com', 0, GETDATE(), N'0999888772', @RefCourseId, @Center1, 0, GETDATE(), 1),
+(CAST(NEWID() AS NVARCHAR(36)), N'New Student 3', N'ns3@test.com', 1, GETDATE(), N'0999888773', @RefCourseId, @Center1, 1, GETDATE(), 1),
+(CAST(NEWID() AS NVARCHAR(36)), N'New Student 4', N'ns4@test.com', 0, GETDATE(), N'0999888774', @RefCourseId, @Center1, 0, GETDATE(), 1),
+(CAST(NEWID() AS NVARCHAR(36)), N'New Student 5', N'ns5@test.com', 1, GETDATE(), N'0999888775', @RefCourseId, @Center1, 1, GETDATE(), 1);
+
+-- 23. CLASS SCHEDULES & SESSIONS
+-- Schedule
+DECLARE @SchedId INT;
+INSERT INTO [ClassSchedules] ([ClassId], [StartDate], [EndDate], [Status], [IsPublished], [IsLocked], [PublishedAt], [CreatedAt], [UpdatedAt]) VALUES
+(@RefClassId, GETDATE(), DATEADD(MONTH, 3, GETDATE()), 1, 1, 0, GETDATE(), GETDATE(), GETDATE());
+-- Cannot easily get Identity Key without scope identity immediately.
+-- Assuming we just insert generic data or use logic. 
+-- For SQL script to be robust usually need 'SCOPE_IDENTITY()' captured in variable.
+SET @SchedId = SCOPE_IDENTITY(); 
+
+-- Sessions (5)
+DECLARE @RoomRef INT; SELECT TOP 1 @RoomRef = Id FROM Rooms;
+DECLARE @InstrRef NVARCHAR(36); SELECT TOP 1 @InstrRef = Id FROM Users WHERE RoleId = '2';
+
+INSERT INTO [ClassSessions] ([ClassScheduleId], [SessionDate], [StartTime], [EndTime], [RoomId], [InstructorId], [SessionType], [Note], [IsCancelled], [CreatedAt]) VALUES
+(@SchedId, GETDATE(), '08:00', '10:00', @RoomRef, @InstrRef, 1, N'Lecture 1', 0, GETDATE()),
+(@SchedId, DATEADD(DAY, 2, GETDATE()), '08:00', '10:00', @RoomRef, @InstrRef, 1, N'Lecture 2', 0, GETDATE()),
+(@SchedId, DATEADD(DAY, 4, GETDATE()), '08:00', '10:00', @RoomRef, @InstrRef, 2, N'Lab 1', 0, GETDATE()),
+(@SchedId, DATEADD(DAY, 6, GETDATE()), '08:00', '10:00', @RoomRef, @InstrRef, 1, N'Lecture 3', 0, GETDATE()),
+(@SchedId, DATEADD(DAY, 8, GETDATE()), '08:00', '10:00', @RoomRef, @InstrRef, 2, N'Lab 2', 0, GETDATE());
+
+-- 24. MATERIALS (5 Materials)
+INSERT INTO [Materials] ([Id], [Title], [Description], [FilePath], [FileType], [UploadDate], [ClassId]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), N'Syllabus', N'Course Syllabus', N'/files/syllabus.pdf', N'.pdf', GETDATE(), @RefClassId),
+(CAST(NEWID() AS NVARCHAR(36)), N'Slide Deck 1', N'Intro Slides', N'/files/deck1.pptx', N'.pptx', GETDATE(), @RefClassId),
+(CAST(NEWID() AS NVARCHAR(36)), N'Code Sample', N'Week 1 Code', N'/files/code.zip', N'.zip', GETDATE(), @RefClassId),
+(CAST(NEWID() AS NVARCHAR(36)), N'Assignment Guide', N'How to submit', N'/files/guide.pdf', N'.pdf', GETDATE(), @RefClassId),
+(CAST(NEWID() AS NVARCHAR(36)), N'Reading List', N'Books to read', N'/files/books.pdf', N'.pdf', GETDATE(), @RefClassId);
+
+-- 25. ASSIGNMENTS & CLASS ASSIGNMENTS
+INSERT INTO [Assignments] ([Id], [Title], [ClassId], [InstructorId], [AssignmentType], [Status], [Note], [CreatedAt]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), N'Homework 1', @RefClassId, @InstrRef, 1, 1, N'Due next week', GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), N'Homework 2', @RefClassId, @InstrRef, 1, 1, N'Chapter 2', GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), N'Midterm Project', @RefClassId, @InstrRef, 2, 1, N'Group work', GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), N'Essay', @RefClassId, @InstrRef, 1, 1, N'1000 words', GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), N'Final Presentation', @RefClassId, @InstrRef, 3, 1, N'Slides required', GETDATE());
+
+-- Class Assignments (Distribution)
+INSERT INTO [ClassAssignments] ([Id], [StudentId], [ClassId], [AssignedAt]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, @RefClassId, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, @RefClassId, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, @RefClassId, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, @RefClassId, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, @RefClassId, GETDATE());
+
+-- 26. REVISION PACKAGES (5 Packages)
+DECLARE @RP1 NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+INSERT INTO [RevisionPackages] ([Id], [Title], [Description], [Fee], [MaxStudents], [CurrentStudents], [Status], [CreatedAt]) VALUES
+(@RP1, N'IELTS Prep', N'Intensive English', 500, 20, 5, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), N'TOEIC Prep', N'Business English', 400, 25, 10, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), N'N3 Japanese', N'JLPT N3', 600, 15, 2, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), N'Basic Math', N'Algebra Review', 200, 30, 0, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), N'Coding Interview', N'DSA Prep', 800, 10, 8, 1, GETDATE());
+
+-- 27. REVISION REGISTRATIONS (5 Registrations)
+INSERT INTO [RevisionRegistrations] ([Id], [FullName], [Email], [PhoneNumber], [RevisionPackageId], [ClassId], [Status], [CreatedAt]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), N'John Doe', N'john@example.com', N'0123456789', @RP1, @RefClassId, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), N'Jane Smith', N'jane@example.com', N'0987654321', @RP1, @RefClassId, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), N'Bob Wilson', N'bob@example.com', N'0111222333', @RP1, @RefClassId, 0, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), N'Alice Brown', N'alice@example.com', N'0444555666', @RP1, @RefClassId, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), N'Charlie Day', N'charlie@example.com', N'0777888999', @RP1, @RefClassId, 2, GETDATE());
+
+-- 28. MESSAGING
+-- Contact Messages
+INSERT INTO [ContactMessages] ([Id], [FullName], [Email], [CenterId], [Message], [CreatedAt], [IsRead]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), N'Visitor 1', N'vis1@email.com', @Center1, N'Open hours?', GETDATE(), 1),
+(CAST(NEWID() AS NVARCHAR(36)), N'Visitor 2', N'vis2@email.com', @Center1, N'Location?', GETDATE(), 0),
+(CAST(NEWID() AS NVARCHAR(36)), N'Visitor 3', N'vis3@email.com', @Center1, N'Jobs?', GETDATE(), 0),
+(CAST(NEWID() AS NVARCHAR(36)), N'Visitor 4', N'vis4@email.com', @Center1, N'Courses?', GETDATE(), 1),
+(CAST(NEWID() AS NVARCHAR(36)), N'Visitor 5', N'vis5@email.com', @Center1, N'Price?', GETDATE(), 0);
+
+-- Chat Messages (Mock)
+INSERT INTO [ChatMessages] ([SenderId], [ReceiverId], [Content], [Timestamp], [IsRead], [SenderValidName]) VALUES
+(@RefStudent1, @InstrRef, N'Hello Professor', GETDATE(), 0, N'Student User'),
+(@InstrRef, @RefStudent1, N'Hi there', GETDATE(), 1, N'Instructor'),
+(@RefStudent1, @InstrRef, N'Question about HW', GETDATE(), 0, N'Student User'),
+(@InstrRef, @RefStudent1, N'Sure go ahead', GETDATE(), 1, N'Instructor'),
+(@RefStudent1, @InstrRef, N'When is the deadline?', GETDATE(), 0, N'Student User');
+
+-- 29. PAYMENTS (5 Payments)
+INSERT INTO [Payments] ([Id], [StudentId], [GuestId], [Amount], [PaymentMethod], [PaymentDate], [ReceiptNumber], [Status], [Purpose]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, NULL, 500.00, 1, GETDATE(), N'REC-001', 1, 1),
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, NULL, 200.00, 2, GETDATE(), N'REC-002', 1, 2),
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, NULL, 1500.00, 1, GETDATE(), N'REC-003', 1, 1),
+(CAST(NEWID() AS NVARCHAR(36)), NULL, NULL, 50.00, 1, GETDATE(), N'REC-004', 1, 3), 
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, NULL, 100.00, 1, GETDATE(), N'REC-005', 0, 1);
+
+-- 30. EXAM RESULTS (5 Results)
+DECLARE @EntExamRef NVARCHAR(36); SELECT TOP 1 @EntExamRef = Id FROM EntranceExams;
+INSERT INTO [ExamResults] ([Id], [StudentId], [EntranceExamId], [Score], [IsPassed], [ExamDate]) VALUES
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, @EntExamRef, 85.5, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, @EntExamRef, 45.0, 0, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, @EntExamRef, 90.0, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, @EntExamRef, 60.0, 1, GETDATE()),
+(CAST(NEWID() AS NVARCHAR(36)), @RefStudent1, @EntExamRef, 75.0, 1, GETDATE());
+
+-- 31. STUDENT EXAM SESSIONS & ANSWERS
+DECLARE @SessId NVARCHAR(36) = CAST(NEWID() AS NVARCHAR(36));
+INSERT INTO [StudentExamSessions] ([Id], [EntranceExamId], [StudentId], [ExamPaperId], [StartTime], [EndTime], [TotalScore], [GradeLevel], [Status]) VALUES
+(@SessId, @EntExamRef, @RefStudent1, @EP1, GETDATE(), DATEADD(HOUR, 1, GETDATE()), 80, N'A', 2);
+
+INSERT INTO [StudentAnswers] ([SessionId], [QuestionId], [SelectedOptionId], [EarnedScore], [IsGraded]) VALUES
+(@SessId, @QP1, NULL, 5.0, 1),
+(@SessId, @QP2, NULL, 5.0, 1),
+(@SessId, @QP3, NULL, 5.0, 1),
+(@SessId, @QP4, NULL, 5.0, 1),
+(@SessId, @QP5, NULL, 5.0, 1);
+
+PRINT 'Full sample data generated.';
+GO

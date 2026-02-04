@@ -13,8 +13,7 @@ namespace Symphony.Portal.Web.Hubs
         private readonly AppDbContext _context;
         private readonly IOllamaService _ollamaService;
         
-        // Track sessions where Admin has intervened to stop AI auto-reply
-        private static readonly ConcurrentDictionary<string, bool> _humanSupportSessions = new();
+        // Removed session intervention tracking to keep AI and Human support independent as requested.
 
         public ChatHub(AppDbContext context, IOllamaService ollamaService)
         {
@@ -45,11 +44,6 @@ namespace Symphony.Portal.Web.Hubs
             _context.ChatMessages.Add(message);
             await _context.SaveChangesAsync();
 
-            // Logic: STOP AI if Admin replies
-            if (Context.User.IsInRole(RoleNames.Admin) && !string.IsNullOrEmpty(sessionId))
-            {
-                _humanSupportSessions.TryAdd(sessionId, true);
-            }
 
             // Broadcast to Receiver
             if (!string.IsNullOrEmpty(receiverId))
@@ -80,11 +74,23 @@ namespace Symphony.Portal.Web.Hubs
         {
             try
             {
-                // Check if Admin has taken over this session
-                if (!string.IsNullOrEmpty(sessionId) && _humanSupportSessions.ContainsKey(sessionId))
+
+                // 1. Save USER's question to DB (so Admin can see it)
+                var userId = Context.UserIdentifier;
+                var userMsg = new ChatMessage 
                 {
-                    return; // Stop AI, human is here
-                }
+                    SenderId = string.IsNullOrEmpty(userId) ? null : userId,
+                    ReceiverId = null, // To System/Admin
+                    Content = question,
+                    Timestamp = DateTime.Now,
+                    SessionId = sessionId,
+                    SenderValidName = senderName
+                };
+                _context.ChatMessages.Add(userMsg);
+                await _context.SaveChangesAsync();
+
+                // 2. Broadcast User's question to Admins
+                await Clients.Group("Admins").SendAsync("ReceiveMessage", userMsg.SenderId, senderName, question, sessionId, userMsg.Timestamp.ToString("HH:mm"));
 
                 // Notify client that AI is thinking
                 await Clients.Caller.SendAsync("AITyping", true);
@@ -93,7 +99,7 @@ namespace Symphony.Portal.Web.Hubs
                 var response = await _ollamaService.GenerateResponseAsync(question);
 
                 // Save AI response to database
-                // Note: SenderId is null for AI messages, we use SenderValidName to identify AI
+                // Note: SenderId is null for AI messages, we use SenderValidName to identify AI                                                
                 var aiMessage = new ChatMessage
                 {
                     SenderId = null, // AI doesn't have a user ID
@@ -108,8 +114,12 @@ namespace Symphony.Portal.Web.Hubs
                 _context.ChatMessages.Add(aiMessage);
                 await _context.SaveChangesAsync();
 
-                // Send response to caller
+                // Send response to caller (User)
                 await Clients.Caller.SendAsync("ReceiveAIMessage", response, aiMessage.Timestamp.ToString("HH:mm"));
+                
+                // Broadcast AI response to Admins (so they see the thread flow)
+                await Clients.Group("Admins").SendAsync("ReceiveMessage", null, "AI Assistant", response, sessionId, aiMessage.Timestamp.ToString("HH:mm"));
+
             }
             catch (Exception ex)
             {
