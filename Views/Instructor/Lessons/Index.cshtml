@@ -1,9 +1,7 @@
-@model IEnumerable<Symphony.Portal.Web.Models.Lesson>
+﻿@model IEnumerable<Symphony.Portal.Web.Models.Lesson>
 
 @{
     ViewData["Title"] = "Lessons Management";
-    ViewData["Title"] = "Lessons Management";
-}
 }
 
 <div class="row mb-4">
@@ -29,6 +27,11 @@
                 </select>
             </div>
             <div class="col-md-3">
+                <select name="classId" class="form-select" asp-items="ViewBag.Classes">
+                    <option value="">-- All Classes --</option>
+                </select>
+            </div>
+            <div class="col-md-3">
                 <select name="subjectId" class="form-select" asp-items="ViewBag.Subjects">
                     <option value="">-- All Subjects --</option>
                 </select>
@@ -48,6 +51,7 @@
                     <tr>
                         <th class="ps-3">Image</th>
                         <th>Title</th>
+                        <th>Class</th> <!-- Thêm cột Class -->
                         <th>Course / Subject</th>
                         <th>Duration</th>
                         <th class="text-end pe-3">Actions</th>
@@ -75,6 +79,10 @@
                                     <div class="fw-bold">@item.Title</div>
                                     <small class="text-muted">ID: @item.Id.Substring(0, 8)...</small>
                                 </td>
+                                <td>
+                                    <div class="badge bg-secondary mb-1">@item.Class?.ClassName</div> <!-- Hiển thị tên lớp -->
+                                </td>
+
                                 <td>
                                     <div class="badge bg-info text-dark mb-1">@item.Course?.Title</div>
                                     <br />
@@ -111,11 +119,3 @@
         </div>
     </div>
 </div>
-</div>
-
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        // System Notifications handled by global script system-notifications.js
-    </script>
-}

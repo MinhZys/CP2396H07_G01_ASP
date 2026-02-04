@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Lesson Details";
-
 }
 
 <div class="container-fluid">
@@ -24,11 +23,12 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <h3 class="card-title text-dark fw-bold mb-3">@Model.Title</h3>
-                    
+
                     <div class="mb-4">
                         <span class="badge bg-primary me-2">Course: @Model.Course?.Title</span>
                         <span class="badge bg-success me-2">Subject: @Model.Subject?.Name</span>
                         <span class="badge bg-secondary"><i class="far fa-clock me-1"></i> @Model.DurationMinutes mins</span>
+                        <span class="badge bg-info me-2">Class: @Model.Class?.ClassName</span> <!-- Display ClassName -->
                     </div>
 
                     <h5 class="text-muted border-bottom pb-2">Description</h5>
