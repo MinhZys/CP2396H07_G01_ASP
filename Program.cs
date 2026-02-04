@@ -15,6 +15,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddTransient<Symphony.Portal.Web.Services.EmailService>();
 builder.Services.AddScoped<Symphony.Portal.Web.Services.INotificationService, Symphony.Portal.Web.Services.NotificationService>();
 
+// Ollama AI Service
+builder.Services.Configure<Symphony.Portal.Web.Models.OllamaSettings>(builder.Configuration.GetSection("Ollama"));
+builder.Services.AddHttpClient<Symphony.Portal.Web.Services.IOllamaService, Symphony.Portal.Web.Services.OllamaService>();
+
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews()
     .AddRazorOptions(options =>

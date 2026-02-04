@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
+using Symphony.Portal.Web.Services;
 using System;
 using System.Threading.Tasks;
 
@@ -9,10 +10,12 @@ namespace Symphony.Portal.Web.Hubs
     public class ChatHub : Hub
     {
         private readonly AppDbContext _context;
+        private readonly IOllamaService _ollamaService;
 
-        public ChatHub(AppDbContext context)
+        public ChatHub(AppDbContext context, IOllamaService ollamaService)
         {
             _context = context;
+            _ollamaService = ollamaService;
         }
 
         public async Task SendMessage(string receiverId, string content, string senderName, string sessionId)
@@ -60,6 +63,51 @@ namespace Symphony.Portal.Web.Hubs
             await Clients.Caller.SendAsync("MessageSent", content);
         }
 
+        /// <summary>
+        /// Ask AI for a response - used by chat widget
+        /// </summary>
+        public async Task AskAI(string question, string sessionId, string senderName)
+        {
+            try
+            {
+                // Notify client that AI is thinking
+                await Clients.Caller.SendAsync("AITyping", true);
+
+                // Generate AI response
+                var response = await _ollamaService.GenerateResponseAsync(question);
+
+                // Save AI response to database
+                // Note: SenderId is null for AI messages, we use SenderValidName to identify AI
+                var aiMessage = new ChatMessage
+                {
+                    SenderId = null, // AI doesn't have a user ID
+                    ReceiverId = null,
+                    Content = response,
+                    Timestamp = DateTime.Now,
+                    IsRead = false,
+                    SessionId = sessionId,
+                    SenderValidName = "AI Assistant" // This identifies the message as from AI
+                };
+
+                _context.ChatMessages.Add(aiMessage);
+                await _context.SaveChangesAsync();
+
+                // Send response to caller
+                await Clients.Caller.SendAsync("ReceiveAIMessage", response, aiMessage.Timestamp.ToString("HH:mm"));
+            }
+            catch (Exception ex)
+            {
+                // Log the error for debugging
+                Console.WriteLine($"AI Chat Error: {ex.Message}");
+                await Clients.Caller.SendAsync("ReceiveAIMessage", "Xin lỗi, đã xảy ra lỗi. Vui lòng thử lại sau.", DateTime.Now.ToString("HH:mm"));
+            }
+            finally
+            {
+                // Notify client that AI stopped typing
+                await Clients.Caller.SendAsync("AITyping", false);
+            }
+        }
+
         public async Task JoinGroup(string groupName)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
@@ -75,3 +123,4 @@ namespace Symphony.Portal.Web.Hubs
         }
     }
 }
+

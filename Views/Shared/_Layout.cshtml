@@ -71,6 +71,8 @@
                 <!-- DesktopNav Links -->
                 <div class="hidden md:flex items-center gap-6 text-sm font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 mr-4">
                     <a class="hover:text-primary transition-colors" asp-controller="Home" asp-action="Index" data-i18n="nav.home">Home</a>
+                    <a class="hover:text-primary transition-colors" asp-controller="Subjects" asp-action="Index" data-i18n="nav.subjects">Subjects</a>
+                    <a class="hover:text-primary transition-colors" asp-controller="Courses" asp-action="Index" data-i18n="nav.courses">Courses</a>
                     
                     @* Entrance Exam: Chỉ hiện cho người chưa đăng nhập hoặc vai trò khác Student/Guest (nếu có) *@
                     @if (!(User.Identity?.IsAuthenticated == true && (User.IsInRole("Student") || User.IsInRole("Guest"))))

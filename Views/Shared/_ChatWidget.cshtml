@@ -5,19 +5,45 @@
     </button>
 
     <!-- Chat Box (Hidden by default) -->
-    <div id="chat-box" class="hidden absolute bottom-16 right-0 w-80 bg-surface-dark border border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col" style="height: 400px;">
+    <div id="chat-box" class="hidden absolute bottom-16 right-0 w-96 bg-surface-dark border border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col" style="height: 500px;">
         <!-- Header -->
-        <div class="bg-primary/10 p-4 border-b border-slate-700 flex justify-between items-center">
-            <h3 class="font-bold text-white">Online Support</h3>
-            <button id="chat-close-btn" class="text-slate-400 hover:text-white">
-                <span class="material-symbols-outlined">close</span>
-            </button>
+        <div class="bg-primary/10 p-4 border-b border-slate-700">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-white">Online Support</h3>
+                <button id="chat-close-btn" class="text-slate-400 hover:text-white">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <!-- AI Mode Toggle -->
+            <div class="flex items-center gap-2 mt-2">
+                <button id="ai-mode-btn" class="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all bg-slate-700 text-slate-300 hover:bg-purple-600 hover:text-white">
+                    <span class="material-symbols-outlined text-sm">smart_toy</span>
+                    <span id="ai-mode-text">Chat với AI</span>
+                </button>
+                <span id="ai-status" class="text-xs text-slate-500 hidden">
+                    <span class="inline-block w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span>
+                    AI Online
+                </span>
+            </div>
         </div>
 
         <!-- Messages Area -->
         <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar bg-background-dark/50">
             <!-- Messages will start here -->
             <div class="text-center text-xs text-slate-500 my-2">Start a conversation</div>
+        </div>
+
+        <!-- AI Typing Indicator -->
+        <div id="ai-typing-indicator" class="hidden px-4 py-2 bg-purple-900/20 border-t border-purple-500/30">
+            <div class="flex items-center gap-2 text-purple-300 text-sm">
+                <span class="material-symbols-outlined animate-pulse">smart_toy</span>
+                <span>AI đang suy nghĩ</span>
+                <span class="flex gap-1">
+                    <span class="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0ms;"></span>
+                    <span class="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 150ms;"></span>
+                    <span class="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 300ms;"></span>
+                </span>
+            </div>
         </div>
 
         <!-- Input Area -->
@@ -51,9 +77,14 @@
         const messagesDiv = document.getElementById('chat-messages');
         const guestNameInput = document.getElementById('guest-name-input');
         const guestNameField = document.getElementById('chat-guest-name');
+        const aiModeBtn = document.getElementById('ai-mode-btn');
+        const aiModeText = document.getElementById('ai-mode-text');
+        const aiStatus = document.getElementById('ai-status');
+        const aiTypingIndicator = document.getElementById('ai-typing-indicator');
 
         let isGuest = @(User.Identity.IsAuthenticated ? "false" : "true");
         let currentUserId = "@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "Guest")";
+        let isAIMode = false;
         
         let sessionId = getCookie("chat_session_id");
         let lastUserId = getCookie("chat_last_user_id");
@@ -80,12 +111,44 @@
             if (window.connection && window.connection.state === "Connected") {
                 clearInterval(waitForConn);
                 console.log("Widget: SignalR Ready");
+                
+                // Setup AI message handlers
+                window.connection.on("ReceiveAIMessage", function(message, time) {
+                    appendMessage(message, 'ai', time);
+                });
+
+                window.connection.on("AITyping", function(isTyping) {
+                    if (isTyping) {
+                        aiTypingIndicator.classList.remove('hidden');
+                    } else {
+                        aiTypingIndicator.classList.add('hidden');
+                    }
+                });
+
                 if (isGuest && sessionId) {
                     console.log("Joining Session: " + sessionId);
                     joinChatGroup("Session_" + sessionId);
                 }
             }
         }, 500);
+
+        // AI Mode Toggle
+        aiModeBtn.addEventListener('click', () => {
+            isAIMode = !isAIMode;
+            if (isAIMode) {
+                aiModeBtn.classList.remove('bg-slate-700', 'text-slate-300');
+                aiModeBtn.classList.add('bg-purple-600', 'text-white');
+                aiModeText.textContent = 'AI Mode ON';
+                aiStatus.classList.remove('hidden');
+                input.placeholder = 'Hỏi AI bất cứ điều gì...';
+            } else {
+                aiModeBtn.classList.add('bg-slate-700', 'text-slate-300');
+                aiModeBtn.classList.remove('bg-purple-600', 'text-white');
+                aiModeText.textContent = 'Chat với AI';
+                aiStatus.classList.add('hidden');
+                input.placeholder = 'Type a message...';
+            }
+        });
 
         // Toggle Chat
         toggleBtn.addEventListener('click', () => {
@@ -117,9 +180,11 @@
                 const myId = "@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "")";
 
                 messages.forEach(m => {
-                    // Logic:
-                    // If I am guest (isGuest=true), Self if senderId is null.
-                    // If I am logged in user (isGuest=false), Self if senderId == myId.
+                    // Check if it's an AI message
+                    if (m.senderValidName === 'AI Assistant' || m.senderId === 'AI_ASSISTANT') {
+                        appendMessage(m.content, 'ai', m.time);
+                        return;
+                    }
                     
                     let isSelf = false;
                     if (isGuest) {
@@ -157,35 +222,78 @@
                 }
             }
 
-            // Call SignalR
-            sendMessageToHub("", msg, senderName, sessionId); // Receiver empty = Broadcast to Admins
-            
             // Append local message
-            appendMessage(msg, 'self', 'Now'); // Normally wait for ack, but optimistic is fine
+            appendMessage(msg, 'self', 'Now');
             input.value = '';
+
+            if (isAIMode) {
+                // Send to AI via SignalR
+                if (window.connection && window.connection.state === "Connected") {
+                    window.connection.invoke("AskAI", msg, sessionId, senderName)
+                        .catch(err => {
+                            console.error("Error asking AI:", err);
+                            appendMessage("Không thể kết nối với AI. Vui lòng thử lại.", 'ai', 'Now');
+                        });
+                }
+            } else {
+                // Send to Admin via SignalR
+                sendMessageToHub("", msg, senderName, sessionId);
+            }
         }
 
         // Listen for new messages
         document.addEventListener('chatMessageReceived', (e) => {
             const data = e.detail;
             if (data.senderId !== connection.connectionId) { 
-                 // Ensure we don't double append if we receive our own message via group (rare but possible depending on hub)
-                 // Also check if valid for us?
                  appendMessage(data.message, 'other', data.time);
             }
         });
 
         function appendMessage(text, type, time) {
             const div = document.createElement('div');
-            div.className = `flex flex-col ${type === 'self' ? 'items-end' : 'items-start'}`;
-            div.innerHTML = `
-                <div class="max-w-[80%] px-3 py-2 rounded-xl text-sm ${type === 'self' ? 'bg-primary text-background-dark rounded-tr-none' : 'bg-slate-700 text-white rounded-tl-none'}">
-                    ${text}
-                </div>
-                <span class="text-[10px] text-slate-500 mt-1">${time}</span>
-            `;
+            
+            if (type === 'ai') {
+                // AI message style
+                div.className = 'flex flex-col items-start';
+                div.innerHTML = `
+                    <div class="flex items-start gap-2 max-w-[85%]">
+                        <div class="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-xs text-white">smart_toy</span>
+                        </div>
+                        <div class="px-3 py-2 rounded-xl text-sm bg-purple-900/40 text-purple-100 rounded-tl-none border border-purple-500/30">
+                            ${formatAIMessage(text)}
+                        </div>
+                    </div>
+                    <span class="text-[10px] text-slate-500 mt-1 ml-8">${time}</span>
+                `;
+            } else if (type === 'self') {
+                div.className = 'flex flex-col items-end';
+                div.innerHTML = `
+                    <div class="max-w-[80%] px-3 py-2 rounded-xl text-sm bg-primary text-background-dark rounded-tr-none">
+                        ${text}
+                    </div>
+                    <span class="text-[10px] text-slate-500 mt-1">${time}</span>
+                `;
+            } else {
+                div.className = 'flex flex-col items-start';
+                div.innerHTML = `
+                    <div class="max-w-[80%] px-3 py-2 rounded-xl text-sm bg-slate-700 text-white rounded-tl-none">
+                        ${text}
+                    </div>
+                    <span class="text-[10px] text-slate-500 mt-1">${time}</span>
+                `;
+            }
+            
             messagesDiv.appendChild(div);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function formatAIMessage(text) {
+            // Simple formatting for AI responses
+            return text
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>');
         }
 
         function setCookie(name, value, days) {
@@ -212,3 +320,4 @@
         }
     });
 </script>
+

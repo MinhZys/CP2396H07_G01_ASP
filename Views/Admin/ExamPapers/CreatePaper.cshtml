@@ -1,26 +1,26 @@
 @{
-    ViewData["Title"] = "Tạo đề thi mới";
+    ViewData["Title"] = "Create New Exam Paper";
 }
 
 <div class="container-fluid py-4">
     <form asp-action="CreatePaperWithQuestions" method="post" id="examPaperForm">
         <div class="row g-4">
-            <!-- Left Sidebar: Thông tin đề thi -->
+            <!-- Left Sidebar: Exam Info -->
             <div class="col-lg-3">
                 <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 100px;">
                     <div class="card-header bg-gradient-primary p-4 border-0">
-                        <h5 class="fw-bold text-white mb-0">Thông tin đề thi</h5>
+                        <h5 class="fw-bold text-white mb-0">Exam Information</h5>
                     </div>
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Tiêu đề đề thi <span class="text-danger">*</span></label>
-                            <input type="text" name="Title" class="form-control rounded-pill px-3" placeholder="VD: Đề thi Tiếng Anh Kỳ 1" required>
+                            <label class="form-label fw-bold">Exam Title <span class="text-danger">*</span></label>
+                            <input type="text" name="Title" class="form-control rounded-pill px-3" placeholder="Eg: English Exam Semester 1" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Môn học <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold">Subject <span class="text-danger">*</span></label>
                             <select name="SubjectId" id="subjectId" class="form-select rounded-pill px-3" required>
-                                <option value="">-- Chọn môn --</option>
+                                <option value="">-- Select Subject --</option>
                                 @foreach (var sub in ViewBag.Subjects as List<Symphony.Portal.Web.Models.Subject>)
                                 {
                                     <option value="@sub.Id">@sub.Name</option>
@@ -29,17 +29,17 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Thời gian (phút) <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold">Duration (minutes) <span class="text-danger">*</span></label>
                             <input type="number" name="Duration" class="form-control rounded-pill px-3" value="60" min="1" required>
                         </div>
 
                         <div class="bg-light rounded-4 p-3 border">
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="small fw-bold text-muted">Tổng câu hỏi:</span>
+                                <span class="small fw-bold text-muted">Total Questions:</span>
                                 <span class="fw-bold text-primary" id="totalQuestions">0</span>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <span class="small fw-bold text-muted">Tổng điểm:</span>
+                                <span class="small fw-bold text-muted">Total Score:</span>
                                 <span class="fw-bold text-success" id="totalScore">0</span>
                             </div>
                         </div>
@@ -47,18 +47,18 @@
                 </div>
             </div>
 
-            <!-- Right Content: Danh sách câu hỏi -->
+            <!-- Right Content: Questions List -->
             <div class="col-lg-9">
                 <div class="card border-0 shadow-sm rounded-4">
                     <div class="card-header bg-white p-4 border-0">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h4 class="fw-bold text-slate-800 mb-1">Câu hỏi trong đề thi</h4>
-                                <p class="text-muted small mb-0">Thêm các câu hỏi trắc nghiệm cho đề thi này</p>
+                                <h4 class="fw-bold text-slate-800 mb-1">Questions in Exam</h4>
+                                <p class="text-muted small mb-0">Add multiple choice questions for this exam</p>
                             </div>
                             <button type="button" class="btn btn-success rounded-pill px-4 d-flex align-items-center gap-2" onclick="addQuestion()">
                                 <span class="material-symbols-outlined">add_circle</span>
-                                Thêm câu hỏi
+                                Add Question
                             </button>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                             <div class="text-muted mb-3">
                                 <span class="material-symbols-outlined display-4 opacity-25">quiz</span>
                             </div>
-                            <p class="text-muted">Chưa có câu hỏi nào. Click nút "Thêm câu hỏi" để bắt đầu.</p>
+                            <p class="text-muted">No questions yet. Click "Add Question" to start.</p>
                         </div>
                     </div>
                 </div>
@@ -79,9 +79,9 @@
                 <div class="d-flex gap-3 mt-4">
                     <button type="submit" class="btn btn-primary btn-lg px-5 rounded-pill fw-bold shadow d-flex align-items-center gap-2">
                         <span class="material-symbols-outlined">save</span>
-                        Tạo đề thi
+                        Create Exam
                     </button>
-                    <a asp-action="Index" class="btn btn-light btn-lg px-4 rounded-pill fw-bold">Hủy bỏ</a>
+                    <a asp-action="Index" class="btn btn-light btn-lg px-4 rounded-pill fw-bold">Cancel</a>
                 </div>
             </div>
         </div>
@@ -105,11 +105,11 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold text-primary mb-0">
                         <span class="badge bg-primary rounded-circle me-2" style="width: 35px; height: 35px; line-height: 35px;">${questionIndex + 1}</span>
-                        Câu hỏi ${questionIndex + 1}
+                        Question ${questionIndex + 1}
                     </h5>
                     <div class="d-flex gap-2">
                         <input type="number" name="questions[${questionIndex}].Score" class="form-control form-control-sm score-input" 
-                               value="1" step="0.5" min="0.5" placeholder="Điểm" style="width: 80px;" onchange="updateStats()">
+                               value="1" step="0.5" min="0.5" placeholder="Score" style="width: 80px;" onchange="updateStats()">
                         <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" onclick="removeQuestion(this)">
                             <span class="material-symbols-outlined text-sm">delete</span>
                         </button>
@@ -117,8 +117,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold small">Nội dung câu hỏi</label>
-                    <textarea name="questions[${questionIndex}].Content" class="form-control rounded-3 p-3" rows="2" placeholder="Nhập câu hỏi..." required></textarea>
+                    <label class="form-label fw-bold small">Question Content</label>
+                    <textarea name="questions[${questionIndex}].Content" class="form-control rounded-3 p-3" rows="2" placeholder="Enter question..." required></textarea>
                 </div>
 
                 <div class="row g-3">
@@ -126,28 +126,28 @@
                         <div class="d-flex align-items-center gap-2 p-3 border rounded-3 bg-white">
                             <input type="radio" name="questions[${questionIndex}].CorrectIndex" value="0" class="form-check-input" required>
                             <span class="badge bg-info">1</span>
-                            <input type="text" name="questions[${questionIndex}].Options[0]" class="form-control border-0" placeholder="Đáp án 1" required>
+                            <input type="text" name="questions[${questionIndex}].Options[0]" class="form-control border-0" placeholder="Option 1" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 p-3 border rounded-3 bg-white">
                             <input type="radio" name="questions[${questionIndex}].CorrectIndex" value="1" class="form-check-input" required>
                             <span class="badge bg-info">2</span>
-                            <input type="text" name="questions[${questionIndex}].Options[1]" class="form-control border-0" placeholder="Đáp án 2" required>
+                            <input type="text" name="questions[${questionIndex}].Options[1]" class="form-control border-0" placeholder="Option 2" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 p-3 border rounded-3 bg-white">
                             <input type="radio" name="questions[${questionIndex}].CorrectIndex" value="2" class="form-check-input" required>
                             <span class="badge bg-info">3</span>
-                            <input type="text" name="questions[${questionIndex}].Options[2]" class="form-control border-0" placeholder="Đáp án 3" required>
+                            <input type="text" name="questions[${questionIndex}].Options[2]" class="form-control border-0" placeholder="Option 3" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 p-3 border rounded-3 bg-white">
                             <input type="radio" name="questions[${questionIndex}].CorrectIndex" value="3" class="form-check-input" required>
                             <span class="badge bg-info">4</span>
-                            <input type="text" name="questions[${questionIndex}].Options[3]" class="form-control border-0" placeholder="Đáp án 4" required>
+                            <input type="text" name="questions[${questionIndex}].Options[3]" class="form-control border-0" placeholder="Option 4" required>
                         </div>
                     </div>
                 </div>
@@ -160,7 +160,7 @@
         }
 
         function removeQuestion(btn) {
-            if (confirm('Xóa câu hỏi này?')) {
+            if (confirm('Remove this question?')) {
                 btn.closest('.question-item').remove();
                 updateQuestionNumbers();
                 updateStats();
@@ -181,7 +181,7 @@
                 if (badge) badge.textContent = index + 1;
                 if (title) title.innerHTML = `
                     <span class="badge bg-primary rounded-circle me-2" style="width: 35px; height: 35px; line-height: 35px;">${index + 1}</span>
-                    Câu hỏi ${index + 1}
+                    Question ${index + 1}
                 `;
                 
                 // Update field names
@@ -214,7 +214,7 @@
             const items = document.querySelectorAll('.question-item');
             if (items.length === 0) {
                 e.preventDefault();
-                alert('Vui lòng thêm ít nhất 1 câu hỏi!');
+                alert('Please add at least 1 question!');
                 return false;
             }
             return true;

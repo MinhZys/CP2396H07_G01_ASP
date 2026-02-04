@@ -239,6 +239,14 @@
                     <span class="nav-text" data-i18n="nav.system_notifications">System Notifications</span>
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AIQuiz" ? "active" : "")"
+                   asp-area="Admin" asp-controller="AIQuiz" asp-action="Index">
+                    <i class="fas fa-robot nav-icon"></i>
+                    <span class="nav-text">AI Quiz Generator</span>
+                </a>
+            </li>
         </ul>
     </nav>
 
