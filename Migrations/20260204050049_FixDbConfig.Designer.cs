@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Symphony.Portal.Web.Data;
 
@@ -11,9 +12,11 @@ using Symphony.Portal.Web.Data;
 namespace CP2396H07_G01.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260204050049_FixDbConfig")]
+    partial class FixDbConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -322,7 +325,6 @@ namespace CP2396H07_G01.Migrations
                         {
                             Id = "1",
                             CreatedAt = new DateTime(2026, 2, 4, 12, 0, 48, 569, DateTimeKind.Local).AddTicks(103),
-                            CreatedAt = new DateTime(2026, 2, 3, 19, 11, 56, 889, DateTimeKind.Local).AddTicks(9320),
                             Description = "Standard classrooms",
                             IsActive = true,
                             Name = "Theory"
@@ -331,7 +333,6 @@ namespace CP2396H07_G01.Migrations
                         {
                             Id = "2",
                             CreatedAt = new DateTime(2026, 2, 4, 12, 0, 48, 569, DateTimeKind.Local).AddTicks(115),
-                            CreatedAt = new DateTime(2026, 2, 3, 19, 11, 56, 889, DateTimeKind.Local).AddTicks(9336),
                             Description = "Computer labs",
                             IsActive = true,
                             Name = "Lab"
@@ -340,7 +341,6 @@ namespace CP2396H07_G01.Migrations
                         {
                             Id = "3",
                             CreatedAt = new DateTime(2026, 2, 4, 12, 0, 48, 569, DateTimeKind.Local).AddTicks(116),
-                            CreatedAt = new DateTime(2026, 2, 3, 19, 11, 56, 889, DateTimeKind.Local).AddTicks(9337),
                             Description = "Virtual classes",
                             IsActive = true,
                             Name = "Online"

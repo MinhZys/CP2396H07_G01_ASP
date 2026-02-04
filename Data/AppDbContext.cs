@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums;
 
@@ -71,12 +71,38 @@ namespace Symphony.Portal.Web.Data
             base.OnModelCreating(modelBuilder);
 
             // =========================
-            // Composite / Index
+            // FIX: Decimal Precision
             // =========================
-            modelBuilder.Entity<ClassLesson>()
-                .HasIndex(x => new { x.ClassId, x.LessonId })
-                .IsUnique();
+            modelBuilder.Entity<Course>().Property(x => x.TuitionFee).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<EntranceExam>().Property(x => x.Fee).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Payment>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<RevisionPackage>().Property(x => x.Fee).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Class>().Property(x => x.Fee).HasColumnType("decimal(18,2)");
 
+            // =========================
+            // FIX: ClassLesson Cascade Cycle
+            // =========================
+            // Sửa lỗi SQL Exception: Multiple cascade paths
+            modelBuilder.Entity<ClassLesson>(entity =>
+            {
+                entity.HasIndex(x => new { x.ClassId, x.LessonId }).IsUnique();
+
+                // Ngắt Cascade xóa từ Class -> ClassLesson
+                entity.HasOne(cl => cl.Class)
+                      .WithMany() // Hoặc .WithMany(c => c.ClassLessons) nếu có
+                      .HasForeignKey(cl => cl.ClassId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // Ngắt Cascade xóa từ Lesson -> ClassLesson
+                entity.HasOne(cl => cl.Lesson)
+                      .WithMany()
+                      .HasForeignKey(cl => cl.LessonId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // =========================
+            // Composite Keys
+            // =========================
             modelBuilder.Entity<CourseSubject>()
                 .HasKey(x => new { x.CourseId, x.SubjectId });
 
@@ -129,11 +155,12 @@ namespace Symphony.Portal.Web.Data
                 .HasForeignKey(e => e.ExamPaperId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            // =====================================================
             // ===== StudentExamSession (explicit mapping) =====
+            // =====================================================
             modelBuilder.Entity<StudentExamSession>(b =>
             {
                 b.HasKey(x => x.Id);
-
                 b.Property(x => x.Status).HasConversion<string>();
 
                 b.HasOne(x => x.Student)
@@ -233,12 +260,6 @@ namespace Symphony.Portal.Web.Data
                 new ClassCategory { Id = "2", Name = "Lab", Description = "Computer labs", IsActive = true },
                 new ClassCategory { Id = "3", Name = "Online", Description = "Virtual classes", IsActive = true }
             );
-
-            // One-to-one relationship for ExamDetail
-            modelBuilder.Entity<StudentRegistration>()
-                .HasOne(s => s.ExamDetail)
-                .WithOne(e => e.StudentRegistration)
-                .HasForeignKey<ExamDetail>(e => e.RegistrationId);
         }
     }
 }

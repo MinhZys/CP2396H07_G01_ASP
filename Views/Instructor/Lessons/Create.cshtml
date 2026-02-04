@@ -2,8 +2,6 @@
 
 @{
     ViewData["Title"] = "Create Lesson";
-    ViewData["Title"] = "Create Lesson";
-}
 }
 
 <div class="row justify-content-center">
@@ -33,6 +31,13 @@
                                 <option value="">-- Select Course --</option>
                             </select>
                             <span asp-validation-for="CourseId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ClassId" class="form-label fw-bold">Class</label>
+                            <select asp-for="ClassId" class="form-select" asp-items="ViewBag.ClassId">
+                                <option value="">-- Select Class --</option>
+                            </select>
+                            <span asp-validation-for="ClassId" class="text-danger"></span>
                         </div>
 
                         <div class="col-md-6">
@@ -66,13 +71,6 @@
                             <input type="file" name="contentFile" class="form-control" />
                             <div class="form-text">Upload video, PDF, or any lesson material.</div>
                         </div>
-
-                        <!-- OR define simple link if needed 
-                        <div class="col-md-12">
-                             <label asp-for="ContentLink" class="form-label">Or External Link</label>
-                             <input asp-for="ContentLink" class="form-control" placeholder="https://..." />
-                        </div>
-                        -->
                     </div>
 
                     <div class="d-grid gap-2 mt-4">
@@ -87,5 +85,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
