@@ -1,8 +1,35 @@
 @model IEnumerable<Symphony.Portal.Web.Models.Center>
+@using System.Text.Encodings.Web
 
 @{
     ViewData["Title"] = "Contact";
     Layout = "_Layout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #contact-map {
+            height: 450px;
+            width: 100%;
+            border-radius: 1.5rem;
+            z-index: 10;
+            border: 1px solid rgba(0, 200, 255, 0.2);
+        }
+        .campus-card {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .campus-card:hover {
+            transform: translateY(-4px);
+            border-color: #00c8ff;
+            box-shadow: 0 10px 30px -10px rgba(0, 200, 255, 0.3);
+        }
+        .campus-card.active-focus {
+            border-color: #00c8ff;
+            background: rgba(0, 200, 255, 0.05);
+        }
+    </style>
 }
 
 <div class="max-w-7xl mx-auto space-y-10">
@@ -13,17 +40,32 @@
         </p>
     </div>
 
-    <!-- Centers list (simple) -->
+    <!-- Integrated Map -->
+    <div class="cyber-card rounded-3xl overflow-hidden p-1">
+        <div id="contact-map"></div>
+    </div>
+
+    <!-- Centers list -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         @foreach (var c in Model)
         {
-            <div class="cyber-card rounded-2xl p-6">
-                <h3 class="text-xl font-bold">@c.Name</h3>
+            <div class="cyber-card campus-card rounded-2xl p-6" 
+                 onclick="focusCampus('@c.Latitude', '@c.Longitude', this)">
+                <h3 class="text-xl font-bold text-primary">@c.Name</h3>
                 <p class="text-slate-400 mt-1">@c.Address</p>
-                <div class="text-slate-400 mt-3 space-y-1 text-sm">
-                    <div>📞 @c.Phone</div>
-                    <div>🕒 @c.OpenHours</div>
-                    <div>📍 @(c.Latitude?.ToString() ?? "-"), @(c.Longitude?.ToString() ?? "-")</div>
+                <div class="text-slate-400 mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-primary">call</span>
+                        @c.Phone
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-primary">schedule</span>
+                        @c.OpenHours
+                    </div>
+                    <div class="flex items-center gap-2 col-span-full">
+                        <span class="material-symbols-outlined text-sm text-primary">location_on</span>
+                        <span class="text-xs">@(c.Latitude?.ToString() ?? "-"), @(c.Longitude?.ToString() ?? "-")</span>
+                    </div>
                 </div>
             </div>
         }
@@ -64,3 +106,88 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map;
+        const markers = [];
+
+        function initContactMap() {
+            // Centers data from Model
+            const centers = [
+                @foreach(var c in Model) {
+                    if (c.Latitude.HasValue && c.Longitude.HasValue) {
+                        @: { id: "@c.Id", name: "@JavaScriptEncoder.Default.Encode(c.Name)", lat: @c.Latitude, lng: @c.Longitude, address: "@JavaScriptEncoder.Default.Encode(c.Address)" },
+                    }
+                }
+            ];
+
+            if (centers.length === 0) {
+                 document.getElementById('contact-map').innerHTML = '<div class="h-full flex items-center justify-center text-slate-500">No location data available.</div>';
+                 return;
+            }
+
+            // Init map - default view
+            map = L.map('contact-map').setView([centers[0].lat, centers[0].lng], 13);
+
+            // Standard map tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Custom icon
+            const customIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: "<div style='background-color:#00c8ff; width:12px; height:12px; border-radius:50%; border:2px solid white; box-shadow:0 0 10px #00c8ff'></div>",
+                iconSize: [12, 12],
+                iconAnchor: [6, 6]
+            });
+
+            const bounds = L.latLngBounds();
+
+            centers.forEach(c => {
+                const marker = L.marker([c.lat, c.lng], { icon: customIcon })
+                    .addTo(map)
+                    .bindPopup(`<strong>${c.name}</strong><br/><small>${c.address}</small>`);
+                
+                markers.push({ id: c.id, marker: marker });
+                bounds.extend([c.lat, c.lng]);
+            });
+
+            // Fit all markers
+            if (centers.length > 1) {
+                map.fitBounds(bounds, { padding: [50, 50] });
+            }
+        }
+
+        window.focusCampus = function(lat, lng, el) {
+            const latitude = parseFloat(lat);
+            const longitude = parseFloat(lng);
+            
+            if (isNaN(latitude) || isNaN(longitude)) return;
+
+            // Update UI focus
+            document.querySelectorAll('.campus-card').forEach(card => card.classList.remove('active-focus'));
+            el.classList.add('active-focus');
+
+            // Map focus
+            map.flyTo([latitude, longitude], 16, {
+                duration: 1.5
+            });
+
+            // Find and open popup
+            const target = markers.find(m => m.marker.getLatLng().lat === latitude && m.marker.getLatLng().lng === longitude);
+            if (target) {
+                target.marker.openPopup();
+            }
+
+            // Scroll map into view if mobile
+            if (window.innerWidth < 768) {
+                document.getElementById('contact-map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', initContactMap);
+    </script>
+}

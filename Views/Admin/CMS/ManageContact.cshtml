@@ -6,6 +6,27 @@
     Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #preview-map {
+            height: 300px;
+            width: 100%;
+            border-radius: 0.5rem;
+            border: 2px solid #e9ecef;
+            display: none;
+        }
+        .map-badge {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .map-badge:hover {
+            filter: brightness(0.9);
+            transform: scale(1.05);
+        }
+    </style>
+}
+
 <style>
     /* Nhẹ thôi: chỉ chỉnh chút spacing, không “đè” Bootstrap */
     .page-header h2 {
@@ -81,12 +102,19 @@
 
                         <div class="col-md-2">
                             <label class="form-label">Latitude</label>
-                            <input name="Latitude" class="form-control" placeholder="Lat" />
+                            <input name="Latitude" id="latInput" class="form-control" placeholder="10.033..." />
                         </div>
 
                         <div class="col-md-2">
                             <label class="form-label">Longitude</label>
-                            <input name="Longitude" class="form-control" placeholder="Lng" />
+                            <input name="Longitude" id="lngInput" class="form-control" placeholder="105.77..." />
+                        </div>
+
+                        <div class="col-12 mt-3" id="mapContainer">
+                            <div id="preview-map"></div>
+                            <small class="text-muted d-none" id="mapTip">
+                                <i class="fas fa-info-circle me-1"></i> Tip: Preview is showing the location on the map.
+                            </small>
                         </div>
 
                         <div class="col-md-2">
@@ -137,7 +165,14 @@
                                             <td>@c.Address</td>
                                             <td>@c.Phone</td>
                                             <td>@c.OpenHours</td>
-                                            <td>@(c.Latitude?.ToString() ?? "-") / @(c.Longitude?.ToString() ?? "-")</td>
+                                            <td>
+                                                <span class="badge bg-info map-badge" 
+                                                      onclick="focusMap('@c.Latitude', '@c.Longitude', '@JavaScriptEncoder.Default.Encode(c.Name)')"
+                                                      title="Click to view on map">
+                                                    <i class="fas fa-location-dot me-1"></i>
+                                                    @(c.Latitude?.ToString() ?? "-") / @(c.Longitude?.ToString() ?? "-")
+                                                </span>
+                                            </td>
                                             <td>
                                                 @if (c.IsActive)
                                                 {
@@ -306,3 +341,54 @@
         bsModal.show();
     });
 </script>
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map, marker;
+        const latInput = document.getElementById('latInput');
+        const lngInput = document.getElementById('lngInput');
+        const mapEl = document.getElementById('preview-map');
+        const mapTip = document.getElementById('mapTip');
+
+        function initMap(lat, lng, name = "New Location") {
+            if (!map) {
+                mapEl.style.display = 'block';
+                mapTip.classList.remove('d-none');
+                map = L.map('preview-map').setView([lat, lng], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+                marker = L.marker([lat, lng]).addTo(map).bindPopup(name).openPopup();
+            } else {
+                const newPos = [lat, lng];
+                map.setView(newPos, 15);
+                marker.setLatLng(newPos).setPopupContent(name).openPopup();
+            }
+        }
+
+        function handleCoordsChange() {
+            const lat = parseFloat(latInput.value);
+            const lng = parseFloat(lngInput.value);
+
+            if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                initMap(lat, lng);
+            }
+        }
+
+        latInput.addEventListener('input', handleCoordsChange);
+        lngInput.addEventListener('input', handleCoordsChange);
+
+        function focusMap(lat, lng, name) {
+            latInput.value = lat;
+            lngInput.value = lng;
+            initMap(parseFloat(lat), parseFloat(lng), name);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Handle auto-display if values already present (e.g. after validation error)
+        if (latInput.value && lngInput.value) {
+            handleCoordsChange();
+        }
+    </script>
+}
