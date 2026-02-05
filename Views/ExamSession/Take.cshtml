@@ -1,131 +1,413 @@
 @model Symphony.Portal.Web.Models.StudentExamSession
 
 @{
-    ViewData["Title"] = "Đang làm bài thi";
-    Layout = "_Layout"; // Or a minimal layout for exams
+    Layout = null; // No Header/Footer for immersive mode
 }
 
-<div class="container py-4">
-    @{ int qNum = 1; }
-    <div class="row">
-        <div class="col-lg-9">
-            <div class="card shadow-lg border-0 mb-4">
-                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
-                    <h4 class="mb-0">@Model.ExamPaper?.Title</h4>
-                    <div id="timer" class="h4 mb-0 text-primary">--:--</div>
-                </div>
-                <div class="card-body p-4">
-                    <form id="examForm" asp-action="Submit" method="post">
-                        <input type="hidden" name="sessionId" value="@Model.Id" />
-                        
-                        @foreach (var epq in Model.ExamPaper!.ExamPaperQuestions.OrderBy(x => x.Order))
-                        {
-                            var q = epq.Question;
-                            <div class="question-block mb-5" id="q-@q.Id">
-                                <h5 class="fw-bold mb-3">Câu @(qNum++): @q.Content</h5>
-                                
-                                @if (q.Type == Symphony.Portal.Web.Models.Enums.QuestionType.MultipleChoice)
-                                {
-                                    <div class="options-list ps-3">
-                                        @foreach (var opt in q.Options)
-                                        {
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="radio" name="answers[@q.Id]" id="opt-@opt.Id" value="@opt.Id">
-                                                <label class="form-check-label" for="opt-@opt.Id">
-                                                    @opt.Content
-                                                </label>
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="ps-3">
-                                        <textarea name="answers[@q.Id]" class="form-control" rows="5" placeholder="Nhập câu trả lời của bạn tại đây..."></textarea>
-                                    </div>
-                                }
-                                <hr class="mt-4 opacity-25" />
-                            </div>
-                        }
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Làm bài thi: @Model.ExamPaper?.Title</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Prevent scrolling body */
+            user-select: none; /* Prevent text selection */
+        }
+        
+        /* Start Screen Overlay */
+        #startScreen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #fff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
 
-                        <div class="text-center mt-5">
-                            <button type="button" class="btn btn-primary btn-lg px-5 shadow" onclick="confirmSubmit()">Nộp bài thi</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+        /* Main Layout */
+        #mainExamInterface {
+            display: none; /* Hidden until started */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            height: 70px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            background: #fff;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .left-panel { /* Question Content */
+            width: 60%;
+            padding: 40px;
+            overflow-y: auto;
+            border-right: 1px solid #f0f0f0;
+        }
+
+        .right-panel { /* Answers */
+            width: 40%;
+            padding: 40px;
+            overflow-y: auto;
+            background-color: #fcfcfc;
+        }
+
+        /* Footer Navigation */
+        .bottom-bar {
+            height: 80px;
+            border-top: 2px solid #f0f0f0;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        /* Typography */
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        /* Custom Radio Options */
+        .option-card {
+            display: block;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .option-card:hover {
+            border-color: #adb5bd;
+            background-color: #f8f9fa;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + .option-card {
+            border-color: #0d6efd;
+            background-color: #f0f7ff;
+        }
+        
+        input[type="radio"]:checked + .option-card::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #0d6efd;
+            font-size: 1.2rem;
+        }
+
+        .option-index {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 28px;
+            text-align: center;
+            border: 2px solid #dee2e6;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        input[type="radio"]:checked + .option-card .option-index {
+            border-color: #0d6efd;
+            background-color: #0d6efd;
+            color: #fff;
+        }
+
+        /* Timer */
+        .timer-box {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: monospace;
+            padding: 5px 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- START SCREEN -->
+    <div id="startScreen">
+        <h1 class="display-4 fw-bold mb-4">@Model.ExamPaper?.Title</h1>
+        <p class="lead mb-5 text-muted">
+            Thời gian: <strong>@(Model.ExamPaper?.Duration ?? 0) phút</strong> | 
+            Số câu hỏi: <strong>@(Model.ExamPaper?.ExamPaperQuestions.Count ?? 0)</strong>
+        </p>
+        
+        <div class="card shadow-sm border-0 bg-light p-4 mb-5" style="max-width: 600px;">
+            <h5 class="fw-bold text-danger mb-3"><i class="fas fa-exclamation-triangle me-2"></i> QUY ĐỊNH PHÒNG THI</h5>
+            <ul class="text-start mb-0 small">
+                <li>Hệ thống sẽ <strong>tự động chuyển sang chế độ Toàn màn hình (Fullscreen)</strong>.</li>
+                <li>Tuyệt đối <strong>không thoát khỏi chế độ Toàn màn hình</strong>.</li>
+                <li>Tuyệt đối <strong>không chuyển tab hoặc mở ứng dụng khác</strong>.</li>
+                <li>Nếu vi phạm, hệ thống sẽ <strong>TỰ ĐỘNG NỘP BÀI</strong> ngay lập tức.</li>
+            </ul>
         </div>
 
-        <div class="col-lg-3">
-            <div class="sticky-top" style="top: 100px;">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <h6 class="text-uppercase text-muted fw-bold mb-3">Danh sách câu hỏi</h6>
-                        <div class="d-flex flex-wrap gap-2">
-                            @for (int i = 1; i < qNum; i++)
-                            {
-                                <div class="q-nav-dot border rounded d-flex align-items-center justify-content-center" 
-                                     style="width: 35px; height: 35px; cursor: pointer;" 
-                                     id="nav-@i" onclick="scrollToQuestion(@i)">@i</div>
-                            }
-                        </div>
-                        <div class="mt-4 small">
-                            <div class="d-flex align-items-center mb-1">
-                                <div class="bg-primary rounded-circle me-2" style="width: 12px; height: 12px;"></div>
-                                <span>Đã chọn</span>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <div class="border rounded-circle me-2" style="width: 12px; height: 12px;"></div>
-                                <span>Chưa chọn</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <button class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold" onclick="startExam()">
+            <i class="fas fa-play me-2"></i> TÔI ĐÃ HIỂU & BẮT ĐẦU LÀM BÀI
+        </button>
     </div>
-</div>
 
-@section Scripts {
-    <script>
-        // Timer Logic
-        let durationInSeconds = @(Model.ExamPaper.Duration * 60);
-        const timerElement = document.getElementById('timer');
-        
-        function updateTimer() {
-            const minutes = Math.floor(durationInSeconds / 60);
-            const seconds = durationInSeconds % 60;
-            timerElement.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    <!-- MAIN INTERFACE -->
+    @if (Model.ExamPaper != null && Model.ExamPaper.ExamPaperQuestions.Any())
+    {
+        <form asp-action="Submit" method="post" id="examForm" style="display:none; height: 100%;">
+            <input type="hidden" name="sessionId" value="@Model.Id" />
             
-            if (durationInSeconds <= 0) {
-                alert("Hết thời gian làm bài! Hệ thống sẽ tự động nộp bài.");
-                document.getElementById('examForm').submit();
+            <div id="mainExamLayout" style="height: 100%; display: flex; flex-direction: column;">
+                
+                <!-- TOP BAR -->
+                <div class="top-bar">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-dark rounded-pill me-3 px-3 py-2">Final Exam</span>
+                        <h5 class="mb-0 fw-bold">@Model.ExamPaper.Title</h5>
+                    </div>
+                    
+                    <div class="text-danger timer-box" id="timerDisplay">--:--</div>
+                    
+                    <button type="button" class="btn btn-outline-danger btn-sm fw-bold confirm-submit">
+                        <i class="fas fa-sign-out-alt me-2"></i> Nộp bài
+                    </button>
+                </div>
+
+                <!-- CONTENT AREA -->
+                <div class="content-area">
+                    @{
+                        var questions = Model.ExamPaper.ExamPaperQuestions.OrderBy(q => q.Order).ToList();
+                    }
+                    
+                    @for (int i = 0; i < questions.Count; i++)
+                    {
+                        var epq = questions[i];
+                        var q = epq.Question;
+                        if(q == null) continue;
+
+                        <div class="question-slide w-100" id="q_slide_@i" style="@(i == 0 ? "display:flex;" : "display:none;") width: 100%;">
+                            <!-- Left: Question -->
+                            <div class="left-panel">
+                                <div class="mb-4">
+                                    <span class="text-muted fw-bold text-uppercase small">Câu hỏi @(i + 1) / @questions.Count</span>
+                                </div>
+                                <div class="question-text">
+                                    @Html.Raw(q.Content.Replace("\n", "<br>"))
+                                </div>
+                            </div>
+                            
+                            <!-- Right: Answers -->
+                            <div class="right-panel">
+                                <h6 class="fw-bold text-muted mb-4">Câu trả lời:</h6>
+                                
+                                @if(q.Type == Symphony.Portal.Web.Models.Enums.QuestionType.MultipleChoice)
+                                {
+                                    <p class="small text-muted mb-3">Chọn 1 đáp án đúng:</p>
+                                    var options = q.Options.ToList();
+                                    char[] labels = { 'A', 'B', 'C', 'D', 'E', 'F' };
+                                    
+                                    @for (int j = 0; j < options.Count; j++)
+                                    {
+                                        var opt = options[j];
+                                        <input type="radio" name="answers[@q.Id]" id="opt_@opt.Id" value="@opt.Id">
+                                        <label class="option-card" for="opt_@opt.Id">
+                                            <span class="option-index">@labels[j]</span>
+                                            <span class="fw-medium">@opt.Content</span>
+                                        </label>
+                                    }
+                                }
+                                else 
+                                {
+                                    <p class="small text-muted mb-3">Nhập câu trả lời tự luận:</p>
+                                    <textarea name="answers[@q.Id]" class="form-control p-3" rows="10" placeholder="Viết câu trả lời của bạn vào đây..." style="border-radius: 12px; background: #f8f9fa; border: 2px solid #e9ecef;"></textarea>
+                                }
+
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- BOTTOM BAR -->
+                <div class="bottom-bar">
+                    <button type="button" class="btn btn-light border px-4" id="btnPrev" onclick="nav(-1)" disabled>
+                        <i class="fas fa-arrow-left me-2"></i> Quay lại
+                    </button>
+
+                    <div class="progress flex-grow-1 mx-5" style="height: 10px;">
+                        <div class="progress-bar bg-primary" id="progressBar" role="progressbar" style="width: 0%"></div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary px-5 fw-bold" id="btnNext" onclick="nav(1)">
+                        Câu tiếp theo <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                    
+                    <button type="button" class="btn btn-success px-5 fw-bold confirm-submit" id="btnFinish" style="display:none;">
+                        <i class="fas fa-check-circle me-2"></i> HOÀN THÀNH
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    }
+
+    <!-- Scripts -->
+    <script>
+        let currentIndex = 0;
+        const totalQuestions = @(Model.ExamPaper?.ExamPaperQuestions.Count ?? 0);
+        let warningCount = 0;
+
+        // --- FULLSCREEN & SECURITY ---
+        function startExam() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('examForm').style.display = 'block';
+            
+            // Request Fullscreen
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            }
+
+            startTimer();
+            updateUI();
+        }
+
+        // Detect Exit Fullscreen
+        document.addEventListener("fullscreenchange", function() {
+            if (!document.fullscreenElement && document.getElementById('examForm').style.display === 'block') {
+                autoSubmit("Bạn đã thoát chế độ toàn màn hình. Hệ thống buộc phải nộp bài.");
+            }
+        });
+
+        // Detect Tab Switch / Blur
+        window.addEventListener("blur", function() {
+            if (document.getElementById('examForm').style.display === 'block') {
+                 autoSubmit("Bạn đã rời khỏi màn hình thi. Hệ thống buộc phải nộp bài.");
+            }
+        });
+
+        function autoSubmit(reason) {
+            // Prevent multiple alerts
+            if(window.isSubmitting) return;
+            window.isSubmitting = true;
+
+            alert("VI PHẠM QUY CHẾ THI!\n" + reason);
+            document.getElementById('examForm').submit();
+        }
+
+        // --- NAVIGATION ---
+        function nav(direction) {
+            const nextIndex = currentIndex + direction;
+            if (nextIndex >= 0 && nextIndex < totalQuestions) {
+                // Hide current
+                document.getElementById(`q_slide_${currentIndex}`).style.display = 'none';
+                // Show next
+                currentIndex = nextIndex;
+                document.getElementById(`q_slide_${currentIndex}`).style.display = 'flex';
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            // Buttons
+            document.getElementById('btnPrev').disabled = currentIndex === 0;
+            
+            if (currentIndex === totalQuestions - 1) {
+                document.getElementById('btnNext').style.display = 'none';
+                document.getElementById('btnFinish').style.display = 'block';
             } else {
-                durationInSeconds--;
-                setTimeout(updateTimer, 1000);
+                document.getElementById('btnNext').style.display = 'block';
+                document.getElementById('btnFinish').style.display = 'none';
             }
-        }
-        
-        updateTimer();
 
-        function confirmSubmit() {
-            if (confirm("Bạn có chắc chắn muốn nộp bài không?")) {
-                document.getElementById('examForm').submit();
-            }
+            // Progress Bar
+            const progress = ((currentIndex + 1) / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
         }
 
-        // Highlight navigation
-        document.querySelectorAll('input, textarea').forEach(el => {
-            el.addEventListener('change', function() {
-                const qBlock = this.closest('.question-block');
-                const qIndex = Array.from(document.querySelectorAll('.question-block')).indexOf(qBlock) + 1;
-                document.getElementById('nav-' + qIndex).classList.add('bg-primary', 'text-white', 'border-primary');
+
+        // --- TIMER ---
+        function startTimer() {
+            let durationMinutes = @(Model.ExamPaper?.Duration ?? 60);
+            let timeRemaining = durationMinutes * 60;
+            
+            // Sync with actual start time logic if needed, but for now using duration
+            
+            const display = document.getElementById('timerDisplay');
+
+            const timerInterval = setInterval(() => {
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmit("Hết thời gian làm bài.");
+                    return;
+                }
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                timeRemaining--;
+            }, 1000);
+        }
+
+        // --- SUBMIT ---
+        document.querySelectorAll('.confirm-submit').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if(window.isSubmitting) return;
+
+                if (confirm('Bạn chắc chắn muốn nộp bài?')) {
+                    window.isSubmitting = true;
+                    // Disable validations to prevent loop
+                    window.onbeforeunload = null; 
+                    document.getElementById('examForm').submit();
+                }
             });
         });
 
-        function scrollToQuestion(index) {
-            const el = document.querySelectorAll('.question-block')[index - 1];
-            window.scrollTo({ top: el.offsetTop - 120, behavior: 'smooth' });
-        }
+        // Prevent Right Click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
     </script>
-}
+</body>
+</html>

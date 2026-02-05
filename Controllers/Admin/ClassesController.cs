@@ -25,6 +25,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         {
             var classesQuery = _context.Classes
                 .Include(c => c.ClassCategory)
+                .Include(c => c.Course)
                 .AsNoTracking();
 
             int pageSize = 10;
@@ -60,6 +61,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             if (id == null) return NotFound();
             var @class = await _context.Classes
                 .Include(c => c.ClassCategory)
+                .Include(c => c.Course)
                 .FirstOrDefaultAsync(m => m.Id == id);
             
             if (@class == null) return NotFound();
@@ -70,12 +72,13 @@ namespace Symphony.Portal.Web.Controllers.Admin
         public IActionResult Create()
         {
             ViewBag.ClassCategories = new SelectList(_context.ClassCategories.Where(c => c.IsActive), "Id", "Name");
+            ViewBag.Courses = new SelectList(_context.Courses.OrderBy(c => c.Title), "Id", "Title");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ClassName,ClassCategoryId,NumberOfSeats,Status")] Class @class)
+        public async Task<IActionResult> Create([Bind("Id,ClassName,ClassCategoryId,CourseId,NumberOfSeats,Status,Fee")] Class @class)
         {
             if (ModelState.IsValid)
             {
@@ -100,12 +103,13 @@ namespace Symphony.Portal.Web.Controllers.Admin
             if (@class == null) return NotFound();
             
             ViewBag.ClassCategories = new SelectList(_context.ClassCategories.Where(c => c.IsActive), "Id", "Name", @class.ClassCategoryId);
+            ViewBag.Courses = new SelectList(_context.Courses.OrderBy(c => c.Title), "Id", "Title", @class.CourseId);
             return View(@class);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,ClassName,ClassCategoryId,NumberOfSeats,Status")] Class @class)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,ClassName,ClassCategoryId,CourseId,NumberOfSeats,Status,Fee")] Class @class)
         {
             if (id != @class.Id) return NotFound();
 

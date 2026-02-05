@@ -16,11 +16,10 @@ namespace Symphony.Portal.Web.Models
         [Display(Name = "Thời gian làm bài (phút)")]
         public int Duration { get; set; }
 
-        [Display(Name = "Môn học")]
-        public string? SubjectId { get; set; }
-
-        [ForeignKey("SubjectId")]
-        public Subject? Subject { get; set; }
+        [Display(Name = "Khóa học")]
+        public string? CourseId { get; set; }
+        [ForeignKey("CourseId")]
+        public Course? Course { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

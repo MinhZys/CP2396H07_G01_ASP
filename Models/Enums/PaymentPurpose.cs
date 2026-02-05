@@ -3,5 +3,6 @@
     EntranceExam,
     Revision,
     Course,
-    Lab
+    Lab,
+    RetakeExam
 }

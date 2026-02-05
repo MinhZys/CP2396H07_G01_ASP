@@ -4,7 +4,8 @@ namespace Symphony.Portal.Web.Models.Enums
     {
         Active,
         Inactive,
-        Open
+        Open,
+        Completed
     }
 
     public enum AssignmentType
@@ -18,6 +19,7 @@ namespace Symphony.Portal.Web.Models.Enums
     {
         Assigned,
         Received,
-        Cancelled
+        Cancelled,
+        Completed
     }
 }

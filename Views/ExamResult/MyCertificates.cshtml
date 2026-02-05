@@ -1,0 +1,214 @@
+@model IEnumerable<Symphony.Portal.Web.Models.StudentCertificate>
+
+@{
+    ViewData["Title"] = "Chứng chỉ của tôi";
+}
+
+<div class="container my-5 pb-5">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-5 animate__animated animate__fadeIn">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-slate-400 text-decoration-none">Home</a></li>
+                    <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Achievements</li>
+                </ol>
+            </nav>
+            <h2 class="display-6 fw-bold text-slate-900 dark:text-white mb-0">My Certificates</h2>
+        </div>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-light rounded-pill px-4 shadow-sm fw-bold text-slate-600 border border-slate-200 hover:bg-white transition-all">
+            <i class="fas fa-arrow-left me-2"></i> Back to Home
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="rounded-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm p-5 text-center animate__animated animate__fadeInUp">
+            <div class="mb-4 d-inline-flex p-4 rounded-circle bg-slate-50 text-slate-300">
+                <i class="fas fa-medal fa-5x"></i>
+            </div>
+            <h4 class="fw-bold text-slate-800 dark:text-white mb-2">No certificates earned yet</h4>
+            <p class="text-slate-500 max-w-md mx-auto">Your achievements will be displayed here once you complete your courses and pass final exams. Keep up the hard work!</p>
+        </div>
+    }
+    else
+    {
+        <!-- Premium Success Alert -->
+        <div class="alert bg-white dark:bg-slate-800 border-start border-4 border-success shadow-sm rounded-4 p-4 mb-5 animate__animated animate__fadeInDown d-flex align-items-center gap-4 position-relative overflow-hidden">
+            <div class="position-absolute top-0 end-0 opacity-10 mt-n4 me-n4">
+                <i class="fas fa-award fa-10x text-success"></i>
+            </div>
+            <div class="flex-shrink-0 bg-success bg-opacity-10 p-4 rounded-circle text-success shadow-sm border border-success border-opacity-10">
+                <i class="fas fa-trophy fa-2x"></i>
+            </div>
+            <div class="position-relative">
+                <h4 class="mb-1 fw-bold text-success">Congratulations!</h4>
+                <p class="mb-0 text-slate-600 dark:text-slate-300 fs-5">You've reached a significant milestone. Please visit <strong>Symphony Center</strong> to receive your physical, official certificate.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-lg-4 animate__animated animate__fadeInUp">
+                    <div class="certificate-card h-100 position-relative">
+                        <!-- Card Body -->
+                        <div class="card h-100 border-0 shadow-lg rounded-4 overflow-hidden dark:bg-slate-850">
+                            <!-- Header Decoration -->
+                            <div class="card-header-accent"></div>
+                            
+                            <div class="card-body p-4 text-center d-flex flex-column h-100">
+                                <!-- Badge Icon (Jagged Seal Style) -->
+                                <div class="medal-float mb-4 mx-auto">
+                                    <div class="seal-burst">
+                                        <div class="seal-inner">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h5 class="fw-extrabold text-slate-900 dark:text-white mb-1 uppercase tracking-wider fs-6 opacity-75">Professional Certification</h5>
+                                <h3 class="h4 fw-bold text-primary mb-4">@item.Course?.Title</h3>
+
+                                <div class="px-3 py-2 bg-slate-50 dark:bg-slate-800 rounded-3 mb-4 inline-block mx-auto border border-slate-100 dark:border-slate-700">
+                                    <div class="small fw-bold text-slate-500 uppercase tracking-tighter mb-1">Pass Status</div>
+                                    <div class="text-success fw-bold fs-5 d-flex align-items-center justify-content-center gap-2">
+                                        <i class="fas fa-check-circle"></i> @item.AverageScore.ToString("F2")
+                                    </div>
+                                </div>
+
+                                <div class="text-start mt-auto">
+                                    <div class="d-flex justify-content-between text-slate-500 small mb-2 border-bottom border-slate-100 dark:border-slate-800 pb-2">
+                                        <span class="font-medium">Issue Date:</span>
+                                        <span class="fw-bold text-slate-700 dark:text-slate-300">@item.IssueDate.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between text-slate-500 small mb-4">
+                                        <span class="font-medium">Credential ID:</span>
+                                        <code class="text-primary fw-bold">@item.CertificateCode</code>
+                                    </div>
+                                </div>
+
+                                <a href="#" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold shadow-sm py-3 transition-all transform hover-scale">
+                                    <i class="fas fa-file-download me-2"></i> Download PDF Result
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    :root {
+        --cert-gold: #c5a059;
+        --cert-gold-light: #e6d4a2;
+        --cert-bg: #fff;
+    }
+
+    .font-display { font-family: 'Outfit', sans-serif; }
+    
+    .certificate-card {
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .certificate-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .card-header-accent {
+        height: 6px;
+        background: linear-gradient(90deg, var(--cert-gold), var(--cert-gold-light), var(--cert-gold));
+        background-size: 200% 100%;
+        animation: gradient-shift 3s infinite linear;
+    }
+
+    @@keyframes gradient-shift {
+        0% { background-position: 100% 0; }
+        100% { background-position: -100% 0; }
+    }
+
+    .medal-float {
+        width: 80px;
+        height: 80px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .seal-burst {
+        width: 70px;
+        height: 70px;
+        background: #c5a059;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);
+        animation: seal-pulse 3s infinite ease-in-out;
+    }
+
+    .seal-burst::before,
+    .seal-burst::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 70px;
+        width: 70px;
+        background: inherit;
+    }
+
+    .seal-burst::before {
+        transform: rotate(30deg);
+    }
+
+    .seal-burst::after {
+        transform: rotate(60deg);
+    }
+
+    .seal-inner {
+        position: relative;
+        z-index: 10;
+        width: 50px;
+        height: 50px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        color: #198754; /* Success Green */
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    @@keyframes seal-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .hover-scale:hover {
+        transform: scale(1.02);
+        filter: brightness(1.1);
+    }
+
+    .animate-spin-slow {
+        animation: spin 8s linear infinite;
+    }
+
+    @@keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .dark .card {
+        background-color: #1e293b;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .dark .medal-center {
+        background: #1e293b;
+    }
+</style>

@@ -177,5 +177,75 @@ namespace Symphony.Portal.Web.Areas.Instructor.Controllers
             }
             return RedirectToAction(nameof(AssignLesson), new { classId });
         }
+
+        // ======================
+        // COMPLETE CLASS (POST)
+        // ======================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Complete(string id)
+        {
+            var instructorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var assignment = await _context.Assignments
+                .Include(a => a.Class)
+                .FirstOrDefaultAsync(a => a.Id == id
+                    && a.InstructorId == instructorId
+                    && a.AssignmentType == AssignmentType.Teaching);
+
+            if (assignment == null) return NotFound();
+
+            // Mark Class as Completed (Signal for Admin)
+            if (assignment.Class != null)
+            {
+                assignment.Class.Status = ClassStatus.Completed;
+            }
+
+            // Mark Assignment as Completed (Visual for Instructor)
+            assignment.Status = AssignmentStatus.Completed;
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Class marked as Completed. Admin has been notified.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // ======================
+        // MANAGE EXAMS (GET)
+        // ======================
+        [HttpGet]
+        public async Task<IActionResult> ManageExams(string classId)
+        {
+            var cls = await _context.Classes.FirstOrDefaultAsync(c => c.Id == classId);
+            if (cls == null) return NotFound();
+
+            var exams = await _context.ClassExams
+                .Include(ce => ce.Course)
+                .Include(ce => ce.ExamPaper)
+                .Where(ce => ce.ClassId == classId)
+                .OrderByDescending(ce => ce.ExamDate)
+                .ToListAsync();
+
+            ViewBag.ClassId = classId;
+            ViewBag.ClassName = cls.ClassName;
+
+            return View(exams);
+        }
+
+        // ======================
+        // PUBLISH SCORE (POST)
+        // ======================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PublishScore(string classExamId)
+        {
+            var exam = await _context.ClassExams.FirstOrDefaultAsync(e => e.Id == classExamId);
+            if (exam == null) return NotFound();
+
+            exam.IsScorePublished = true;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Exam scores have been published to students.";
+            return RedirectToAction(nameof(ManageExams), new { classId = exam.ClassId });
+        }
     }
 }

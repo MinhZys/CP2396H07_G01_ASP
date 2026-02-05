@@ -1,0 +1,114 @@
+@model IEnumerable<Symphony.Portal.Web.Models.ClassExam>
+
+@{
+    ViewData["Title"] = "Manage Exams: " + ViewBag.ClassName;
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">Manage Exams</h1>
+            <p class="text-muted small">Course: @ViewBag.ClassName</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i> Back to Classes
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Exam List</h6>
+        </div>
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-clipboard-list fa-3x mb-3"></i>
+                    <p>No exams have been scheduled for this class yet.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                        <thead>
+                            <tr class="bg-light">
+                                <th>Course</th>
+                                <th>Topic</th>
+                                <th>Date & Time</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                <th>Score Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold text-primary">@item.Course?.Title</td>
+                                    <td>@item.ExamPaper?.Title</td>
+                                    <td>
+                                        <div>@item.ExamDate?.ToString("dd/MM/yyyy")</div>
+                                        <div class="small text-muted">@item.ExamDate?.ToString("HH:mm")</div>
+                                    </td>
+                                    <td>@(item.DurationOverride ?? item.ExamPaper?.Duration ?? 0) mins</td>
+                                    <td>
+                                        @if (item.Status == Symphony.Portal.Web.Models.Enums.ClassExamStatus.Scheduled)
+                                        {
+                                            <span class="badge bg-primary">Scheduled</span>
+                                        }
+                                        else if (item.Status == Symphony.Portal.Web.Models.Enums.ClassExamStatus.InProgress)
+                                        {
+                                            <span class="badge bg-warning text-dark">In Progress</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">Completed</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.IsScorePublished)
+                                        {
+                                            <span class="badge bg-success"><i class="fas fa-globe me-1"></i> Published</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary"><i class="fas fa-eye-slash me-1"></i> Hidden</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!item.IsScorePublished)
+                                        {
+                                            <form asp-action="PublishScore" method="post" class="d-inline"
+                                                  onsubmit="return confirm('Are you sure? Once published, students will see their scores immediately.');">
+                                                <input type="hidden" name="classExamId" value="@item.Id" />
+                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-bullhorn me-1"></i> Publish Scores
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <button disabled class="btn btn-sm btn-outline-secondary">
+                                                <i class="fas fa-check me-1"></i> Published
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

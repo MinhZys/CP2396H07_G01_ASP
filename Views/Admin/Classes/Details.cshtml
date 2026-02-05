@@ -16,6 +16,9 @@
             <dt class="col-sm-3">Category</dt>
             <dd class="col-sm-9">@Model.ClassCategory?.Name</dd>
 
+            <dt class="col-sm-3">Course</dt>
+            <dd class="col-sm-9">@(Model.Course?.Title ?? "N/A")</dd>
+
             <dt class="col-sm-3">Number of Seats</dt>
             <dd class="col-sm-9">@Model.NumberOfSeats</dd>
 

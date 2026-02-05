@@ -66,6 +66,11 @@ namespace Symphony.Portal.Web.Data
         public DbSet<RevisionPackage> RevisionPackages { get; set; }
         public DbSet<RevisionRegistration> RevisionRegistrations { get; set; }
 
+        // Course Exam & Certificate System
+        public DbSet<StudentCertificate> StudentCertificates { get; set; }
+        public DbSet<ClassExam> ClassExams { get; set; }
+        public DbSet<ExamAttempt> ExamAttempts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -122,6 +127,71 @@ namespace Symphony.Portal.Web.Data
             modelBuilder.Entity<Payment>().Property(x => x.PaymentMethod).HasConversion<string>();
             modelBuilder.Entity<EntranceExam>().Property(x => x.Status).HasConversion<string>();
             modelBuilder.Entity<Question>().Property(x => x.Type).HasConversion<string>();
+            modelBuilder.Entity<ClassExam>().Property(x => x.Status).HasConversion<string>();
+            modelBuilder.Entity<ExamAttempt>().Property(x => x.Status).HasConversion<string>();
+            modelBuilder.Entity<Course>().Property(x => x.RetakeFee).HasColumnType("decimal(18,2)");
+
+            // =========================
+            // Course Exam & Certificate System
+            // =========================
+            modelBuilder.Entity<StudentCertificate>(entity =>
+            {
+                entity.HasOne(sc => sc.Student)
+                      .WithMany()
+                      .HasForeignKey(sc => sc.StudentId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(sc => sc.Course)
+                      .WithMany()
+                      .HasForeignKey(sc => sc.CourseId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(sc => sc.Certificate)
+                      .WithMany()
+                      .HasForeignKey(sc => sc.CertificateId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(sc => sc.CertificateCode).IsUnique();
+            });
+
+            modelBuilder.Entity<ClassExam>(entity =>
+            {
+                entity.HasOne(ce => ce.Class)
+                      .WithMany()
+                      .HasForeignKey(ce => ce.ClassId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(ce => ce.Course)
+                      .WithMany()
+                      .HasForeignKey(ce => ce.CourseId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(ce => ce.ExamPaper)
+                      .WithMany()
+                      .HasForeignKey(ce => ce.ExamPaperId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<ExamPaper>(entity =>
+            {
+                entity.HasOne(ep => ep.Course)
+                      .WithMany()
+                      .HasForeignKey(ep => ep.CourseId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<ExamAttempt>(entity =>
+            {
+                entity.HasOne(ea => ea.Student)
+                      .WithMany()
+                      .HasForeignKey(ea => ea.StudentId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(ea => ea.Course)
+                      .WithMany()
+                      .HasForeignKey(ea => ea.CourseId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
 
             // =========================
             // Class Schedule
@@ -176,6 +246,11 @@ namespace Symphony.Portal.Web.Data
                 b.HasOne(x => x.EntranceExam)
                     .WithMany(e => e.StudentExamSessions)
                     .HasForeignKey(x => x.EntranceExamId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(x => x.ClassExam)
+                    .WithMany()
+                    .HasForeignKey(x => x.ClassExamId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 

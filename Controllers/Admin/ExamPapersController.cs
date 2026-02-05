@@ -116,6 +116,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
             public double Score { get; set; } = 1.0;
             public List<string> Options { get; set; } = new List<string>();
             public int CorrectIndex { get; set; }
+            public QuestionType Type { get; set; } = QuestionType.MultipleChoice;
         }
 
         // --- Exam Paper Management ---
@@ -123,7 +124,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         public async Task<IActionResult> Index(int? pageNumber)
         {
             var papersQuery = _context.ExamPapers
-                .Include(p => p.Subject)
+                .Include(p => p.Course)
                 .Include(p => p.ExamPaperQuestions)
                 .AsNoTracking();
             
@@ -133,14 +134,14 @@ namespace Symphony.Portal.Web.Controllers.Admin
 
         public async Task<IActionResult> CreatePaper()
         {
-            ViewBag.Subjects = await _context.Subjects.ToListAsync();
+            ViewBag.Courses = await _context.Courses.ToListAsync();
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePaperWithQuestions(string Title, string SubjectId, int Duration, List<QuestionDto> questions)
+        public async Task<IActionResult> CreatePaperWithQuestions(string Title, string CourseId, int Duration, List<QuestionDto> questions)
         {
-            if (string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(SubjectId))
+            if (string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(CourseId))
             {
                 TempData["Error"] = "Please fill in all exam paper details.";
                 return RedirectToAction(nameof(CreatePaper));
@@ -158,7 +159,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 var examPaper = new ExamPaper
                 {
                     Title = Title,
-                    SubjectId = SubjectId,
+                    CourseId = CourseId,
                     Duration = Duration
                 };
                 _context.Add(examPaper);
@@ -170,26 +171,29 @@ namespace Symphony.Portal.Web.Controllers.Admin
                     var question = new Question
                     {
                         Content = qDto.Content,
-                        Type = QuestionType.MultipleChoice,
-                        SubjectId = SubjectId,
+                        Type = qDto.Type,
+                        SubjectId = null, // linked to course via paper
                         Score = qDto.Score,
                         Difficulty = "Medium"
                     };
                     _context.Add(question);
 
-                    // Create 4 Options
-                    for (int i = 0; i < 4; i++)
+                    // Create Options ONLY for Multiple Choice
+                    if (qDto.Type == QuestionType.MultipleChoice)
                     {
-                        if (i < qDto.Options?.Count)
+                        for (int i = 0; i < 4; i++)
                         {
-                            var option = new QuestionOption
+                            if (i < qDto.Options?.Count)
                             {
-                                Id = Guid.NewGuid().ToString(),
-                                QuestionId = question.Id,
-                                Content = qDto.Options[i],
-                                IsCorrect = (i == qDto.CorrectIndex)
-                            };
-                            _context.Add(option);
+                                var option = new QuestionOption
+                                {
+                                    Id = Guid.NewGuid().ToString(),
+                                    QuestionId = question.Id,
+                                    Content = qDto.Options[i],
+                                    IsCorrect = (i == qDto.CorrectIndex)
+                                };
+                                _context.Add(option);
+                            }
                         }
                     }
 
@@ -216,7 +220,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
         public async Task<IActionResult> Details(string id)
         {
             var paper = await _context.ExamPapers
-                .Include(p => p.Subject)
+                .Include(p => p.Course)
                 .Include(p => p.ExamPaperQuestions)
                 .ThenInclude(epq => epq.Question)
                 .ThenInclude(q => q.Options)
@@ -265,7 +269,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Subjects = await _context.Subjects.ToListAsync();
+            ViewBag.Courses = await _context.Courses.ToListAsync();
             ViewBag.Questions = await _context.Questions.Include(q => q.Subject).ToListAsync();
             ViewBag.SelectedQuestionIds = paper.ExamPaperQuestions.Select(epq => epq.QuestionId).ToList();
             return View(paper);
@@ -295,7 +299,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 // Update basic properties
                 existingPaper.Title = paper.Title;
                 existingPaper.Duration = paper.Duration;
-                existingPaper.SubjectId = paper.SubjectId;
+                existingPaper.CourseId = paper.CourseId;
 
                 // Remove old questions
                 _context.ExamPaperQuestions.RemoveRange(existingPaper.ExamPaperQuestions);
@@ -317,7 +321,7 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Subjects = await _context.Subjects.ToListAsync();
+            ViewBag.Courses = await _context.Courses.ToListAsync();
             ViewBag.Questions = await _context.Questions.ToListAsync();
             ViewBag.SelectedQuestionIds = selectedQuestionIds?.ToList() ?? new List<string>();
             return View(paper);

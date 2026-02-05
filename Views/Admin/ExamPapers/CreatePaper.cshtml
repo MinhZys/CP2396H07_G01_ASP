@@ -18,12 +18,12 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Subject <span class="text-danger">*</span></label>
-                            <select name="SubjectId" id="subjectId" class="form-select rounded-pill px-3" required>
-                                <option value="">-- Select Subject --</option>
-                                @foreach (var sub in ViewBag.Subjects as List<Symphony.Portal.Web.Models.Subject>)
+                            <label class="form-label fw-bold">Course <span class="text-danger">*</span></label>
+                            <select name="CourseId" id="courseId" class="form-select rounded-pill px-3" required>
+                                <option value="">-- Select Course --</option>
+                                @foreach (var course in ViewBag.Courses as List<Symphony.Portal.Web.Models.Course>)
                                 {
-                                    <option value="@sub.Id">@sub.Name</option>
+                                    <option value="@course.Id">@course.Title</option>
                                 }
                             </select>
                         </div>
@@ -56,10 +56,16 @@
                                 <h4 class="fw-bold text-slate-800 mb-1">Questions in Exam</h4>
                                 <p class="text-muted small mb-0">Add multiple choice questions for this exam</p>
                             </div>
-                            <button type="button" class="btn btn-success rounded-pill px-4 d-flex align-items-center gap-2" onclick="addQuestion()">
-                                <span class="material-symbols-outlined">add_circle</span>
-                                Add Question
-                            </button>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-outline-success rounded-pill px-4 d-flex align-items-center gap-2" onclick="addQuestion('MultipleChoice')">
+                                    <span class="material-symbols-outlined">add_circle</span>
+                                    Add MC Question
+                                </button>
+                                <button type="button" class="btn btn-success rounded-pill px-4 d-flex align-items-center gap-2" onclick="addQuestion('Essay')">
+                                    <span class="material-symbols-outlined">description</span>
+                                    Add Essay Question
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-4">
@@ -92,7 +98,7 @@
     <script>
         let questionIndex = 0;
 
-        function addQuestion() {
+        function addQuestion(type = 'MultipleChoice') {
             const container = document.getElementById('questionsContainer');
             const emptyState = document.getElementById('emptyState');
             emptyState.style.display = 'none';
@@ -100,12 +106,58 @@
             const questionCard = document.createElement('div');
             questionCard.className = 'question-item mb-4 p-4 border rounded-4 bg-light animate-in';
             questionCard.dataset.index = questionIndex;
+            questionCard.dataset.type = type;
             
+            let contentHtml = '';
+            
+            if (type === 'MultipleChoice') {
+                contentHtml = `
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center gap-2 p-3 border rounded-3 bg-white">
+                                <input type="radio" name="questions[${questionIndex}].CorrectIndex" value="0" class="form-check-input" required>
+                                <span class="badge bg-info">1</span>
+                                <input type="text" name="questions[${questionIndex}].Options[0]" class="form-control border-0" placeholder="Option 1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center gap-2 p-3 border rounded-3 bg-white">
+                                <input type="radio" name="questions[${questionIndex}].CorrectIndex" value="1" class="form-check-input" required>
+                                <span class="badge bg-info">2</span>
+                                <input type="text" name="questions[${questionIndex}].Options[1]" class="form-control border-0" placeholder="Option 2" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center gap-2 p-3 border rounded-3 bg-white">
+                                <input type="radio" name="questions[${questionIndex}].CorrectIndex" value="2" class="form-check-input" required>
+                                <span class="badge bg-info">3</span>
+                                <input type="text" name="questions[${questionIndex}].Options[2]" class="form-control border-0" placeholder="Option 3" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center gap-2 p-3 border rounded-3 bg-white">
+                                <input type="radio" name="questions[${questionIndex}].CorrectIndex" value="3" class="form-check-input" required>
+                                <span class="badge bg-info">4</span>
+                                <input type="text" name="questions[${questionIndex}].Options[3]" class="form-control border-0" placeholder="Option 4" required>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                contentHtml = `
+                    <div class="p-3 border rounded-3 bg-white">
+                        <label class="form-label text-muted small mb-2">Student Answer Placeholder (Students will type here)</label>
+                        <textarea class="form-control bg-light" rows="4" placeholder="Student will enter their answer here during the exam..." disabled></textarea>
+                    </div>
+                `;
+            }
+
             questionCard.innerHTML = `
+                <input type="hidden" name="questions[${questionIndex}].Type" value="${type}">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold text-primary mb-0">
                         <span class="badge bg-primary rounded-circle me-2" style="width: 35px; height: 35px; line-height: 35px;">${questionIndex + 1}</span>
-                        Question ${questionIndex + 1}
+                        ${type === 'MultipleChoice' ? 'MC Question' : 'Essay Question'} ${questionIndex + 1}
                     </h5>
                     <div class="d-flex gap-2">
                         <input type="number" name="questions[${questionIndex}].Score" class="form-control form-control-sm score-input" 
@@ -121,36 +173,7 @@
                     <textarea name="questions[${questionIndex}].Content" class="form-control rounded-3 p-3" rows="2" placeholder="Enter question..." required></textarea>
                 </div>
 
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center gap-2 p-3 border rounded-3 bg-white">
-                            <input type="radio" name="questions[${questionIndex}].CorrectIndex" value="0" class="form-check-input" required>
-                            <span class="badge bg-info">1</span>
-                            <input type="text" name="questions[${questionIndex}].Options[0]" class="form-control border-0" placeholder="Option 1" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center gap-2 p-3 border rounded-3 bg-white">
-                            <input type="radio" name="questions[${questionIndex}].CorrectIndex" value="1" class="form-check-input" required>
-                            <span class="badge bg-info">2</span>
-                            <input type="text" name="questions[${questionIndex}].Options[1]" class="form-control border-0" placeholder="Option 2" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center gap-2 p-3 border rounded-3 bg-white">
-                            <input type="radio" name="questions[${questionIndex}].CorrectIndex" value="2" class="form-check-input" required>
-                            <span class="badge bg-info">3</span>
-                            <input type="text" name="questions[${questionIndex}].Options[2]" class="form-control border-0" placeholder="Option 3" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center gap-2 p-3 border rounded-3 bg-white">
-                            <input type="radio" name="questions[${questionIndex}].CorrectIndex" value="3" class="form-check-input" required>
-                            <span class="badge bg-info">4</span>
-                            <input type="text" name="questions[${questionIndex}].Options[3]" class="form-control border-0" placeholder="Option 4" required>
-                        </div>
-                    </div>
-                </div>
+                ${contentHtml}
             `;
             
             container.appendChild(questionCard);
@@ -176,13 +199,17 @@
         function updateQuestionNumbers() {
             const items = document.querySelectorAll('.question-item');
             items.forEach((item, index) => {
+                const type = item.dataset.type;
                 const badge = item.querySelector('.badge.bg-primary');
                 const title = item.querySelector('h5');
+                
                 if (badge) badge.textContent = index + 1;
-                if (title) title.innerHTML = `
-                    <span class="badge bg-primary rounded-circle me-2" style="width: 35px; height: 35px; line-height: 35px;">${index + 1}</span>
-                    Question ${index + 1}
-                `;
+                if (title) {
+                    title.innerHTML = `
+                        <span class="badge bg-primary rounded-circle me-2" style="width: 35px; height: 35px; line-height: 35px;">${index + 1}</span>
+                        ${type === 'MultipleChoice' ? 'MC Question' : 'Essay Question'} ${index + 1}
+                    `;
+                }
                 
                 // Update field names
                 const inputs = item.querySelectorAll('input, textarea');

@@ -33,7 +33,7 @@ namespace Symphony.Portal.Web.Controllers.Student
 
             if (string.IsNullOrWhiteSpace(classId))
             {
-                ViewBag.Message = "Bạn chưa được xếp lớp.";
+                ViewBag.Message = "You have not been assigned to a class yet.";
                 return View(new List<Symphony.Portal.Web.Models.ClassSession>());
             }
 
@@ -47,7 +47,7 @@ namespace Symphony.Portal.Web.Controllers.Student
 
             if (schedule == null)
             {
-                ViewBag.Message = "Lịch học chưa được công bố.";
+                ViewBag.Message = "Study schedule has not been published yet.";
                 return View(new List<Symphony.Portal.Web.Models.ClassSession>());
             }
 

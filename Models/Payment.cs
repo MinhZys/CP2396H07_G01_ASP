@@ -30,5 +30,9 @@ namespace Symphony.Portal.Web.Models
         public string ReceiptNumber { get; set; } = string.Empty;
         public PaymentPurpose Purpose { get; set; }
 
+        public string? ExamAttemptId { get; set; }
+        [ForeignKey("ExamAttemptId")]
+        public ExamAttempt? ExamAttempt { get; set; }
+
     }
 }

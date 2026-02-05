@@ -16,25 +16,35 @@ namespace Symphony.Portal.Web.Controllers
             _context = context;
         }
 
-        // Student starts an exam
-        public async Task<IActionResult> Start(string entranceExamId)
+        // Student starts a final exam for a class/subject
+        public async Task<IActionResult> StartFinal(string classExamId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            var exam = await _context.EntranceExams
-                .Include(e => e.ExamPapers)
-                .FirstOrDefaultAsync(e => e.Id == entranceExamId);
+            var classExam = await _context.ClassExams
+                .Include(ce => ce.ExamPaper)
+                .FirstOrDefaultAsync(ce => ce.Id == classExamId);
 
-            if (exam == null || exam.Status != ExamStatus.Ongoing)
+            if (classExam == null) return NotFound();
+
+            // Auto-start if time has arrived
+            if (classExam.Status == ClassExamStatus.Scheduled && classExam.ExamDate <= DateTime.Now)
             {
-                TempData["Error"] = "Kỳ thi này hiện không diễn ra.";
+                classExam.Status = ClassExamStatus.InProgress;
+                _context.Update(classExam);
+                await _context.SaveChangesAsync();
+            }
+
+            if (classExam.Status != ClassExamStatus.InProgress)
+            {
+                TempData["Error"] = "Kỳ thi này hiện không diễn ra hoặc chưa bắt đầu.";
                 return RedirectToAction("Index", "Home");
             }
 
-            // Check if student already has a session
+            // Check if student already has a session for this specific class exam
             var existingSession = await _context.StudentExamSessions
-                .FirstOrDefaultAsync(s => s.EntranceExamId == entranceExamId && s.StudentId == userId);
+                .FirstOrDefaultAsync(s => s.ClassExamId == classExamId && s.StudentId == userId);
 
             if (existingSession != null)
             {
@@ -46,22 +56,11 @@ namespace Symphony.Portal.Web.Controllers
                 return RedirectToAction("MyExams", "ExamResult");
             }
 
-            // Assign a random paper from the exam
-            var papers = exam.ExamPapers.ToList();
-            if (!papers.Any())
-            {
-                TempData["Error"] = "Kỳ thi này chưa có đề thi.";
-                return RedirectToAction("Index", "Home");
-            }
-
-            var random = new Random();
-            var paper = papers[random.Next(papers.Count)];
-
             var session = new StudentExamSession
             {
-                EntranceExamId = entranceExamId,
+                ClassExamId = classExamId,
                 StudentId = userId,
-                ExamPaperId = paper.Id,
+                ExamPaperId = classExam.ExamPaperId,
                 StartTime = DateTime.Now,
                 Status = ExamSessionStatus.Taking
             };
@@ -128,10 +127,41 @@ namespace Symphony.Portal.Web.Controllers
 
             session.EndTime = DateTime.Now;
             session.Status = ExamSessionStatus.Finished;
+            
+            // Auto-grading for Multiple Choice questions
+            double score = 0;
+            foreach (var answer in session.Answers)
+            {
+                var question = await _context.Questions.Include(q => q.Options).FirstOrDefaultAsync(q => q.Id == answer.QuestionId);
+                if (question != null && question.Type == QuestionType.MultipleChoice)
+                {
+                    var correctOption = question.Options?.FirstOrDefault(o => o.IsCorrect);
+                    if (correctOption != null && answer.SelectedOptionId == correctOption.Id)
+                    {
+                        answer.EarnedScore = 1.0; // Assume 1 point per question for now, or use complex logic
+                        score += 1.0;
+                    }
+                    answer.IsGraded = true;
+                }
+            }
+            session.TotalScore = score;
+
             await _context.SaveChangesAsync();
 
-            // Note: Auto-grading can be triggered here or by Admin later.
-            TempData["Success"] = "Bạn đã hoàn thành bài thi. Kết quả sẽ sớm được cập nhật.";
+            // Notify user
+            TempData["Success"] = "Bạn đã hoàn thành bài thi. Vui lòng chờ giảng viên công bố kết quả.";
+
+            // Contextual Redirect: If it's a class exam, redirect back to the Class Exams view
+            if (!string.IsNullOrEmpty(session.ClassExamId))
+            {
+                var classExam = await _context.ClassExams.FindAsync(session.ClassExamId);
+                if (classExam != null)
+                {
+                    return RedirectToAction("ViewExams", "Student", new { classId = classExam.ClassId });
+                }
+            }
+
+            // Default redirect (for Entrance Exams)
             return RedirectToAction("MyExams", "ExamResult");
         }
     }

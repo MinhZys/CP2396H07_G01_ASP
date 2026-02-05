@@ -1,0 +1,57 @@
+@model Symphony.Portal.Web.Models.ExamAttempt
+
+@{
+    ViewData["Title"] = "Đăng ký thi lại";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-danger text-white p-4 text-center">
+                    <h2 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Kết quả thi không đạt</h2>
+                </div>
+                <div class="card-body p-5">
+                    <h4 class="text-center mb-4">Rất tiếc, bạn chưa đủ điểm để đạt chứng chỉ khóa học</h4>
+                    
+                    <div class="alert alert-secondary text-center py-4 mb-4">
+                        <p class="mb-1 text-uppercase small ls-1">Điểm trung bình của bạn</p>
+                        <h1 class="display-4 fw-bold text-danger mb-0">@Model.AverageScore?.ToString("F2")</h1>
+                        <p class="mt-2 text-muted">Yêu cầu tối thiểu: <strong>@Model.Course?.PassingScore.ToString("F2")</strong></p>
+                    </div>
+
+                    <div class="mb-5">
+                        <h5 class="fw-bold"><i class="fas fa-info-circle text-primary"></i> Thông tin thi lại:</h5>
+                        <ul class="list-group list-group-flush mt-3">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Khóa học:
+                                <span class="fw-bold">@Model.Course?.Title</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Lần thi tiếp theo:
+                                <span class="badge bg-info">Lần @Model.AttemptNumber</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
+                                <span class="text-primary fw-bold">Lệ phí thi lại:</span>
+                                <span class="text-danger fw-bold h4 mb-0">@Model.Course?.RetakeFee.ToString("N0") VNĐ</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="text-muted mb-4 small">Sau khi thanh toán, bạn sẽ được xếp lịch thi vào đợt kế tiếp của lớp.</p>
+                        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                            <a asp-action="MyExams" class="btn btn-outline-secondary px-5 py-3">Để sau</a>
+                            <form asp-controller="VNPay" asp-action="PayRetakeFee" method="post">
+                                <input type="hidden" name="attemptId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-primary px-5 py-3 shadow">
+                                    <i class="fas fa-credit-card"></i> Thanh toán ngay qua VNPay
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

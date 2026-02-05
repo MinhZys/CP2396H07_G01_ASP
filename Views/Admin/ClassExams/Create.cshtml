@@ -1,0 +1,115 @@
+@model Symphony.Portal.Web.Models.ClassExam
+
+@{
+    ViewData["Title"] = "Assign Class Exam";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Assign New Final Exam</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="ClassId" class="form-label font-weight-bold">Select Class</label>
+                            <select asp-for="ClassId" class="form-select" asp-items="ViewBag.ClassId">
+                                <option value="">-- Select Class --</option>
+                            </select>
+                            <span asp-validation-for="ClassId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CourseId" class="form-label font-weight-bold">Select Course</label>
+                            <select asp-for="CourseId" class="form-select" asp-items="ViewBag.CourseId">
+                                <option value="">-- Select Course --</option>
+                            </select>
+                            <span asp-validation-for="CourseId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ExamPaperId" class="form-label font-weight-bold">Select Exam Paper</label>
+                            <select asp-for="ExamPaperId" class="form-select" asp-items="ViewBag.ExamPaperId">
+                                <option value="">-- Select Paper --</option>
+                            </select>
+                            <span asp-validation-for="ExamPaperId" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ExamDate" class="form-label font-weight-bold">Exam Date & Time</label>
+                                <input asp-for="ExamDate" class="form-control" type="datetime-local" />
+                                <span asp-validation-for="ExamDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DurationOverride" class="form-label font-weight-bold">Duration Override (Mins)</label>
+                                <input asp-for="DurationOverride" class="form-control" placeholder="Optional" />
+                                <span asp-validation-for="DurationOverride" class="text-danger"></span>
+                                <small class="text-muted">If empty, paper's default duration is used.</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Status" class="form-label font-weight-bold">Status</label>
+                            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<Symphony.Portal.Web.Models.Enums.ClassExamStatus>()"></select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                            <button type="submit" class="btn btn-primary px-4">Create Assignment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            // 1. On Class Change -> Load Course
+            $('#ClassId').change(function () {
+                var classId = $(this).val();
+                
+                // Clear and reset dependent dropdowns
+                $('#CourseId').empty().append('<option value="">-- Select Course --</option>');
+                $('#ExamPaperId').empty().append('<option value="">-- Select Paper --</option>');
+
+                if (classId) {
+                    $.getJSON('/Admin/ClassExams/GetCourseByClass', { classId: classId }, function (data) {
+                        if (data) {
+                            $('#CourseId').append($('<option>').text(data.name).attr('value', data.id).attr('selected', 'selected'));
+                            // Automatically load papers for this course
+                            $('#CourseId').trigger('change');
+                        }
+                    });
+                }
+            });
+
+            // 2. On Course Change -> Load Exam Papers
+            $('#CourseId').change(function () {
+                var courseId = $(this).val();
+
+                // Clear Exam Paper dropdown
+                $('#ExamPaperId').empty().append('<option value="">-- Select Paper --</option>');
+
+                if (courseId) {
+                    $.getJSON('/Admin/ClassExams/GetExamPapersByCourse', { courseId: courseId }, function (data) {
+                        $.each(data, function (index, item) {
+                            var text = item.title + ' (' + item.duration + ' mins)';
+                            $('#ExamPaperId').append($('<option>').text(text).attr('value', item.id));
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}

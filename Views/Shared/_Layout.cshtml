@@ -115,15 +115,7 @@
                        data-i18n="nav.about">About</a>
 
                     @* ✅ Student - My Schedule (Top Nav) *@
-                    @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Student"))
-                    {
-                        <a asp-controller="StudySchedule"
-                           asp-action="Index"
-                           class="hover:text-primary transition-colors"
-                           data-i18n="nav.my_schedule">
-                            My Schedule
-                        </a>
-                    }
+                  
 
                 </div>
 
@@ -201,6 +193,10 @@
                                             <span class="material-symbols-outlined text-lg">dashboard</span>
                                             Admin Dashboard
                                         </a>
+                                        <a asp-controller="ClassExams" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                            <span class="material-symbols-outlined text-lg">assignment</span>
+                                            Manage Class Exams
+                                        </a>
                                     }
 
                                     <a asp-controller="Profile" asp-action="Index" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
@@ -224,12 +220,17 @@
                                             My Classroom
                                         </a>
 
-                                        @* ✅ Student - My Schedule (Dropdown) *@
                                         <a asp-controller="StudySchedule"
                                            asp-action="Index"
                                            class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
                                             <span class="material-symbols-outlined text-lg">calendar_month</span>
                                             <span data-i18n="nav.my_schedule">My Schedule</span>
+                                        </a>
+
+                                        <a asp-controller="ExamResult" asp-action="MyCertificates"
+                                           class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+                                            <span class="material-symbols-outlined text-lg">workspace_premium</span>
+                                            My Certificates
                                         </a>
 
                                     }

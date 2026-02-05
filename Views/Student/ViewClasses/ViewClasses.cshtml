@@ -33,12 +33,18 @@ else
                     </p>
                 </div>
 
-                <div class="mt-4 pt-4 border-t border-slate-700">
+                <div class="mt-4 pt-4 border-t border-slate-700 grid grid-cols-2 gap-3">
                     <a asp-controller="Student"
                        asp-action="ViewLessons"
                        asp-route-classId="@item.ClassId"
-                       class="block w-full text-center bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                       class="text-center bg-slate-700 hover:bg-slate-600 text-white font-medium py-2 px-2 rounded-lg transition-colors duration-200 text-xs">
                         View Lessons
+                    </a>
+                    <a asp-controller="Student"
+                       asp-action="ViewExams"
+                       asp-route-classId="@item.ClassId"
+                       class="text-center bg-primary hover:bg-primary/80 text-background-dark font-medium py-2 px-2 rounded-lg transition-colors duration-200 text-xs">
+                        View Exams
                     </a>
                 </div>
             </div>

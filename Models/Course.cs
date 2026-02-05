@@ -26,6 +26,13 @@ namespace Symphony.Portal.Web.Models
         
         public bool IsActive { get; set; } = true;
 
+        [Display(Name = "Điểm đạt yêu cầu")]
+        public double PassingScore { get; set; } = 5.0; // Default 5.0/10
+
+        [Display(Name = "Phí thi lại")]
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal RetakeFee { get; set; } = 0m;
+
         public string? Image { get; set; }
 
         public CourseLevel Level { get; set; } = CourseLevel.Beginner;

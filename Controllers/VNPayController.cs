@@ -130,6 +130,18 @@ public class VNPayController : Controller
                 }
             }
 
+            // Handle Retake Exam Fee Success
+            if (txn.Payment.Purpose == PaymentPurpose.RetakeExam && !string.IsNullOrEmpty(txn.Payment.ExamAttemptId))
+            {
+                var attempt = await _context.ExamAttempts.FindAsync(txn.Payment.ExamAttemptId);
+                if (attempt != null)
+                {
+                    attempt.RetakeFeePaid = true;
+                    attempt.Status = ExamAttemptStatus.AwaitingRetake;
+                    _context.Update(attempt);
+                }
+            }
+
         }
         else
         {
@@ -139,5 +151,33 @@ public class VNPayController : Controller
 
         await _context.SaveChangesAsync();
         return View(responseCode == "00" ? "VNPaySuccess" : "VNPayFailed", txn);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PayRetakeFee(string attemptId)
+    {
+        var attempt = await _context.ExamAttempts
+            .Include(ea => ea.Course)
+            .FirstOrDefaultAsync(ea => ea.Id == attemptId);
+
+        if (attempt == null) return NotFound();
+
+        var payment = new Payment
+        {
+            Id = Guid.NewGuid().ToString(),
+            StudentId = attempt.StudentId,
+            Amount = attempt.Course!.RetakeFee,
+            PaymentMethod = PaymentMethod.Online,
+            Status = PaymentStatus.Pending,
+            Purpose = PaymentPurpose.RetakeExam,
+            ExamAttemptId = attemptId,
+            ReceiptNumber = "R-EX-" + DateTime.Now.Ticks.ToString().Substring(10)
+        };
+
+        _context.Payments.Add(payment);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Create", new { paymentId = payment.Id });
     }
 }

@@ -120,5 +120,47 @@ namespace Symphony.Portal.Web.Controllers
             // Trả về file
             return File(fileBytes, "application/octet-stream", fileName);
         }
+
+        // ==========================================
+        // 4. XEM DANH SÁCH BÀI THI (EXAMS)
+        // ==========================================
+        public async Task<IActionResult> ViewExams(string classId)
+        {
+            if (string.IsNullOrEmpty(classId)) return RedirectToAction(nameof(ViewClasses));
+
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // BẢO MẬT: Kiểm tra học sinh có thuộc lớp này không
+            var isAssigned = await _context.ClassAssignments
+                .AnyAsync(ca => ca.ClassId == classId && ca.StudentId == studentId);
+
+            if (!isAssigned) return RedirectToAction(nameof(ViewClasses));
+
+            // Lấy danh sách Class Exam
+            var exams = await _context.ClassExams
+                .Include(ce => ce.Course)
+                .Include(ce => ce.ExamPaper)
+                .Where(ce => ce.ClassId == classId)
+                .OrderByDescending(ce => ce.ExamDate)
+                .ToListAsync();
+
+            // Lấy danh sách các bài thi mà học sinh này đã làm trong lớp này
+            var studentSessions = await _context.StudentExamSessions
+                .Where(s => s.StudentId == studentId && s.ClassExamId != null && s.ClassExam!.ClassId == classId)
+                .ToListAsync();
+
+            // Chuyển thành Dictionary để dễ tra cứu trong View: ClassExamId -> StudentExamSession
+            var sessionDict = studentSessions.ToDictionary(s => s.ClassExamId!, s => s);
+
+            var className = await _context.Classes
+                .Where(c => c.Id == classId)
+                .Select(c => c.ClassName)
+                .FirstOrDefaultAsync();
+
+            ViewData["ClassName"] = className;
+            ViewData["ClassId"] = classId;
+            ViewBag.StudentSessions = sessionDict;
+
+            return View("Exams/ViewExams", exams);
+        }
     }
 }

@@ -26,14 +26,14 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="SubjectId" class="form-label fw-bold">Subject</label>
-                            <select asp-for="SubjectId" class="form-select rounded-pill px-3" id="subjectFilter">
-                                @foreach (var sub in ViewBag.Subjects as List<Symphony.Portal.Web.Models.Subject>)
+                            <label asp-for="CourseId" class="form-label fw-bold">Course</label>
+                            <select asp-for="CourseId" class="form-select rounded-pill px-3" id="courseFilter">
+                                @foreach (var course in ViewBag.Courses as List<Symphony.Portal.Web.Models.Course>)
                                 {
-                                    <option value="@sub.Id">@sub.Name</option>
+                                    <option value="@course.Id">@course.Title</option>
                                 }
                             </select>
-                            <span asp-validation-for="SubjectId" class="text-danger small"></span>
+                            <span asp-validation-for="CourseId" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
@@ -146,7 +146,7 @@
             });
         }
 
-        document.getElementById('subjectFilter').onchange = filterQuestions;
+        document.getElementById('courseFilter').onchange = filterQuestions;
 
         // Initialize display and stats
         window.onload = function() {

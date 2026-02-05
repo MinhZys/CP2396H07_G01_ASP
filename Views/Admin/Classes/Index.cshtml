@@ -35,6 +35,7 @@
         <tr>
             <th>Class Name</th>
             <th>Category</th>
+            <th>Course</th>
             <th>Seats</th>
             <th>Assigned Students</th>
             <th>Status</th>
@@ -62,6 +63,7 @@
             <tr>
                 <td>@item.ClassName</td>
                 <td>@item.ClassCategory?.Name</td>
+                <td>@(item.Course?.Title ?? "N/A")</td>
                 <td>
                     @item.NumberOfSeats
                     <br />
@@ -96,11 +98,13 @@
                     }
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" class="d-inline form-delete">
-                        <button type="button" class="btn btn-link p-0 text-danger border-0 btn-delete" style="text-decoration: none;">Delete</button>
-                    </form>
+                    <div class="btn-group" role="group">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">Details</a>
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline form-delete">
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete">Delete</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
         }

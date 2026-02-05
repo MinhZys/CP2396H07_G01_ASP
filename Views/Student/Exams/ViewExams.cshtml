@@ -1,0 +1,174 @@
+@model IEnumerable<Symphony.Portal.Web.Models.ClassExam>
+
+@{
+    ViewData["Title"] = "Final Exams - " + ViewData["ClassName"];
+}
+
+<div class="container py-4">
+    <div class="mb-4">
+        <a asp-action="ViewClasses" class="btn btn-light btn-sm mb-3 d-inline-flex align-items-center gap-2 rounded-pill px-3 shadow-sm text-slate-600">
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+            Back to My Classroom
+        </a>
+        <h2 class="text-white">Final Exams: <span class="text-primary">@ViewData["ClassName"]</span></h2>
+    </div>
+
+    <div class="row">
+        @if (!Model.Any())
+        {
+            <div class="col-12">
+                <div class="alert alert-info border-0 shadow-sm rounded-xl">
+                    <i class="fas fa-info-circle me-2"></i> No final exams scheduled for this class yet.
+                </div>
+            </div>
+        }
+        else
+        {
+            @foreach (var exam in Model)
+            {
+                <div class="col-12 mb-4">
+                    <div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm relative overflow-hidden group">
+                         <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <span class="material-symbols-outlined text-9xl text-slate-500">event_available</span>
+                       </div>
+                       
+                       <div class="relative z-10">
+                            <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-1">@exam.Course?.Title</h4>
+                            <p class="text-slate-500 mb-4">Topic: @exam.ExamPaper?.Title</p>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                                        <span class="material-symbols-outlined">schedule</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-slate-500 font-bold uppercase">Date & Time</p>
+                                        <p class="text-slate-900 dark:text-white font-medium">@(exam.ExamDate?.ToString("dd/MM/yyyy") ?? "TBA")</p>
+                                        <p class="text-slate-500 text-sm">@(exam.ExamDate?.ToString("HH:mm tt") ?? "")</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center">
+                                        <span class="material-symbols-outlined">timer</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-slate-500 font-bold uppercase">Duration</p>
+                                        <p class="text-slate-900 dark:text-white font-medium">@(exam.DurationOverride ?? exam.ExamPaper?.Duration ?? 0) mins</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700/50">
+                                @{
+                                    var now = DateTime.Now;
+                                    var examStart = exam.ExamDate ?? DateTime.MaxValue;
+                                    var duration = exam.DurationOverride ?? exam.ExamPaper?.Duration ?? 60;
+                                    
+                                    var isTime = now >= examStart && now < examStart.AddMinutes(duration); 
+                                    var isEntryOpen = now >= examStart && now <= examStart.AddMinutes(duration); // Allow entry during whole exam for class exams? Or just 5 mins? Let's assume lenient for now or match entrance logic (5 mins). Actually User fixed logic for Entrance to be 5 mins. But for Class Exam, instructor might start it. Let's use simple logic: If InProgress or (Scheduled and Time passed), allow in.
+                                    
+                                    // Use strict logic from dashboard for visuals
+                                    bool isUpcoming = now < examStart;
+                                    bool isOpen = (exam.Status == Symphony.Portal.Web.Models.Enums.ClassExamStatus.InProgress) || (exam.Status == Symphony.Portal.Web.Models.Enums.ClassExamStatus.Scheduled && now >= examStart);
+                                    bool isEnded = exam.Status == Symphony.Portal.Web.Models.Enums.ClassExamStatus.Completed || (now > examStart.AddMinutes(duration) && exam.Status != Symphony.Portal.Web.Models.Enums.ClassExamStatus.InProgress);
+                                }
+
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        @if (isUpcoming)
+                                        {
+                                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-500 text-sm font-bold">
+                                                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                                                Upcoming
+                                            </span>
+                                        }
+                                        else if (isOpen)
+                                        {
+                                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-500 text-sm font-bold">
+                                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                                In Progress (Open)
+                                            </span>
+                                        }
+                                        else if (isEnded)
+                                        {
+                                             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-500/10 text-slate-500 text-sm font-bold">
+                                                Event Ended
+                                            </span>
+                                        }
+                                    </div>
+
+                                    @{
+                                        var sessionDict = ViewBag.StudentSessions as Dictionary<string, Symphony.Portal.Web.Models.StudentExamSession>;
+                                        var hasTaken = sessionDict != null && sessionDict.ContainsKey(exam.Id);
+                                    }
+
+                                    @if (hasTaken)
+                                    {
+                                        <button disabled class="btn btn-success rounded-pill px-4 shadow-sm fw-bold">
+                                            <i class="fas fa-check-circle me-2"></i> Đã thi
+                                        </button>
+                                    }
+                                    else if (isOpen)
+                                    {
+                                        <a asp-controller="ExamSession" asp-action="StartFinal" asp-route-classExamId="@exam.Id" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+                                            <i class="fas fa-play-circle me-2"></i> Vào Thi Ngay
+                                        </a>
+                                    }
+                                    else if (isUpcoming)
+                                    {
+                                         <button disabled class="btn btn-secondary rounded-pill px-4 opacity-50 cursor-not-allowed">
+                                            <i class="fas fa-clock me-2"></i> Chưa đến giờ
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                         <button disabled class="btn btn-secondary rounded-pill px-4 opacity-75 cursor-default">
+                                            <i class="fas fa-check-circle me-2"></i> Đã kết thúc
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+
+                            @if (hasTaken)
+                            {
+                                var session = sessionDict![exam.Id];
+                                <div class="mt-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                                                <i class="fas fa-poll-h"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="text-sm font-bold text-slate-900 dark:text-white mb-0">Kết quả bài thi</h5>
+                                                <p class="text-xs text-slate-500">Hoàn thành lúc @session.EndTime?.ToString("HH:mm - dd/MM/yyyy")</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="text-end">
+                                            @if (exam.IsScorePublished)
+                                            {
+                                                <div class="h3 mb-0 text-primary fw-bold">@session.TotalScore.ToString("0.##")</div>
+                                                <span class="badge @(session.GradeLevel == "Level A" ? "bg-success" : (session.GradeLevel == "Level B" ? "bg-info" : "bg-warning"))">
+                                                    @session.GradeLevel
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-xs font-bold">
+                                                    <i class="fas fa-hourglass-half animate-spin-slow"></i>
+                                                    Đợi công bố kết quả
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                  
+                                </div>
+                            }
+                       </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

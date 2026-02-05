@@ -10,11 +10,15 @@ namespace Symphony.Portal.Web.Models
         [StringLength(36)]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        [Required]
-        public string EntranceExamId { get; set; } = string.Empty;
+        public string? EntranceExamId { get; set; }
         
         [ForeignKey("EntranceExamId")]
         public EntranceExam? EntranceExam { get; set; }
+
+        public string? ClassExamId { get; set; }
+        
+        [ForeignKey("ClassExamId")]
+        public ClassExam? ClassExam { get; set; }
 
         [Required]
         public string StudentId { get; set; } = string.Empty;

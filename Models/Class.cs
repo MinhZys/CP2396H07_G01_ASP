@@ -39,5 +39,9 @@ namespace Symphony.Portal.Web.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Fee { get; set; } = 0m;
 
+        public string? CourseId { get; set; }
+        [ForeignKey("CourseId")]
+        public Course? Course { get; set; }
+
     }
 }

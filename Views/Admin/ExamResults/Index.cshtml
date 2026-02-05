@@ -9,6 +9,19 @@
     <h1 class="h2">Exam Results</h1>
 </div>
 
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link active fw-bold" asp-action="Index">
+            <i class="fas fa-sign-in-alt me-1"></i> Entrance Exams
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-muted" asp-action="FinalExams">
+            <i class="fas fa-graduation-cap me-1"></i> Final Exams (Class Exams)
+        </a>
+    </li>
+</ul>
+
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form method="get" class="row g-3">
@@ -63,7 +76,7 @@
                     </td>
                     <td>
                         <button class="btn btn-sm btn-outline-primary" onclick="sendEmail('@item.Id', this)">
-                            <i class="bi bi-envelope"></i> Send Email
+                            <i class="fas fa-envelope"></i> Gửi Email
                         </button>
                     </td>
                 </tr>

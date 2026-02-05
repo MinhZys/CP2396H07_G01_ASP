@@ -64,7 +64,19 @@
                         </a>
                     }
 
-                   
+                    @if (item.Status == AssignmentStatus.Received && item.Class?.Status != ClassStatus.Completed)
+                    {
+                         <form asp-action="Complete" asp-route-id="@item.Id" method="post" class="d-inline"
+                               onsubmit="return confirm('Are you sure you want to mark this class as COMPLETED? This will notify the Admin to schedule the exam.');">
+                            <button type="submit" class="btn btn-sm btn-success text-white">
+                                <i class="fas fa-check-circle"></i> Complete
+                            </button>
+                        </form>
+                    }
+                    else if (item.Status == AssignmentStatus.Completed || item.Class?.Status == ClassStatus.Completed)
+                    {
+                        <span class="badge bg-success"><i class="fas fa-check"></i> Done</span>
+                    }
                 </td>
             </tr>
         }

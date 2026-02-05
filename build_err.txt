@@ -1,0 +1,7 @@
+﻿D:\Sem3v2\CP2396H07_G01_ASP\Controllers\Admin\ClassExamsController.cs(166,54): error CS1061: 'Class' does not contain a definition for 'CourseId' and no accessible extension method 'CourseId' accepting a first argument of type 'Class' could be found (are you missing a using directive or an assembly reference?) [D:\Sem3v2\CP2396H07_G01_ASP\CP2396H07_G01.csproj]
+
+Build FAILED.
+    97 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:04.93

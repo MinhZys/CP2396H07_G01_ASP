@@ -148,6 +148,14 @@
                 </a>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ClassExams" ? "active" : "")"
+                   asp-area="Admin" asp-controller="ClassExams" asp-action="Index">
+                    <i class="fas fa-edit nav-icon"></i>
+                    <span class="nav-text">Class Exams</span>
+                </a>
+            </li>
+
             <li class="sidebar-heading">ADMISSIONS & USERS</li>
 
             <li class="nav-item">
