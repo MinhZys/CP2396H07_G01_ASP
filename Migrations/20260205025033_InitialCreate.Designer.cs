@@ -12,8 +12,8 @@ using Symphony.Portal.Web.Data;
 namespace CP2396H07_G01.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260204050049_FixDbConfig")]
-    partial class FixDbConfig
+    [Migration("20260205025033_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -324,7 +324,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "1",
-                            CreatedAt = new DateTime(2026, 2, 4, 12, 0, 48, 569, DateTimeKind.Local).AddTicks(103),
+                            CreatedAt = new DateTime(2026, 2, 5, 9, 50, 33, 605, DateTimeKind.Local).AddTicks(9495),
                             Description = "Standard classrooms",
                             IsActive = true,
                             Name = "Theory"
@@ -332,7 +332,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "2",
-                            CreatedAt = new DateTime(2026, 2, 4, 12, 0, 48, 569, DateTimeKind.Local).AddTicks(115),
+                            CreatedAt = new DateTime(2026, 2, 5, 9, 50, 33, 605, DateTimeKind.Local).AddTicks(9512),
                             Description = "Computer labs",
                             IsActive = true,
                             Name = "Lab"
@@ -340,7 +340,7 @@ namespace CP2396H07_G01.Migrations
                         new
                         {
                             Id = "3",
-                            CreatedAt = new DateTime(2026, 2, 4, 12, 0, 48, 569, DateTimeKind.Local).AddTicks(116),
+                            CreatedAt = new DateTime(2026, 2, 5, 9, 50, 33, 605, DateTimeKind.Local).AddTicks(9513),
                             Description = "Virtual classes",
                             IsActive = true,
                             Name = "Online"

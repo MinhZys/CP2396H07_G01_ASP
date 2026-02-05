@@ -318,33 +318,30 @@ namespace CP2396H07_G01.Migrations
                     b.ToTable("ClassCategories");
 
                     b.HasData(
-           new
-           {
-               Id = "1",
-               CreatedAt = new DateTime(2026, 2, 4, 12, 0, 48, 569, DateTimeKind.Local).AddTicks(103),
-               OriginalCreatedAt = new DateTime(2026, 2, 3, 19, 11, 56, 889, DateTimeKind.Local).AddTicks(9320), // Renamed
-               Description = "Standard classrooms",
-               IsActive = true,
-               Name = "Theory"
-           },
-           new
-           {
-               Id = "2",
-               CreatedAt = new DateTime(2026, 2, 4, 12, 0, 48, 569, DateTimeKind.Local).AddTicks(115),
-               OriginalCreatedAt = new DateTime(2026, 2, 3, 19, 11, 56, 889, DateTimeKind.Local).AddTicks(9336), // Renamed
-               Description = "Computer labs",
-               IsActive = true,
-               Name = "Lab"
-           },
-           new
-           {
-               Id = "3",
-               CreatedAt = new DateTime(2026, 2, 4, 12, 0, 48, 569, DateTimeKind.Local).AddTicks(116),
-               OriginalCreatedAt = new DateTime(2026, 2, 3, 19, 11, 56, 889, DateTimeKind.Local).AddTicks(9337), // Renamed
-               Description = "Virtual classes",
-               IsActive = true,
-               Name = "Online"
-           });
+                        new
+                        {
+                            Id = "1",
+                            CreatedAt = new DateTime(2026, 2, 5, 9, 50, 33, 605, DateTimeKind.Local).AddTicks(9495),
+                            Description = "Standard classrooms",
+                            IsActive = true,
+                            Name = "Theory"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            CreatedAt = new DateTime(2026, 2, 5, 9, 50, 33, 605, DateTimeKind.Local).AddTicks(9512),
+                            Description = "Computer labs",
+                            IsActive = true,
+                            Name = "Lab"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            CreatedAt = new DateTime(2026, 2, 5, 9, 50, 33, 605, DateTimeKind.Local).AddTicks(9513),
+                            Description = "Virtual classes",
+                            IsActive = true,
+                            Name = "Online"
+                        });
                 });
 
             modelBuilder.Entity("Symphony.Portal.Web.Models.ClassLesson", b =>

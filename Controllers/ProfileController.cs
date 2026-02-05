@@ -159,6 +159,29 @@ namespace Symphony.Portal.Web.Controllers
                 user.FullName = model.FullName;
             }
 
+            // Update Profile based on role
+            if (isInstructor)
+            {
+                var profile = await _context.InstructorProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
+                if (profile == null) return NotFound();
+
+                profile.FullName = model.FullName;
+                profile.DateOfBirth = model.DateOfBirth;
+                profile.Gender = model.Gender;
+                profile.PhoneNumber = model.PhoneNumber;
+                profile.AddressLine = model.AddressLine;
+                profile.YearsOfExperience = model.YearsOfExperience;
+                profile.Specialization = model.Specialization;
+                profile.Bio = model.Bio;
+                profile.Certifications = model.Certifications;
+                profile.GithubUrl = model.GithubUrl;
+                if (!string.IsNullOrEmpty(model.AvatarUrl))
+                {
+                    profile.AvatarUrl = model.AvatarUrl;
+                }
+
+                _context.InstructorProfiles.Update(profile);
+            }
             else if (isGuest)
             {
                 var guest = await _context.Guests.FirstOrDefaultAsync(g => g.UserId == userId || g.Email == user.Email);
