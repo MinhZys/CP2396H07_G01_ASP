@@ -181,6 +181,30 @@ namespace Symphony.Portal.Web.Controllers
             return View(certs);
         }
 
+        public async Task<IActionResult> DownloadCertificate(string id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var cert = await _context.StudentCertificates
+                .Include(sc => sc.Course)
+                .Include(sc => sc.Certificate)
+                .Include(sc => sc.Student)
+                .FirstOrDefaultAsync(sc => sc.Id == id);
+
+            if (cert == null) return NotFound();
+
+            // Find the enrollment to get the class information
+            var enrollment = await _context.Enrollments
+                .Include(e => e.Class)
+                .ThenInclude(c => c!.ClassCategory)
+                .FirstOrDefaultAsync(e => e.StudentId == cert.StudentId && e.CourseId == cert.CourseId);
+
+            ViewBag.Enrollment = enrollment;
+
+            return View(cert);
+        }
+
         public async Task<IActionResult> RetakeRegistration(string attemptId)
         {
             var attempt = await _context.ExamAttempts

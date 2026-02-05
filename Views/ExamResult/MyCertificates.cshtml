@@ -33,27 +33,28 @@
     }
     else
     {
-        <!-- Premium Success Alert -->
-        <div class="alert bg-white dark:bg-slate-800 border-start border-4 border-success shadow-sm rounded-4 p-4 mb-5 animate__animated animate__fadeInDown d-flex align-items-center gap-4 position-relative overflow-hidden">
+        <!-- High-Contrast Achievement Alert -->
+        <div class="alert shadow-lg p-5 mb-5 animate__animated animate__zoomIn d-flex align-items-center gap-4 position-relative overflow-hidden" 
+             style="background: #ffffff !important; border: none !important; border-radius: 40px !important; color: #1e293b !important;">
             <div class="position-absolute top-0 end-0 opacity-10 mt-n4 me-n4">
                 <i class="fas fa-award fa-10x text-success"></i>
             </div>
-            <div class="flex-shrink-0 bg-success bg-opacity-10 p-4 rounded-circle text-success shadow-sm border border-success border-opacity-10">
-                <i class="fas fa-trophy fa-2x"></i>
+            <div class="flex-shrink-0 bg-success bg-opacity-10 p-4 rounded-circle text-success shadow-sm">
+                <i class="fas fa-trophy fa-3x"></i>
             </div>
             <div class="position-relative">
-                <h4 class="mb-1 fw-bold text-success">Congratulations!</h4>
-                <p class="mb-0 text-slate-600 dark:text-slate-300 fs-5">You've reached a significant milestone. Please visit <strong>Symphony Center</strong> to receive your physical, official certificate.</p>
+                <h3 class="mb-2 fw-bold text-success">Congratulations!</h3>
+                <p class="mb-0 fs-5 opacity-90">Outstanding achievement! You've successfully completed your journey. Please visit <strong>Symphony Center</strong> to receive your official hard-copy certificate.</p>
             </div>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
             @foreach (var item in Model)
             {
-                <div class="col-md-6 col-lg-4 animate__animated animate__fadeInUp">
+                <div class="col-md-8 col-lg-6 animate__animated animate__fadeInUp">
                     <div class="certificate-card h-100 position-relative">
                         <!-- Card Body -->
-                        <div class="card h-100 border-0 shadow-lg rounded-4 overflow-hidden dark:bg-slate-850">
+                        <div class="card h-100 border-0 shadow-lg overflow-hidden dark:bg-slate-850" style="border-radius: 40px !important;">
                             <!-- Header Decoration -->
                             <div class="card-header-accent"></div>
                             
@@ -88,7 +89,7 @@
                                     </div>
                                 </div>
 
-                                <a href="#" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold shadow-sm py-3 transition-all transform hover-scale">
+                                <a asp-action="DownloadCertificate" asp-route-id="@item.Id" target="_blank" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold shadow-sm py-3 transition-all transform hover-scale">
                                     <i class="fas fa-file-download me-2"></i> Download PDF Result
                                 </a>
                             </div>

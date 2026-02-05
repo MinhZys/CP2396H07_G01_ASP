@@ -1,0 +1,295 @@
+@model Symphony.Portal.Web.Models.StudentCertificate
+@{
+    Layout = null;
+    var enrollment = ViewBag.Enrollment as Symphony.Portal.Web.Models.Enrollment;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate - @Model.CertificateCode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .certificate-container {
+            width: 1100px;
+            height: 750px;
+            padding: 40px;
+            margin: 40px auto;
+            background: white;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            position: relative;
+            box-sizing: border-box;
+            border-radius: 20px;
+        }
+
+        .certificate-border {
+            width: 100%;
+            height: 100%;
+            border: 20px solid #c5a059;
+            padding: 40px;
+            box-sizing: border-box;
+            position: relative;
+            border-radius: 10px;
+        }
+
+        .certificate-inner-border {
+            width: 100%;
+            height: 100%;
+            border: 2px solid #c5a059;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .corner-decoration {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background-repeat: no-repeat;
+            pointer-events: none;
+        }
+
+        .top-left { top: -10px; left: -10px; border-top: 5px solid #c5a059; border-left: 5px solid #c5a059; }
+        .top-right { top: -10px; right: -10px; border-top: 5px solid #c5a059; border-right: 5px solid #c5a059; }
+        .bottom-left { bottom: -10px; left: -10px; border-bottom: 5px solid #c5a059; border-left: 5px solid #c5a059; }
+        .bottom-right { bottom: -10px; right: -10px; border-bottom: 5px solid #c5a059; border-right: 5px solid #c5a059; }
+
+        .content {
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: #1e293b;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .logo span { color: #c5a059; }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            color: #1e293b;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #64748b;
+            margin: 5px 0 30px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        .presented-to {
+            font-size: 18px;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .student-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: #c5a059;
+            margin: 0 0 5px;
+            font-style: italic;
+        }
+
+        .student-email {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
+
+        .description {
+            font-size: 16px;
+            color: #475569;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            text-align: left;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 15px;
+        }
+
+        .detail-item {
+            margin-bottom: 5px;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: auto;
+            padding: 0 40px;
+        }
+
+        .signature {
+            width: 200px;
+            border-top: 2px solid #c5a059;
+            padding-top: 10px;
+            text-align: center;
+        }
+
+        .signature-text {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: bold;
+        }
+
+        .credential {
+            text-align: right;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .credential strong {
+            color: #1e293b;
+        }
+
+        @@media print {
+            body { background: none; }
+            .certificate-container { 
+                margin: 0;
+                box-shadow: none;
+                width: 100%;
+                height: 100vh;
+            }
+            .no-print { display: none; }
+        }
+
+        .no-print-toolbar {
+            text-align: center;
+            padding: 20px;
+            background: #1e293b;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .btn-print {
+            padding: 12px 30px;
+            background: #c5a059;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print-toolbar no-print">
+        <a href="#" class="btn-print" onclick="window.print()">
+            <i class="fas fa-print"></i> Download as PDF / Print
+        </a>
+        <p style="margin: 10px 0 0; font-size: 12px; opacity: 0.7;">Tip: Set 'Destination' to 'Save as PDF' in the print dialog.</p>
+    </div>
+
+    <div class="certificate-container">
+        <div class="certificate-border">
+            <div class="certificate-inner-border">
+                <div class="corner-decoration top-left"></div>
+                <div class="corner-decoration top-right"></div>
+                <div class="corner-decoration bottom-left"></div>
+                <div class="corner-decoration bottom-right"></div>
+
+                <div class="content">
+                    <div class="logo">Symphony <span>Academy</span></div>
+                    
+                    <p class="subtitle">Certificate of Achievement</p>
+                    <h1 class="title">Official Graduate</h1>
+
+                    <p class="presented-to">This is to certify that</p>
+                    <h2 class="student-name">@Model.Student?.FullName</h2>
+                    <p class="student-email">(@Model.Student?.Email)</p>
+
+                    <p class="description">
+                        has successfully completed all academic requirements for the course 
+                        <strong>@Model.Course?.Title</strong> 
+                        under the supervision of Symphony IT Professional Training Center.
+                    </p>
+
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Examination Date</div>
+                            <div class="detail-value">@Model.IssueDate.ToString("MMMM dd, yyyy HH:mm")</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Final Average Score</div>
+                            <div class="detail-value">@Model.AverageScore.ToString("F2") / 100</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Course Category</div>
+                            <div class="detail-value">@(enrollment?.Class?.ClassCategory?.Name ?? "Professional IT")</div>
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        <div class="signature">
+                            <div class="signature-text">Symphony Director</div>
+                        </div>
+                        <div class="seal" style="text-align: center;">
+                            <i class="fas fa-certificate fa-4x" style="color: #c5a059; opacity: 0.5;"></i>
+                        </div>
+                        <div class="credential">
+                            Credential ID: <strong>@Model.CertificateCode</strong><br>
+                            Issued on @Model.IssueDate.ToString("yyyy-MM-dd")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

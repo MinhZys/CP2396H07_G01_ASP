@@ -34,20 +34,6 @@ namespace Symphony.Portal.Web.Controllers.Admin
             return View(await PaginatedList<ClassExam>.CreateAsync(classExamsQuery, pageNumber ?? 1, pageSize));
         }
 
-        public async Task<IActionResult> Details(string? id)
-        {
-            if (id == null) return NotFound();
-
-            var classExam = await _context.ClassExams
-                .Include(ce => ce.Class)
-                .Include(ce => ce.Course)
-                .Include(ce => ce.ExamPaper)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (classExam == null) return NotFound();
-
-            return View(classExam);
-        }
 
         public IActionResult Create()
         {
@@ -116,20 +102,6 @@ namespace Symphony.Portal.Web.Controllers.Admin
             return View(classExam);
         }
 
-        public async Task<IActionResult> Delete(string? id)
-        {
-            if (id == null) return NotFound();
-
-            var classExam = await _context.ClassExams
-                .Include(ce => ce.Class)
-                .Include(ce => ce.Course)
-                .Include(ce => ce.ExamPaper)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (classExam == null) return NotFound();
-
-            return View(classExam);
-        }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -138,6 +110,14 @@ namespace Symphony.Portal.Web.Controllers.Admin
             var classExam = await _context.ClassExams.FindAsync(id);
             if (classExam != null)
             {
+                // Check if any students have already started or finished this exam
+                var hasSessions = await _context.StudentExamSessions.AnyAsync(s => s.ClassExamId == id);
+                if (hasSessions)
+                {
+                    TempData["Error"] = "Cannot delete this exam assignment because students have already interacted with it. Please cancel the exam instead if needed.";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.ClassExams.Remove(classExam);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Class Exam deleted successfully.";
