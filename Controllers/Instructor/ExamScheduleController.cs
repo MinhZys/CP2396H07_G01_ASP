@@ -5,6 +5,7 @@ using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models;
 using Symphony.Portal.Web.Models.Enums; // Đảm bảo bạn có khai báo enum này ở đây
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Symphony.Portal.Web.Controllers.Instructor
@@ -21,20 +22,45 @@ namespace Symphony.Portal.Web.Controllers.Instructor
             _context = context;
         }
 
-        // GET: Instructor/ExamSchedule/Index
+        // =========================
+        // INDEX (LIST)
+        // =========================
         public async Task<IActionResult> Index()
         {
-            // Lấy tất cả bài tập có AssignmentType là Invigilation (giám sát phòng thi)
+            var instructorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // 1) Mark Assigned -> Received
+            var notReceived = await _context.Assignments
+                .Where(a => a.InstructorId == instructorId
+                         && a.AssignmentType == AssignmentType.Invigilation
+                         && a.Status == AssignmentStatus.Assigned) // Kiểm tra trạng thái là Assigned
+                .ToListAsync();
+
+            if (notReceived.Any())
+            {
+                foreach (var item in notReceived)
+                {
+                    item.Status = AssignmentStatus.Received; // Cập nhật trạng thái thành Received
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            // 2) Load list for display (Include Class + Instructor)
             var assignments = await _context.Assignments
                 .Include(a => a.Class)        // Lấy thông tin lớp
                 .Include(a => a.Instructor)   // Lấy thông tin giảng viên
-                .Where(a => a.AssignmentType == AssignmentType.Invigilation) // Chỉ lấy bài giám sát phòng thi
+                .Where(a => a.InstructorId == instructorId
+                         && a.AssignmentType == AssignmentType.Invigilation) // Chỉ lấy bài giám sát phòng thi
+                .OrderByDescending(a => a.CreatedAt) // Sắp xếp theo thời gian tạo
                 .ToListAsync();
 
             return View(assignments); // Trả về danh sách các bài giám sát phòng thi cho view
         }
 
-        // GET: Instructor/ExamSchedule/Cancel/5
+        // =========================
+        // CANCEL (GET)
+        // =========================
         public async Task<IActionResult> Cancel(string id)
         {
             if (id == null) return NotFound();
