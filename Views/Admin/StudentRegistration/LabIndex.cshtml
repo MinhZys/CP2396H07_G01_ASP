@@ -1,0 +1,90 @@
+@using Symphony.Portal.Web.Models.Enums
+@model Symphony.Portal.Web.Models.ViewModels.PaginatedList<Symphony.Portal.Web.Models.Guest>
+
+@{
+    ViewData["Title"] = "Lab Rental Registrations";
+    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
+    var currentStatus = ViewBag.CurrentStatus as RegistrationStatus?;
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Lab Rental Registrations</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a asp-action="Index" asp-route-type="" class="btn btn-sm btn-outline-primary">Courses</a>
+            <a asp-action="Index" asp-route-type="Lab" class="btn btn-sm btn-danger active">Lab Rentals</a>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="btn-group">
+            <a asp-action="Index" asp-route-type="Lab" asp-route-status="" class="btn btn-sm btn-outline-secondary @(currentStatus == null ? "active" : "")">All</a>
+            <a asp-action="Index" asp-route-type="Lab" asp-route-status="Pending" class="btn btn-sm btn-outline-warning @(currentStatus == RegistrationStatus.Pending ? "active" : "")">Pending</a>
+            <a asp-action="Index" asp-route-type="Lab" asp-route-status="Approved" class="btn btn-sm btn-outline-success @(currentStatus == RegistrationStatus.Approved ? "active" : "")">Approved</a>
+            <a asp-action="Index" asp-route-type="Lab" asp-route-status="Rejected" class="btn btn-sm btn-outline-danger @(currentStatus == RegistrationStatus.Rejected ? "active" : "")">Rejected</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Created</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Lab Class</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@item.FullName</td>
+                            <td>@item.Email</td>
+                            <td>
+                                @if (item.Class != null)
+                                {
+                                    <strong>@item.Class.ClassName</strong>
+                                    <br/><small class="text-muted">@item.Class.ClassCategory?.Name</small>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">N/A</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.Status == GuestRegistrationStatus.PaidPendingApproval || item.Status == GuestRegistrationStatus.Approved)
+                                {
+                                    <span class="badge bg-success">Approved</span>
+                                }
+                                else if (item.Status == GuestRegistrationStatus.Rejected)
+                                {
+                                    <span class="badge bg-danger">Rejected</span>
+                                }
+                                else if (item.Status == GuestRegistrationStatus.PendingPayment)
+                                {
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@item.Status</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-controller="Guests" asp-action="Index" asp-route-status="@item.Status" class="btn btn-sm btn-info text-white">
+                                    <i class="fa-solid fa-eye"></i> Manage
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <partial name="_Pagination" model="Model" />
+    </div>
+</div>

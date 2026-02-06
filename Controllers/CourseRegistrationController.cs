@@ -128,8 +128,8 @@ namespace Symphony.Portal.Web.Controllers
                 Status = GuestRegistrationStatus.PendingPayment,
                 CreatedAt = DateTime.Now,
 
-                // lưu CourseId vào Description (vì model Guest chưa có CourseId)
-                Description = $"COURSE:{courseId}"
+                // lưu CourseId và ExtraPractice vào Description
+                Description = $"COURSE:{courseId}|EXTRA:{guest.HasExtraPractice}"
             };
 
             _context.Guests.Add(guestEntity);
@@ -174,6 +174,10 @@ namespace Symphony.Portal.Web.Controllers
                 }
             };
 
+            // Calculate total amount for display
+            var hasExtra = guest.Description?.Contains("EXTRA:True", StringComparison.OrdinalIgnoreCase) ?? false;
+            ViewBag.TotalAmount = course.TuitionFee + (hasExtra ? 1000m : 0m);
+            ViewBag.HasExtra = hasExtra;
             ViewBag.GuestId = guest.Id; // để view post lại id
             return View(vm);
         }
@@ -199,11 +203,14 @@ namespace Symphony.Portal.Web.Controllers
                 ? pm
                 : PaymentMethod.Online;
 
+            var hasExtra = guest.Description?.Contains("EXTRA:True", StringComparison.OrdinalIgnoreCase) ?? false;
+            var totalAmount = course.TuitionFee + (hasExtra ? 1000m : 0m);
+
             var payment = new Payment
             {
                 Id = Guid.NewGuid().ToString(),
                 GuestId = guest.Id,
-                Amount = course.TuitionFee,
+                Amount = totalAmount,
                 PaymentMethod = method,
                 PaymentDate = DateTime.Now,
 

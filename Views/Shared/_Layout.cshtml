@@ -85,8 +85,8 @@
                         </a>
                     }
 
-                    @* Revision Courses: Không hiện cho Student *@
-                    @if (!(User.Identity?.IsAuthenticated == true && User.IsInRole("Student")))
+                    @* Revision Courses: Chỉ hiện cho người đã đăng nhập và không phải Student (ví dụ Guest muốn đăng ký ôn tập) *@
+                    @if (User.Identity?.IsAuthenticated == true && !User.IsInRole("Student"))
                     {
                         <a class="hover:text-primary transition-colors"
                            asp-controller="RevisionGuests"
@@ -95,8 +95,8 @@
                         </a>
                     }
 
-                    @* Lab Registration: Không hiện cho Guest *@
-                    @if (!(User.Identity?.IsAuthenticated == true && User.IsInRole("Guest")))
+                    @* Lab Registration: Hiện cho Student và Guest đã đăng nhập *@
+                    @if (User.Identity?.IsAuthenticated == true && (User.IsInRole("Guest") || User.IsInRole("Student")))
                     {
                         <a class="hover:text-primary transition-colors"
                            asp-controller="LabRegistration"

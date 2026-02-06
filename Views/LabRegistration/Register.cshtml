@@ -18,7 +18,7 @@
                 <select asp-for="SelectedClassId"
                         asp-items="labClasses"
                         class="w-full bg-background-dark border border-slate-700 rounded-lg p-3 text-white">
-                    <option value="">-- Select Lab Class --</option>
+                    <option value="">-- Select Lab Class (@(((decimal?)ViewBag.LabFee ?? 1500m).ToString("N0"))đ each) --</option>
                 </select>
                 <span asp-validation-for="SelectedClassId" class="text-red-400 text-sm"></span>
             </div>
@@ -71,4 +71,14 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <script>
+            document.getElementById('SelectedClassId').addEventListener('change', function() {
+                if (this.value) {
+                    this.closest('form').submit();
+                }
+            });
+        </script>
+    }
 }

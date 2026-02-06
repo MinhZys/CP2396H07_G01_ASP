@@ -35,5 +35,8 @@ namespace Symphony.Portal.Web.Models
 
         [Required]
         public PaymentMethod PaymentMethod { get; set; }
+
+        // Extra Practice for Course Registration
+        public bool HasExtraPractice { get; set; }
     }
 }

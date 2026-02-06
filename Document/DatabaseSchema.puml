@@ -124,6 +124,11 @@ entity "Classes" as Classes {
     NumberOfSeats : int
     Status : int
     CreatedAt : datetime2
+    RoomName : nvarchar(max)
+    RoomLocation : nvarchar(max)
+    CenterId : nvarchar(36) <<FK>>
+    Fee : decimal(18,2)
+    CourseId : nvarchar(36) <<FK>>
 }
 
 entity "Enrollments" as Enrollments {
@@ -260,6 +265,7 @@ entity "StudentExamSessions" as StudentExamSessions {
     Id : nvarchar(36) <<PK>>
     --
     EntranceExamId : nvarchar(36) <<FK>>
+    ClassExamId : nvarchar(36) <<FK>>
     StudentId : nvarchar(36) <<FK>>
     ExamPaperId : nvarchar(36) <<FK>>
     StartTime : datetime2
@@ -531,6 +537,46 @@ entity "PageImages" as PageImages {
     CreatedAt : datetime2
 }
 
+entity "ClassExams" as ClassExams {
+    Id : nvarchar(36) <<PK>>
+    --
+    ClassId : nvarchar(36) <<FK>>
+    CourseId : nvarchar(36) <<FK>>
+    ExamPaperId : nvarchar(36) <<FK>>
+    ExamDate : datetime2
+    DurationOverride : int
+    Status : int
+    IsScorePublished : bit
+    CreatedAt : datetime2
+}
+
+entity "ExamAttempts" as ExamAttempts {
+    Id : nvarchar(36) <<PK>>
+    --
+    StudentId : nvarchar(36) <<FK>>
+    CourseId : nvarchar(36) <<FK>>
+    AttemptNumber : int
+    AverageScore : float
+    Status : int
+    RetakeFeePaid : bit
+    PaymentReference : nvarchar(max)
+    AttemptDate : datetime2
+    CompletedDate : datetime2
+}
+
+entity "StudentCertificates" as StudentCertificates {
+    Id : nvarchar(36) <<PK>>
+    --
+    StudentId : nvarchar(36) <<FK>>
+    CourseId : nvarchar(36) <<FK>>
+    CertificateId : nvarchar(36) <<FK>>
+    IssueDate : datetime2
+    ExpiryDate : datetime2
+    CertificateCode : nvarchar(50)
+    AverageScore : float
+    IsValid : bit
+}
+
 ' Relationships
 Users }-- Roles
 StudentProfiles }-- Users
@@ -593,5 +639,16 @@ ClassSessions }-- Rooms
 ClassSessions }-- Users : Instructor
 ContactMessages }-- Centers
 PageImages }-- PageContents
+ClassExams }-- Classes
+ClassExams }-- Courses
+ClassExams }-- ExamPapers
+ExamAttempts }-- Users : Student
+ExamAttempts }-- Courses
+StudentCertificates }-- Users : Student
+StudentCertificates }-- Courses
+StudentCertificates }-- Certificates
+Classes }-- Centers
+Classes }-- Courses
+StudentExamSessions }-- ClassExams
 
 @enduml

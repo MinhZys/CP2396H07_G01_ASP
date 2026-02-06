@@ -15,7 +15,15 @@
             <div class="bg-[#0b0f16] border border-slate-800 rounded-xl p-6">
                 <p class="text-xs font-bold uppercase text-slate-500 mb-2">Course</p>
                 <h2 class="text-xl font-bold text-white mb-2">@Model.Course.Title</h2>
-                <p class="text-2xl font-bold text-primary">@Model.Course.TuitionFee.ToString("N0")đ</p>
+                <div class="space-y-1">
+                    <p class="text-slate-400 text-sm flex justify-between">Tuition Fee: <span>@Model.Course.TuitionFee.ToString("N0")đ</span></p>
+                    @if (ViewBag.HasExtra == true)
+                    {
+                        <p class="text-slate-400 text-sm flex justify-between">Extra Practice: <span class="text-primary font-bold">+1,000đ</span></p>
+                    }
+                    <hr class="border-slate-800 my-2" />
+                    <p class="text-lg font-bold text-white flex justify-between">Total: <span class="text-primary">@(((decimal)ViewBag.TotalAmount).ToString("N0"))đ</span></p>
+                </div>
             </div>
 
             <div class="bg-[#0b0f16] border border-slate-800 rounded-xl p-6">

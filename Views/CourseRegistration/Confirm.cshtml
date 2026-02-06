@@ -59,6 +59,16 @@
                 <span asp-validation-for="Guest.Address" class="text-red-400 text-sm"></span>
             </div>
 
+            <div class="mt-4 bg-[#1a1f26] border border-primary/20 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                    <input asp-for="Guest.HasExtraPractice" type="checkbox" class="mt-1 w-5 h-5 rounded border-slate-700 bg-background-dark text-primary" />
+                    <div>
+                        <label asp-for="Guest.HasExtraPractice" class="text-white font-bold block">Add Lab Training Session (Extra Practice)</label>
+                        <p class="text-slate-400 text-sm">Include extra lab practice sessions. An additional fee of <span class="text-primary font-bold">$1,000</span> will be applied.</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="flex gap-3 pt-4">
                 <a asp-controller="Courses" asp-action="Detail" asp-route-id="@Model.Course.Id"
                    class="px-6 py-3 rounded-lg border border-slate-700 text-slate-300 font-bold hover:text-white hover:border-slate-500 transition">

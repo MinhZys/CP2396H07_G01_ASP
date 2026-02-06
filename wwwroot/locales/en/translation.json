@@ -37,7 +37,10 @@
     "certificates": "Certificates",
     "chat_support": "Chat Support",
     "go_to_site": "Go to Site",
-    "sign_out": "Sign Out"
+    "sign_out": "Sign Out",
+    "class_schedules": "Class Schedules",
+    "class_exams": "Class Exams",
+    "ai_quiz_generator": "AI Quiz Generator"
   },
   "hero": {
     "title": "Master Technology Today",

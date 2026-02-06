@@ -23,8 +23,12 @@ namespace Symphony.Portal.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Register()
         {
+            // 0) Calculate fee based on user
+            decimal fee = await CalculateLabFee();
+            ViewBag.LabFee = fee;
+
             // 1) load list lớp Lab cho dropdown
-            ViewBag.LabClasses = await GetOpenLabClasses();
+            ViewBag.LabClasses = await GetOpenLabClasses(fee);
 
             // 2) lấy email từ user đang đăng nhập (nếu có)
             var email = User?.Identity?.Name;
@@ -74,8 +78,12 @@ namespace Symphony.Portal.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(LabRegisterPageVm vm)
         {
+            // Calculate fee
+            decimal fee = await CalculateLabFee();
+            ViewBag.LabFee = fee;
+
             // load list lại để render khi lỗi
-            ViewBag.LabClasses = await GetOpenLabClasses();
+            ViewBag.LabClasses = await GetOpenLabClasses(fee);
 
             // validate chọn lớp
             if (string.IsNullOrWhiteSpace(vm.SelectedClassId))
@@ -91,8 +99,6 @@ namespace Symphony.Portal.Web.Controllers
 
                 if (labClass == null)
                     ModelState.AddModelError(nameof(vm.SelectedClassId), "Lớp Lab không tồn tại.");
-                else if (!string.Equals(labClass.ClassCategory?.Name, "Lab", StringComparison.OrdinalIgnoreCase))
-                    ModelState.AddModelError(nameof(vm.SelectedClassId), "Bạn chỉ được chọn lớp thuộc loại Lab.");
             }
 
             // set purpose cố định
@@ -140,8 +146,9 @@ namespace Symphony.Portal.Web.Controllers
                 Status = GuestRegistrationStatus.PendingPayment,
                 CreatedAt = DateTime.Now,
 
-                // ✅ lưu ClassId vào Description
-                Description = $"CLASS:{vm.SelectedClassId}"
+                // ✅ lưu ClassId vào đúng property + Description
+                Description = $"CLASS:{vm.SelectedClassId}",
+                ClassId = vm.SelectedClassId
             };
 
             _context.Guests.Add(guestEntity);
@@ -174,9 +181,6 @@ namespace Symphony.Portal.Web.Controllers
 
             if (labClass == null) return NotFound();
 
-            if (!string.Equals(labClass.ClassCategory?.Name, "Lab", StringComparison.OrdinalIgnoreCase))
-                return BadRequest("Class này không phải loại Lab.");
-
             var vm = new LabRegisterPageVm
             {
                 SelectedClassId = labClass.Id,
@@ -192,6 +196,8 @@ namespace Symphony.Portal.Web.Controllers
                 }
             };
 
+            decimal fee = await CalculateLabFee();
+            ViewBag.LabFee = fee;
             ViewBag.GuestId = guest.Id;
             ViewBag.LabClass = labClass; // để view hiển thị class + fee
             return View(vm);
@@ -220,14 +226,11 @@ namespace Symphony.Portal.Web.Controllers
 
             if (labClass == null) return NotFound();
 
-            if (!string.Equals(labClass.ClassCategory?.Name, "Lab", StringComparison.OrdinalIgnoreCase))
-                return BadRequest("Class này không phải loại Lab.");
-
             var method = Enum.TryParse<PaymentMethod>(paymentMethod, true, out var pm)
                 ? pm
                 : PaymentMethod.Online;
 
-            var amount = labClass.Fee;
+            var amount = await CalculateLabFee();
 
             var payment = new Payment
             {
@@ -261,9 +264,27 @@ namespace Symphony.Portal.Web.Controllers
         }
 
         // ===== helpers =====
-        private async Task<List<SelectListItem>> GetOpenLabClasses()
+        private async Task<decimal> CalculateLabFee()
         {
-            var labCategory = await _context.ClassCategories.FirstOrDefaultAsync(x => x.Name == "Lab");
+            var email = User?.Identity?.Name;
+            if (string.IsNullOrWhiteSpace(email)) return 1500m;
+
+            var user = await _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            // Nếu là Student (case-insensitive)
+            if (string.Equals(user.Role?.Name, RoleNames.Student, StringComparison.OrdinalIgnoreCase))
+            {
+                return 1000m; // Giảm còn 1000 cho tất cả Student
+            }
+
+            return 1500m; // Giá mặc định cho Guest hoặc các role khác
+        }
+
+        private async Task<List<SelectListItem>> GetOpenLabClasses(decimal fee)
+        {
+            var labCategory = await _context.ClassCategories.FirstOrDefaultAsync(x => x.Name == "Register Lab");
             if (labCategory == null) return new List<SelectListItem>();
 
             var labs = await _context.Classes
@@ -274,7 +295,7 @@ namespace Symphony.Portal.Web.Controllers
             return labs.Select(c => new SelectListItem
             {
                 Value = c.Id,
-                Text = $"{c.ClassName} - {c.Fee:N0}đ"
+                Text = $"{c.ClassName} - {fee:N0}đ"
             }).ToList();
         }
 

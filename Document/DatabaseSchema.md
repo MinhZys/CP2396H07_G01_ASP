@@ -133,6 +133,10 @@ Specific scheduled instances of a Course.
 | `ClassCategoryId`| `VARCHAR(36)` | **FK**, `Required` | Links to **ClassCategories**. |
 | `CourseId` | `VARCHAR(36)` | **FK** | Links to **Courses**. |
 | `InstructorId` | `VARCHAR(36)` | **FK** | Links to **Users**. |
+| `RoomName` | `NVARCHAR(Max)` | | Name of the exam room/classroom. |
+| `RoomLocation` | `NVARCHAR(Max)` | | Physical location of the room. |
+| `CenterId` | `VARCHAR(36)` | **FK** | Links to **Centers**. |
+| `Fee` | `DECIMAL(18,2)` | `Default 0` | Tuition or special fee for the class. |
 
 ### `Enrollments`
 Records of students joining classes.
@@ -167,6 +171,50 @@ Applications from prospective students.
 
 ### `EntranceExams` & `ExamDetails`
 Tables handling the logic for entrance testing, linked typically to Registrations or Courses.
+
+### `ClassExams`
+Defines final exam sessions for specific classes.
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| **Id** | `VARCHAR(36)` | **PK** | Unique ID for the class exam setting. |
+| `ClassId` | `VARCHAR(36)` | **FK**, `Required` | Links to **Classes**. |
+| `CourseId` | `VARCHAR(36)` | **FK**, `Required` | Links to **Courses**. |
+| `ExamPaperId` | `VARCHAR(36)` | **FK**, `Required` | Links to **ExamPapers**. |
+| `ExamDate` | `DATETIME` | | Specific date when the exam is held. |
+| `DurationOverride` | `INT` | | Custom duration in minutes (overrides paper duration). |
+| `Status` | `INT` | `Required` | Scheduled, Taking, Completed, Cancelled. |
+| `IsScorePublished` | `BIT` | `Default false`| Whether scores are visible to students. |
+| `CreatedAt` | `DATETIME` | `Default Now`| Record creation timestamp. |
+
+### `StudentExamSessions`
+Tracks actual exam-taking sessions for both entrance and final exams.
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| **Id** | `VARCHAR(36)` | **PK** | Session ID. |
+| `EntranceExamId` | `VARCHAR(36)` | **FK** | Links to **EntranceExams** (nullable). |
+| `ClassExamId` | `VARCHAR(36)` | **FK** | Links to **ClassExams** (nullable). |
+| `StudentId` | `VARCHAR(36)` | **FK**, `Required` | Links to **Users**. |
+| `ExamPaperId` | `VARCHAR(36)` | **FK**, `Required` | Links to **ExamPapers**. |
+| `StartTime` | `DATETIME` | | Actual start timestamp. |
+| `EndTime` | `DATETIME` | | Actual submission timestamp. |
+| `TotalScore` | `FLOAT` | | Achieved score. |
+| `GradeLevel` | `NVARCHAR(Max)` | | e.g., "Pass", "A", "Distinction". |
+| `Status` | `INT` | `Enum` | Taking, Finished. |
+
+### `ExamAttempts`
+Tracks student progress through multiple exam attempts for course completion.
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| **Id** | `VARCHAR(36)` | **PK** | Unique identifier for the attempt. |
+| `StudentId` | `VARCHAR(36)` | **FK**, `Required` | Links to **Users**. |
+| `CourseId` | `VARCHAR(36)` | **FK**, `Required` | Links to **Courses**. |
+| `AttemptNumber` | `INT` | `Required` | Attempt count (1, 2, 3...). |
+| `AverageScore` | `FLOAT` | | Calculated average score of the attempt. |
+| `Status` | `INT` | `Required` | InProgress, Completed, Failed. |
+| `RetakeFeePaid` | `BIT` | `Default false`| Whether the fee for retaking was paid. |
+| `PaymentReference` | `NVARCHAR(Max)` | | Linked payment transaction reference. |
+| `AttemptDate` | `DATETIME` | `Default Now`| Start date of the attempt. |
+| `CompletedDate` | `DATETIME` | | Completion date of the attempt. |
 
 ---
 
@@ -203,5 +251,24 @@ Transaction records for tuition fees.
 *   Includes Method (Cash/Transfer), Amount, Date, and linked Enrollment.
 
 ### `Certificates`
-Definitions of certificates awarded.
-*   Linked to Courses via `CertificateId`.
+Definitions of available certificates.
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| **Id** | `VARCHAR(36)` | **PK** | |
+| `Name` | `NVARCHAR(100)`| `Required` | |
+| `Description` | `NVARCHAR(500)`| | |
+| `IsActive` | `BIT` | | |
+
+### `StudentCertificates`
+Issued achievements for students who pass courses.
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| **Id** | `VARCHAR(36)` | **PK** | |
+| `StudentId` | `VARCHAR(36)` | **FK**, `Required` | |
+| `CourseId` | `VARCHAR(36)` | **FK**, `Required` | |
+| `CertificateId` | `VARCHAR(36)` | **FK**, `Required` | |
+| `IssueDate` | `DATETIME` | `Required` | |
+| `ExpiryDate` | `DATETIME` | | |
+| `CertificateCode` | `NVARCHAR(50)` | `Required` | Unique code. |
+| `AverageScore` | `FLOAT` | `Required` | Final GPA. |
+| `IsValid` | `BIT` | `Default true` | |

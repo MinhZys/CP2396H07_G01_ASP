@@ -37,7 +37,10 @@
     "certificates": "Chứng chỉ",
     "chat_support": "Hỗ trợ trực tuyến",
     "go_to_site": "Về trang chủ",
-    "sign_out": "Đăng xuất"
+    "sign_out": "Đăng xuất",
+    "class_schedules": "Lịch học lớp",
+    "class_exams": "Kỳ thi lớp",
+    "ai_quiz_generator": "Trình tạo Quiz AI"
   },
   "hero": {
     "title": "Chinh phục Công nghệ Hôm nay",
