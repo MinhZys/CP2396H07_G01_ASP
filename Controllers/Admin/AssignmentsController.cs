@@ -150,9 +150,39 @@ namespace Symphony.Portal.Web.Controllers.Admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var assignment = await _context.Assignments.FindAsync(id);
+            var assignment = await _context.Assignments
+                .Include(a => a.Class)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (assignment != null)
             {
+                // Check if assignment can be deleted
+                bool hasData = false;
+
+                // 1. Check status
+                if (assignment.Status == AssignmentStatus.Received)
+                {
+                    hasData = true;
+                }
+
+                // 2. Check for related student exam sessions if it's an exam-related assignment
+                if (assignment.AssignmentType == AssignmentType.Invigilation || assignment.AssignmentType == AssignmentType.Grading)
+                {
+                    var hasExamSessions = await _context.StudentExamSessions
+                        .AnyAsync(s => s.ClassExam != null && s.ClassExam.ClassId == assignment.ClassId);
+                    
+                    if (hasExamSessions)
+                    {
+                        hasData = true;
+                    }
+                }
+
+                if (hasData)
+                {
+                    TempData["Error"] = "Cannot delete this assignment because it has associated data or has been received.";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Assignments.Remove(assignment);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Assignment deleted successfully.";
