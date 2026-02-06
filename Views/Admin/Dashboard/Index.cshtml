@@ -1,3 +1,4 @@
+@model Symphony.Portal.Web.Models.ViewModels.AdminDashboardVM
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
@@ -20,9 +21,9 @@
             <div class="card-body d-flex flex-column justify-content-between">
                 <div>
                      <h5 class="card-title fw-bold"><i class="fas fa-user-graduate me-2"></i>Students</h5>
-                     <h2 class="display-6 fw-bold my-2">--</h2> 
+                     <h2 class="display-6 fw-bold my-2">@Model.StudentCount</h2> 
                 </div>
-                 <p class="card-text small opacity-75">New regs pending approval</p>
+                 <p class="card-text small opacity-75">@Model.PendingRegistrationCount New regs pending approval</p>
                  <a href="/Admin/StudentRegistration/Index" class="stretched-link text-white text-decoration-none small">View All <i class="fas fa-arrow-right ms-1"></i></a>
             </div>
         </div>
@@ -32,7 +33,7 @@
             <div class="card-body d-flex flex-column justify-content-between">
                 <div>
                      <h5 class="card-title fw-bold"><i class="fas fa-chalkboard-teacher me-2"></i>Instructors</h5>
-                     <h2 class="display-6 fw-bold my-2">--</h2>
+                     <h2 class="display-6 fw-bold my-2">@Model.InstructorCount</h2>
                 </div>
                 <p class="card-text small opacity-75">Active course instructors</p>
                 <a href="/Admin/Users/Index" class="stretched-link text-white text-decoration-none small">Manage <i class="fas fa-arrow-right ms-1"></i></a>
@@ -44,7 +45,7 @@
             <div class="card-body d-flex flex-column justify-content-between">
                 <div>
                      <h5 class="card-title fw-bold"><i class="fas fa-book-open me-2"></i>Courses</h5>
-                     <h2 class="display-6 fw-bold my-2">--</h2>
+                     <h2 class="display-6 fw-bold my-2">@Model.CourseCount</h2>
                 </div>
                 <p class="card-text small opacity-75">Active training courses</p>
                 <a href="/Admin/Courses/Index" class="stretched-link text-white text-decoration-none small">View <i class="fas fa-arrow-right ms-1"></i></a>
@@ -56,7 +57,7 @@
             <div class="card-body d-flex flex-column justify-content-between">
                  <div>
                      <h5 class="card-title fw-bold text-dark"><i class="fas fa-calendar-alt me-2"></i>Exams</h5>
-                     <h2 class="display-6 fw-bold my-2 text-dark">--</h2>
+                     <h2 class="display-6 fw-bold my-2 text-dark">@Model.UpcomingExamCount</h2>
                 </div>
                 <p class="card-text small text-dark opacity-75">Upcoming entrance exams</p>
                 <a href="/Admin/EntranceExams/Index" class="stretched-link text-dark text-decoration-none small">Check Schedule <i class="fas fa-arrow-right ms-1"></i></a>

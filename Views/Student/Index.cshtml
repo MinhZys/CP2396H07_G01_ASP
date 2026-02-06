@@ -1,0 +1,118 @@
+@model Symphony.Portal.Web.Models.ViewModels.StudentDashboardVM
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+    <h1 class="h2 text-dark">Welcome back, Student!</h1>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary h-100 shadow-sm border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-white bg-opacity-25 rounded p-2 me-3">
+                        <i class="fas fa-school fa-lg"></i>
+                    </div>
+                    <h5 class="card-title mb-0">My Classes</h5>
+                </div>
+                <h2 class="display-6 fw-bold">@Model.MyClassCount</h2>
+                <a asp-action="ViewClasses" class="stretched-link text-white text-decoration-none small">Go to Classroom <i class="fas fa-chevron-right ms-1"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning h-100 shadow-sm border-0">
+            <div class="card-body text-dark">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-dark bg-opacity-10 rounded p-2 me-3">
+                        <i class="fas fa-calendar-alt fa-lg"></i>
+                    </div>
+                    <h5 class="card-title mb-0">Upcoming Exams</h5>
+                </div>
+                <h2 class="display-6 fw-bold">@Model.UpcomingExamCount</h2>
+                <p class="mb-0 small opacity-75">Check your exam schedule</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger h-100 shadow-sm border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-white bg-opacity-25 rounded p-2 me-3">
+                        <i class="fas fa-bell fa-lg"></i>
+                    </div>
+                    <h5 class="card-title mb-0">Notifications</h5>
+                </div>
+                <h2 class="display-6 fw-bold">@Model.UnreadNotificationCount</h2>
+                <p class="mb-0 small opacity-75">Unread messages</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white py-3">
+                <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-tasks me-2"></i>Recent Assignments</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Assignment</th>
+                                <th>Type</th>
+                                <th>Class</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RecentAssignments.Any())
+                            {
+                                @foreach (var assignment in Model.RecentAssignments)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">@assignment.Title</td>
+                                        <td><span class="badge bg-secondary">@assignment.AssignmentType</span></td>
+                                        <td>@(assignment.Class?.ClassName ?? "N/A")</td>
+                                        <td class="small text-muted">@assignment.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">No recent assignments.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white py-3">
+                <h6 class="m-0 font-weight-bold text-success"><i class="fas fa-rocket me-2"></i>Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-3">
+                    <a asp-action="ViewClasses" class="btn btn-outline-primary text-start p-3">
+                        <i class="fas fa-book-reader me-2"></i> View Lessons
+                    </a>
+                    <a asp-controller="StudySchedule" asp-action="Index" class="btn btn-outline-info text-start p-3">
+                        <i class="fas fa-calendar-day me-2"></i> My Schedule
+                    </a>
+                    <a asp-controller="Profile" asp-action="Index" class="btn btn-outline-secondary text-start p-3">
+                        <i class="fas fa-user-edit me-2"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

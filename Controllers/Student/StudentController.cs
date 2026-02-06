@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 using Symphony.Portal.Web.Models; // Namespace chứa Lesson, Material...
+using Symphony.Portal.Web.Models.ViewModels;
 using System.Security.Claims;
 
 namespace Symphony.Portal.Web.Controllers
@@ -19,6 +20,28 @@ namespace Symphony.Portal.Web.Controllers
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var viewModel = new StudentDashboardVM
+            {
+                MyClassCount = await _context.ClassAssignments.CountAsync(ca => ca.StudentId == studentId),
+                UpcomingExamCount = await _context.ClassExams
+                    .CountAsync(ce => ce.ExamDate > DateTime.Now && 
+                                     _context.ClassAssignments.Any(ca => ca.StudentId == studentId && ca.ClassId == ce.ClassId)),
+                UnreadNotificationCount = await _context.Notifications
+                    .CountAsync(n => n.UserId == studentId && !n.IsRead),
+                RecentAssignments = await _context.Assignments
+                    .Where(a => _context.ClassAssignments.Any(ca => ca.StudentId == studentId && ca.ClassId == a.ClassId))
+                    .OrderByDescending(a => a.CreatedAt)
+                    .Take(5)
+                    .ToListAsync()
+            };
+
+            return View(viewModel);
         }
 
         // ==========================================

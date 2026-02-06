@@ -122,9 +122,12 @@
                     document.getElementById('ai-typing').classList.toggle('hidden', !t);
                 });
                 window.connection.on("ReceiveMessage", (sId, name, msg, sid, time) => {
+                    // Prevent duplicate if it's our own message we already appended
+                    if (sId === connection.connectionId) return;
+
                     // Route message to correct box
-                    if (sid === supportSid) appendUI('support-messages', msg, (sId === connection.connectionId) ? 'self' : 'other', time);
-                    if (sid === aiSid && name !== "AI Assistant") appendUI('ai-messages', msg, 'self', time);
+                    if (sid === supportSid) appendUI('support-messages', msg, 'other', time);
+                    if (sid === aiSid && name !== "AI Assistant") appendUI('ai-messages', msg, 'other', time);
                 });
             }
         }, 500);
