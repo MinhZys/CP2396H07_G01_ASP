@@ -115,7 +115,6 @@
                             <tr>
                                 <th>Date</th>
                                 <th>Time</th>
-                                <th>Room</th>
                                 <th>Type</th>
                                 <th>Cancelled</th>
                             </tr>
@@ -138,7 +137,6 @@
                                     <tr>
                                         <td>@s.SessionDate.ToString("yyyy-MM-dd")</td>
                                         <td>@s.StartTime.ToString(@"hh\:mm") - @s.EndTime.ToString(@"hh\:mm")</td>
-                                        <td>@(s.Room?.Name ?? "—")</td>
                                         <td><span class="badge bg-secondary">@s.SessionType</span></td>
                                         <td>
                                             @if (s.IsCancelled)

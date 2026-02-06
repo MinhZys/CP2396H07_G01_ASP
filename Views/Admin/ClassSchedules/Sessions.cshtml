@@ -41,7 +41,6 @@
                     <tr>
                         <th>Date</th>
                         <th>Time</th>
-                        <th>Room</th>
                         <th>Instructor</th>
                         <th>Type</th>
                         <th>Note</th>
@@ -60,7 +59,6 @@
                             <tr>
                                 <td>@s.SessionDate.ToString("yyyy-MM-dd")</td>
                                 <td>@s.StartTime.ToString(@"hh\:mm") - @s.EndTime.ToString(@"hh\:mm")</td>
-                                <td>@(s.Room?.Name ?? "—")</td>
                                 <td>@(string.IsNullOrWhiteSpace(s.InstructorId) ? "—" : s.InstructorId)</td>
                                 <td><span class="badge bg-secondary">@s.SessionType</span></td>
                                 <td class="text-muted small">@s.Note</td>

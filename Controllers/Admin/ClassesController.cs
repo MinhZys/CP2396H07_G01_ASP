@@ -153,25 +153,43 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 // Check dependencies
                 if (await _context.Guests.AnyAsync(g => g.ClassId == id))
                 {
-                    TempData["Error"] = "Cannot delete this class because there are still guests assigned to it.";
+                    TempData["Error"] = "Không thể xóa lớp vì có khách hàng/sinh viên tiềm năng đang đăng ký.";
                     return RedirectToAction(nameof(Index));
                 }
 
                 if (await _context.Assignments.AnyAsync(a => a.ClassId == id))
                 {
-                    TempData["Error"] = "Cannot delete this class because there are still assignments assigned to it.";
+                    TempData["Error"] = "Không thể xóa lớp vì có bài tập đang được gán.";
                     return RedirectToAction(nameof(Index));
                 }
 
                 if (await _context.Enrollments.AnyAsync(e => e.ClassId == id))
                 {
-                    TempData["Error"] = "Cannot delete this class because there are still student enrollments.";
+                    TempData["Error"] = "Không thể xóa lớp vì đã có sinh viên chính thức đăng ký (Enrollment).";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                if (await _context.ClassAssignments.AnyAsync(a => a.ClassId == id))
+                {
+                    TempData["Error"] = "Không thể xóa lớp này vì đã có sinh viên được gán vào lớp.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                if (await _context.ClassSchedules.AnyAsync(s => s.ClassId == id))
+                {
+                    TempData["Error"] = "Không thể xóa lớp này vì đã có lịch học được tạo.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                if (await _context.RevisionRegistrations.AnyAsync(r => r.ClassId == id))
+                {
+                    TempData["Error"] = "Không thể xóa lớp này vì có đăng ký ôn tập liên quan.";
                     return RedirectToAction(nameof(Index));
                 }
 
                 _context.Classes.Remove(@class);
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Class deleted successfully.";
+                TempData["Success"] = "Xóa lớp thành công.";
             }
             return RedirectToAction(nameof(Index));
         }

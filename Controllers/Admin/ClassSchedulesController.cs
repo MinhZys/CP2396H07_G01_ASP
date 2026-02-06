@@ -205,7 +205,6 @@ public class ClassSchedulesController : Controller
             if (schedule == null) return NotFound();
             if (schedule.IsLocked) return BadRequest("Schedule is locked.");
 
-            ViewBag.Rooms = await _context.Rooms.Where(r => r.IsActive).OrderBy(r => r.Name).ToListAsync();
             ViewBag.Instructors = await _context.Users.Where(u => u.RoleId == "2" && u.IsActive).OrderBy(u => u.FullName).ToListAsync();
 
             var vm = new GenerateScheduleVM

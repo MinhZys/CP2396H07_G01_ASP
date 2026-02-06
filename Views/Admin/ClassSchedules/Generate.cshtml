@@ -69,21 +69,7 @@
                     <span asp-validation-for="DaysOfWeek" class="text-danger small"></span>
                 </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">Room</label>
-                    <select asp-for="RoomId" class="form-select">
-                        <option value="">-- None --</option>
-                        @if (ViewBag.Rooms != null)
-                        {
-                            foreach (var r in ViewBag.Rooms)
-                            {
-                                <option value="@r.Id">@r.Name</option>
-                            }
-                        }
-                    </select>
-                </div>
-
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <label class="form-label">Instructor</label>
                     <select asp-for="InstructorId" class="form-select">
                         <option value="">-- None --</option>
@@ -97,7 +83,7 @@
                     </select>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <label class="form-label">SessionType</label>
                     <select asp-for="SessionType" class="form-select"
                             asp-items="Html.GetEnumSelectList<Symphony.Portal.Web.Models.SessionType>()">
