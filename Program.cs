@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
 using Symphony.Portal.Web.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("https://localhost:7242", "http://localhost:5124");
 
 
 // Add services to the container.
