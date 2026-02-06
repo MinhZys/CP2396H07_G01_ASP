@@ -79,7 +79,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 // Handle Image Upload
                 if (imageFile != null && imageFile.Length > 0)
                 {
-                    var uploadsFolder = Path.Combine(_environment.WebRootPath, "images", "subjects");
+                    var webRootPath = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    var uploadsFolder = Path.Combine(webRootPath, "images", "subjects");
                     if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
 
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
@@ -145,7 +146,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
                      // Handle Image Upload
                     if (imageFile != null && imageFile.Length > 0)
                     {
-                        var uploadsFolder = Path.Combine(_environment.WebRootPath, "images", "subjects");
+                        var webRootPath = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                        var uploadsFolder = Path.Combine(webRootPath, "images", "subjects");
                         if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
 
                         var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;

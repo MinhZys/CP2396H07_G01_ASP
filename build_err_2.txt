@@ -1,7 +1,0 @@
-﻿D:\Sem3v2\CP2396H07_G01_ASP\Controllers\Admin\ClassExamsController.cs(168,35): error CS1061: 'CourseSubject' does not contain a definition for 'Order' and no accessible extension method 'Order' accepting a first argument of type 'CourseSubject' could be found (are you missing a using directive or an assembly reference?) [D:\Sem3v2\CP2396H07_G01_ASP\CP2396H07_G01.csproj]
-
-Build FAILED.
-    97 Warning(s)
-    1 Error(s)
-
-Time Elapsed 00:00:04.84

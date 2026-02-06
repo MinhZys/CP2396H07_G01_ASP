@@ -5,6 +5,12 @@ using Symphony.Portal.Web.Data;
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("https://localhost:7242", "http://localhost:5124");
 
+// Fix: Ensure WebRootPath is set if not detected (avoids ArgumentNullException in Path.Combine)
+if (string.IsNullOrEmpty(builder.Environment.WebRootPath))
+{
+    builder.Environment.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+}
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
