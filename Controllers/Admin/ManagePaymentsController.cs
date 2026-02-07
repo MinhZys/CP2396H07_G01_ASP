@@ -98,7 +98,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 case PaymentPurpose.Course:
                     if (payment.Guest?.Description?.StartsWith("COURSE:") == true)
                     {
-                        var courseId = payment.Guest.Description.Replace("COURSE:", "").Trim();
+                        var fullContent = payment.Guest.Description.Replace("COURSE:", "").Trim();
+                        var courseId = fullContent.Split('|')[0].Trim();
                         var course = await _context.Courses.FindAsync(courseId);
 
                         registeredType = "Course";
@@ -109,7 +110,8 @@ namespace Symphony.Portal.Web.Controllers.Admin
                 case PaymentPurpose.Lab:
                     if (payment.Guest?.Description?.StartsWith("CLASS:") == true)
                     {
-                        var classId = payment.Guest.Description.Replace("CLASS:", "").Trim();
+                        var fullContent = payment.Guest.Description.Replace("CLASS:", "").Trim();
+                        var classId = fullContent.Split('|')[0].Trim();
                         var lab = await _context.Classes.FindAsync(classId);
 
                         registeredType = "Lab Class";

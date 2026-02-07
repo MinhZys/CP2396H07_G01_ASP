@@ -303,7 +303,13 @@ namespace Symphony.Portal.Web.Controllers
         {
             if (string.IsNullOrWhiteSpace(description)) return null;
             if (!description.StartsWith("CLASS:", StringComparison.OrdinalIgnoreCase)) return null;
-            return description.Substring("CLASS:".Length).Trim();
+            
+            var content = description.Substring("CLASS:".Length).Trim();
+            if (content.Contains('|'))
+            {
+                return content.Split('|')[0].Trim();
+            }
+            return content;
         }
     }
 }

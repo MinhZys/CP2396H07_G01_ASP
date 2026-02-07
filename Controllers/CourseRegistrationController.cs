@@ -244,7 +244,14 @@ namespace Symphony.Portal.Web.Controllers
         {
             if (string.IsNullOrWhiteSpace(description)) return null;
             if (!description.StartsWith("COURSE:", StringComparison.OrdinalIgnoreCase)) return null;
-            return description.Substring("COURSE:".Length).Trim();
+            
+            var content = description.Substring("COURSE:".Length).Trim();
+            // Nếu có metadata đằng sau (phân cách bởi |) thì chỉ lấy phần ID
+            if (content.Contains('|'))
+            {
+                return content.Split('|')[0].Trim();
+            }
+            return content;
         }
     }
 }
