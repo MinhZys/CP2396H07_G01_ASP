@@ -13,7 +13,7 @@
             </div>
             <div>
                 <h1 class="h3 mb-0">AI Quiz Generator</h1>
-                <p class="text-muted small mb-0">Tự động tạo câu hỏi trắc nghiệm từ nội dung bài học</p>
+                <p class="text-muted small mb-0">Automatically generate multiple-choice questions from lesson content</p>
             </div>
         </div>
         
@@ -34,16 +34,16 @@
             <div class="d-flex gap-3">
                 <i class="fa-solid fa-circle-exclamation fs-4 text-danger mt-1"></i>
                 <div>
-                    <h5 class="alert-heading text-danger">Ollama không khả dụng</h5>
-                    <p class="mb-2">Để sử dụng AI Quiz Generator, bạn cần:</p>
+                    <h5 class="alert-heading text-danger">Ollama is Not Available</h5>
+                    <p class="mb-2">To use the AI Quiz Generator, you need to:</p>
                     <ol class="small text-secondary mb-3 ps-3">
-                        <li>Cài đặt Ollama từ <a href="https://ollama.ai" target="_blank" class="fw-bold">ollama.ai</a></li>
-                        <li>Chạy lệnh: <code class="bg-dark text-white px-1 rounded">ollama pull llama3.2</code></li>
-                        <li>Đảm bảo Ollama đang chạy (localhost:11434)</li>
+                        <li>Install Ollama from <a href="https://ollama.ai" target="_blank" class="fw-bold">ollama.ai</a></li>
+                        <li>Run the command: <code class="bg-dark text-white px-1 rounded">ollama pull llama3.2</code></li>
+                        <li>Ensure Ollama is running (localhost:11434)</li>
                     </ol>
                     <button onclick="checkAIStatus()" class="btn btn-sm btn-outline-danger">
                         <i class="fa-solid fa-rotate-right me-1"></i>
-                        Kiểm tra lại
+                        Check Again
                     </button>
                 </div>
             </div>
@@ -57,15 +57,15 @@
                 <div class="card-header bg-white py-3 border-bottom-0">
                     <h5 class="card-title mb-0 d-flex align-items-center gap-2">
                         <i class="fa-solid fa-pen-to-square text-primary"></i>
-                        Nội dung bài học
+                        Lesson Content
                     </h5>
                 </div>
                 <div class="card-body">
                     <!-- Subject Selection -->
                     <div class="mb-3">
-                        <label class="form-label fw-bold small">Môn học</label>
+                        <label class="form-label fw-bold small">Subject</label>
                         <select id="subjectSelect" class="form-select">
-                            <option value="">-- Chọn môn học --</option>
+                            <option value="">-- Select Subject --</option>
                             @foreach (var subject in subjects)
                             {
                                 <option value="@subject.Value">@subject.Text</option>
@@ -75,36 +75,36 @@
 
                     <!-- Content Input -->
                     <div class="mb-3">
-                        <label class="form-label fw-bold small">Nội dung văn bản</label>
+                        <label class="form-label fw-bold small">Text Content</label>
                         <textarea id="contentInput" 
                                   rows="10" 
-                                  placeholder="Dán nội dung bài học vào đây... AI sẽ tự động tạo câu hỏi từ nội dung này."
+                                  placeholder="Paste lesson content here... AI will automatically generate questions from this content."
                                   class="form-control"
                                   style="resize: none;"></textarea>
                         <div class="d-flex justify-content-between mt-1">
-                            <small id="charCount" class="text-muted">0 ký tự</small>
-                            <small class="text-muted">Tối thiểu 100 ký tự</small>
+                            <small id="charCount" class="text-muted">0 characters</small>
+                            <small class="text-muted">Minimum 100 characters</small>
                         </div>
                     </div>
 
                     <!-- Options -->
                     <div class="row g-3 mb-4">
                         <div class="col-6">
-                            <label class="form-label fw-bold small">Số câu hỏi</label>
+                            <label class="form-label fw-bold small">Number of Questions</label>
                             <select id="questionCount" class="form-select">
-                                <option value="3">3 câu</option>
-                                <option value="5" selected>5 câu</option>
-                                <option value="10">10 câu</option>
-                                <option value="15">15 câu</option>
-                                <option value="20">20 câu</option>
+                                <option value="3">3 questions</option>
+                                <option value="5" selected>5 questions</option>
+                                <option value="10">10 questions</option>
+                                <option value="15">15 questions</option>
+                                <option value="20">20 questions</option>
                             </select>
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-bold small">Độ khó</label>
+                            <label class="form-label fw-bold small">Difficulty</label>
                             <select id="difficultySelect" class="form-select">
-                                <option value="Easy">Dễ</option>
-                                <option value="Medium" selected>Trung bình</option>
-                                <option value="Hard">Khó</option>
+                                <option value="Easy">Easy</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="Hard">Hard</option>
                             </select>
                         </div>
                     </div>
@@ -115,7 +115,7 @@
                             class="btn btn-primary w-100 py-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
                             @(isAIAvailable ? "" : "disabled")>
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        Tạo câu hỏi với AI
+                        Generate Questions with AI
                     </button>
                 </div>
             </div>
@@ -127,10 +127,10 @@
                 <div class="card-header bg-white py-3 border-bottom-0 d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0 d-flex align-items-center gap-2">
                         <i class="fa-solid fa-list-check text-primary"></i>
-                        Câu hỏi được tạo
+                        Generated Questions
                     </h5>
                     <span id="questionCountBadge" class="badge bg-primary-subtle text-primary rounded-pill d-none">
-                        0 câu
+                        0 questions
                     </span>
                 </div>
                 <div class="card-body bg-light rounded-bottom">
@@ -138,8 +138,8 @@
                     <!-- Loading State -->
                     <div id="loadingState" class="d-none py-5 text-center">
                         <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
-                        <h6 class="text-dark">AI đang phân tích và tạo câu hỏi...</h6>
-                        <p class="text-muted small">Quá trình này có thể mất 15-30 giây</p>
+                        <h6 class="text-dark">AI is analyzing and generating questions...</h6>
+                        <p class="text-muted small">This process may take 15-30 seconds</p>
                     </div>
 
                     <!-- Empty State -->
@@ -147,9 +147,9 @@
                         <div class="bg-white rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                             <i class="fa-regular fa-lightbulb fs-1 text-secondary"></i>
                         </div>
-                        <h5 class="text-muted">Chưa có câu hỏi nào</h5>
+                        <h5 class="text-muted">No questions yet</h5>
                         <p class="text-muted small mx-auto" style="max-width: 300px;">
-                            Nhập nội dung bài học và nhấn "Tạo câu hỏi" để AI tự động tạo câu hỏi trắc nghiệm
+                            Enter lesson content and press "Generate Questions" for AI to automatically create multiple-choice questions
                         </p>
                     </div>
 
@@ -164,7 +164,7 @@
                                 onclick="saveQuestions()" 
                                 class="btn btn-success w-100 py-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2">
                             <i class="fa-solid fa-floppy-disk"></i>
-                            Lưu vào ngân hàng câu hỏi
+                            Save to question bank
                         </button>
                     </div>
                 </div>
@@ -180,7 +180,7 @@
 
     // Character count
     document.getElementById('contentInput').addEventListener('input', function() {
-        document.getElementById('charCount').textContent = this.value.length + ' ký tự';
+        document.getElementById('charCount').textContent = this.value.length + ' characters';
     });
 
     async function checkAIStatus() {
@@ -190,7 +190,7 @@
             if (data.available) {
                 location.reload();
             } else {
-                alert('Ollama vẫn chưa khả dụng. Vui lòng kiểm tra lại.');
+                alert('Ollama is still not available. Please check again.');
             }
         } catch (err) {
             console.error('Error checking AI status:', err);
@@ -205,12 +205,12 @@
 
         // Validation
         if (!subjectId) {
-            alert('Vui lòng chọn môn học');
+            alert('Please select a subject');
             return;
         }
 
         if (content.length < 100) {
-            alert('Nội dung bài học phải có ít nhất 100 ký tự');
+            alert('Lesson content must be at least 100 characters');
             return;
         }
 
@@ -243,12 +243,12 @@
                 currentSubjectId = subjectId;
                 displayQuestions(data.questions);
             } else {
-                alert(data.error || 'Không thể tạo câu hỏi. Vui lòng thử lại.');
+                alert(data.error || 'Failed to generate questions. Please try again.');
                 document.getElementById('emptyState').classList.remove('d-none');
             }
         } catch (err) {
             console.error('Error generating questions:', err);
-            alert('Đã xảy ra lỗi. Vui lòng thử lại.');
+            alert('An error occurred. Please try again.');
             document.getElementById('emptyState').classList.remove('d-none');
         } finally {
             document.getElementById('loadingState').classList.add('d-none');
@@ -294,7 +294,7 @@
         document.getElementById('questionsList').classList.remove('d-none');
         document.getElementById('saveSection').classList.remove('d-none');
         document.getElementById('questionCountBadge').classList.remove('d-none');
-        document.getElementById('questionCountBadge').textContent = questions.length + ' câu';
+        document.getElementById('questionCountBadge').textContent = questions.length + ' questions';
     }
 
     function getDifficultyClass(difficulty) {
@@ -308,9 +308,9 @@
 
     function getDifficultyLabel(difficulty) {
         switch(difficulty) {
-            case 'Easy': return 'Dễ';
-            case 'Medium': return 'Trung bình';
-            case 'Hard': return 'Khó';
+            case 'Easy': return 'Easy';
+            case 'Medium': return 'Medium';
+            case 'Hard': return 'Hard';
             default: return difficulty;
         }
     }
@@ -329,12 +329,12 @@
 
     async function saveQuestions() {
         if (generatedQuestions.length === 0) {
-            alert('Không có câu hỏi để lưu');
+            alert('No questions to save');
             return;
         }
 
         document.getElementById('saveBtn').disabled = true;
-        document.getElementById('saveBtn').innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Đang lưu...';
+        document.getElementById('saveBtn').innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Saving...';
 
         try {
             const response = await fetch('/Admin/AIQuiz/SaveQuestions', {
@@ -360,16 +360,16 @@
                 document.getElementById('questionCountBadge').classList.add('d-none');
                 document.getElementById('emptyState').classList.remove('d-none');
                 document.getElementById('contentInput').value = '';
-                document.getElementById('charCount').textContent = '0 ký tự';
+                document.getElementById('charCount').textContent = '0 characters';
             } else {
-                alert(data.error || 'Không thể lưu câu hỏi');
+                alert(data.error || 'Failed to save questions');
             }
         } catch (err) {
             console.error('Error saving questions:', err);
-            alert('Đã xảy ra lỗi khi lưu câu hỏi');
+            alert('An error occurred while saving questions');
         } finally {
             document.getElementById('saveBtn').disabled = false;
-            document.getElementById('saveBtn').innerHTML = '<i class="fa-solid fa-floppy-disk me-2"></i> Lưu vào ngân hàng câu hỏi';
+            document.getElementById('saveBtn').innerHTML = '<i class="fa-solid fa-floppy-disk me-2"></i> Save to question bank';
         }
     }
 
